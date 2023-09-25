@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+    font-family: "Montserrat",sans-serif;
+}
+
+.bg-primary {
+    background-color: #0f1728;
+}
+
+.bg-secondary {
+    background-color: #fea116;
+}
+
+.text-primary {
+    color: #0f1728;
+}
+
+.text-secondary {
+    color: #fea116;
+}
+
+.btn-primary {
+    border: 1px solid #0f1728;
+    background-color: #0f1728;
+    color: #fff;
+    cursor: pointer;
+    transition: .2s ease-in;
+}
+
+.btn-primary:hover {
+    background-color: white;
+    color: #0f1728;
+}
+
+.btn-secondary {
+    border: 1px solid #fea116;
+    background-color: #fea116;
+    color: #fff;
+    cursor: pointer;
+    transition: .2s ease-in;
+}
+
+.btn-secondary:hover {
+    background-color: white;
+    color: #fea116;
+}
+
+.btn-sub {
+    border: 1px solid #fff;
+    background-color: #fff;
+    color: #0f1728;
+    cursor: pointer;
+    transition: .2s ease-in;
+}
+
+.btn-sub:hover {
+    background-color: white;
+    color: #0f1728;
+}
+
+
+.input-cus {
+    /* border-radius: 10px; */
+    /* padding: 10px 16px; */
+}
+
+.input-cus:focus {
+    outline: none;
+}
