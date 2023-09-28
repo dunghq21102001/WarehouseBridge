@@ -14,7 +14,13 @@ import WarehouseList from './pages/WarehouseList'
 import Profile from './pages/Profile'
 import PartnerProfile from './pages/PartnerProfile'
 import WarehouseDetail from './pages/WarehouseDetail'
+import { ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
+import LoadingLocal from './components/LoadingLocal'
+import { useSelector } from 'react-redux'
 function App() {
+  const system = useSelector(state => state.system)
+
 
   return (
     <>
@@ -37,6 +43,8 @@ function App() {
           </Routes>
         </div>
         <Footer />
+        <ToastContainer />
+        {system?.loading == true ? <LoadingLocal /> : ''}
       </div>
     </>
   )

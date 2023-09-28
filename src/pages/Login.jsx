@@ -1,18 +1,37 @@
 import { useState } from 'react'
 import image1 from '../assets/images/kho1.jpg'
 import image2 from '../assets/images/kho2.jpg'
+import noti from '../common/noti';
+import API from '../API';
+import { useDispatch, useSelector } from 'react-redux';
+import {authen} from '../reducers/UserReducer'
+import { changeLoadingState } from '../reducers/SystemReducer';
+import { useNavigate } from 'react-router-dom';
+
 function Login() {
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [isRegister, setIsRegister] = useState(false)
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+  const [username, setUsername] = useState('admin@localhost')
+  const [password, setPassword] = useState('Admin@123')
   const [password2, setPassword2] = useState('')
 
   const login = () => {
-    if(username == 'dung' && password == '1') {
-      setUsername('')
-      setPassword('')
-      return alert('ok') 
-    }
+    if (username.trim() == '' || password.trim() == '') return noti.error('Email và mật khẩu không được để trống !!!')
+    dispatch(changeLoadingState(true))
+    API.login({ email: username, password: password })
+      .then(res => {
+        dispatch(authen(res.data))
+        localStorage.setItem('user', JSON.stringify(res.data))
+        localStorage.setItem('token', res.data?.token)
+        dispatch(changeLoadingState(false))
+        navigate('/')
+        noti.success('Đăng nhập thành công', 2000)
+      })
+      .catch(err => {
+        noti.error(err?.response?.data, 3000)
+        dispatch(changeLoadingState(false))
+      })
   }
 
   const register = () => {
@@ -46,6 +65,7 @@ function Login() {
           </div>
           <img src={image2} alt="" className='w-[50%] object-cover hidden md:block' />
         </div>}
+      {/* <LoadingLocal/> */}
     </div>
   )
 }

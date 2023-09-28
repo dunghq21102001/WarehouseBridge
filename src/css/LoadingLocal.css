@@ -41,3 +41,8 @@
         transform: rotate(360deg);
     }
 }
+
+.background-fog {
+    z-index: 99;
+    background-color: rgba(0, 0, 0, 0.6);
+}
