@@ -18,6 +18,7 @@ import { ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import LoadingLocal from './components/LoadingLocal'
 import { useSelector } from 'react-redux'
+import ConfirmEmail from './pages/ConfirmEmail'
 function App() {
   const system = useSelector(state => state.system)
 
@@ -40,6 +41,7 @@ function App() {
             <Route path='/profile' element={<Profile />} />
             <Route path='/profile/:pnname' element={<PartnerProfile />} />
             <Route path='/login' element={<Login />} />
+            <Route path='/ConfirmEmail' element={<ConfirmEmail />} />
           </Routes>
         </div>
         <Footer />

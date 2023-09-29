@@ -115,19 +115,12 @@ function Header() {
           {user.auth == null
             ? <div onClick={() => changeRoute('login')}
               className='absolute top-0 bottom-0 right-0 bg-secondary flex items-center justify-center cursor-pointer px-14 text-[16px] text-white duration-150'>đăng nhập</div>
-            : <div >
+            : <div>
               <Menu>
-                <Menu.Button className="absolute top-0 bottom-0 right-0 bg-secondary flex items-center justify-center cursor-pointer px-14 text-[16px] text-white duration-150">More</Menu.Button>
-                <Menu.Items className="absolute top-[100%] right-0 flex flex-col items-end bg-white text-black px-2 py-1">
-                  <Menu.Item>
-                    {({ active }) => (
-                      <p
-                        className={`${active ? 'bg-[#fea116] text-white p-1 cursor-pointer w-full text-right' : 'p-1 cursor-pointer w-full text-right'}`}
-                      >
-                        Account settings
-                      </p>
-                    )}
-                  </Menu.Item>
+                <Menu.Button className="absolute top-[50%] translate-y-[-50%] bottom-0 right-5 flex items-center justify-center cursor-pointer text-[16px] text-white overflow-hidden w-[50px] h-[50px]">
+                  <img src='https://static.vecteezy.com/system/resources/thumbnails/009/734/564/small/default-avatar-profile-icon-of-social-media-user-vector.jpg' className='rounded-full object-fill' alt=''/>
+                </Menu.Button>
+                <Menu.Items className="absolute top-[100%] right-2 flex flex-col items-end bg-white text-black py-1 shadow-md">
                   <Menu.Item>
                     {({ active }) => (
                       <p
