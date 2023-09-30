@@ -2,8 +2,28 @@ import { useParams } from "react-router-dom"
 import { BiLogoFacebook, BiLogoInstagramAlt, BiLogoTwitter } from 'react-icons/bi'
 import '../css/Partner.css'
 import WarehouseItem from "../components/WarehouseItem"
+import { useDispatch } from "react-redux"
+import { useEffect, useState } from "react"
+import API from "../API"
+import noti from '../common/noti'
+import { changeLoadingState } from "../reducers/SystemReducer"
 function PartnerProfile() {
   const { pnname } = useParams()
+  const dispatch = useDispatch();
+  const [item, setItem] = useState({})
+  useEffect(() => {
+    dispatch(changeLoadingState(true))
+    API.providerById(pnname)
+      .then(res => {
+        console.log(res);
+        dispatch(changeLoadingState(false))
+        setItem(res.data)
+      })
+      .catch((err) => {
+        noti.error(err.response?.data)
+        dispatch(changeLoadingState(false))
+      })
+  }, [])
   const listWarehouse = [
     {
       id: 1,
@@ -66,37 +86,37 @@ function PartnerProfile() {
         <div className="w-full text-[#666] text-[18px] bg-white">
           <div className="w-full flex px-4 py-6">
             <span className="text-[#444] w-[20%]">Tên đầy đủ</span>
-            <span className="w-[80%]">{pnname}</span>
+            <span className="w-[80%]">{item?.name}</span>
           </div>
           <div className="line"></div>
           <div className="w-full flex px-4 py-6">
             <span className="text-[#444] w-[20%]">Email</span>
-            <span className="w-[80%]">logistic.express@example.com</span>
+            <span className="w-[80%]">{item?.email}</span>
           </div>
           <div className="line"></div>
           <div className="w-full flex px-4 py-6">
             <span className="text-[#444] w-[20%]">Phone</span>
-            <span className="w-[80%]">(097) 234-5678</span>
+            <span className="w-[80%]">{item?.phone}</span>
           </div>
           <div className="line"></div>
           <div className="w-full flex px-4 py-6">
             <span className="text-[#444] w-[20%]">Mobile</span>
-            <span className="w-[80%]">(097) 234-5678</span>
+            <span className="w-[80%]">{item?.phone}</span>
           </div>
           <div className="line"></div>
           <div className="w-full flex px-4 py-6">
             <span className="text-[#444] w-[20%]">Địa chỉ</span>
-            <span className="w-[80%]">Bay Area, San Francisco, CA</span>
+            <span className="w-[80%]">{item?.address}</span>
           </div>
           <div className="line"></div>
           <div className="w-full flex px-4 py-6">
             <span className="text-[#444] w-[20%]">Mô tả</span>
-            <span className="w-[80%]">Kho logistic này nằm trong một khuôn viên rộng, được thiết kế một cách hợp lý để tối ưu hóa việc quản lý hàng hóa. Kho được xây dựng bằng vật liệu chắc chắn và bền bỉ, với kiến trúc thông minh để tận dụng tối đa diện tích sử dụng. Kho có nhiều ngăn, kệ và không gian lưu trữ để phù hợp với các loại hàng hóa khác nhau.</span>
+            <span className="w-[80%]">{item?.description}</span>
           </div>
         </div>
 
         <div className="w-full grid grid-cols-12 gap-3">
-          {listWarehouse.map(item => (
+          {listWarehouse.map( item => (
             <div key={item.id} className='col-span-12 md:col-span-6'>
               <WarehouseItem item={item} />
             </div>

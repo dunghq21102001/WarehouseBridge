@@ -27,6 +27,12 @@ export default class API {
     static warehouseByCategory(categoryId) {
         return axios.get(`${this.BASE_URL}/api/Warehouses/GetWarehouseByCategory/${categoryId}`)
     }
+    static provider() {
+        return axios.get(`${this.BASE_URL}/api/Providers`)
+    }
+    static providerById(id) {
+        return axios.get(`${this.BASE_URL}/api/Providers/${id}`)
+    }
 
     // Warehouses detail
 }
