@@ -1,24 +1,39 @@
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-
+import API from "../API"
+import { useDispatch } from "react-redux"
+import {changeLoadingState} from '../reducers/SystemReducer'
 function WarehouseItem({ item }) {
     const navigate = useNavigate()
-
+    const dispatch = useDispatch()
+    const [listImage, setListImage] = useState([])
+    useEffect(() => {
+        dispatch(changeLoadingState(true))
+        API.imageByWarehouseId(item?.id)
+            .then(res => {
+        dispatch(changeLoadingState(false))
+                setListImage(res.data)
+            })
+            .catch(err => {
+                dispatch(changeLoadingState(false))
+            })
+    }, [])
     function goToDetail(id) {
         navigate(`/warehouse-detail/${id}`)
     }
     return (
         <div className='shadow-lg pb-4 my-3 w-full'>
-            <img src={item?.image} className='w-full' alt="" />
+            <img src={listImage[0]?.imageURL} className='w-full' alt="" />
             <div className='w-full px-6'>
                 <p className='text-primary text-[24px] font-bold mt-3'>{item?.name}</p>
                 <p className='text-[#666] mt-3'>
                     {item?.address}
                 </p>
-                <div className='flex items-center justify-between flex-wrap w-full my-3 text-[#666]'>
+                {/* <div className='flex items-center justify-between flex-wrap w-full my-3 text-[#666]'>
                     <p>120k/tháng</p> |
                     <p>220k/tháng</p> |
                     <p>320k/tháng</p>
-                </div>
+                </div> */}
                 <p className='text-[#666]'>
                     {item?.description}
                 </p>

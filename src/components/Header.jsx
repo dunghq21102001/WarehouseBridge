@@ -52,6 +52,7 @@ function Header() {
     dispatch(authen(null))
     localStorage.removeItem('token')
     localStorage.removeItem('user')
+    navigate('/')
     noti.success('Đăng xuất thành công')
   }
   return (

@@ -8,31 +8,29 @@ import SliderComment from '../components/SliderComment'
 import AboutUs from '../components/AboutUs'
 import { useNavigate } from 'react-router-dom'
 import WarehouseItem from '../components/WarehouseItem'
+import { useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { changeLoadingState } from '../reducers/SystemReducer'
+import API from '../API'
+import noti from '../common/noti'
 function Home() {
   const navigate = useNavigate()
-  const listWarehouse = [
-    {
-      id: 1,
-      name: 'MyStorage',
-      image: 'https://dunghq21102001.github.io/exe101_tmp/img/khokechung//kho1.jpg',
-      address: 'Số 103 Đường Vạn Phúc, Quận Hà Đông, Hà Nội',
-      description: 'Kho kệ chung: là giải pháp tối ưu chi phí nhất cho cá nhân và doanh nghiệp'
-    },
-    {
-      id: 2,
-      name: 'MyStorage',
-      image: 'https://dunghq21102001.github.io/exe101_tmp/img/khokechung//kho1.jpg',
-      address: 'Số 103 Đường Vạn Phúc, Quận Hà Đông, Hà Nội',
-      description: 'Kho kệ chung: là giải pháp tối ưu chi phí nhất cho cá nhân và doanh nghiệp'
-    },
-    {
-      id: 3,
-      name: 'MyStorage',
-      image: 'https://dunghq21102001.github.io/exe101_tmp/img/khokechung//kho1.jpg',
-      address: 'Số 103 Đường Vạn Phúc, Quận Hà Đông, Hà Nội',
-      description: 'Kho kệ chung: là giải pháp tối ưu chi phí nhất cho cá nhân và doanh nghiệp'
-    }
-  ]
+  const [listWarehouse, setListWarehouse] = useState([])
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(changeLoadingState(true))
+    API.warehouses()
+      .then(res => {
+        dispatch(changeLoadingState(false))
+        setListWarehouse(res.data)
+      })
+      .catch(err => {
+        dispatch(changeLoadingState(false))
+        noti.error(err.response?.data)
+      })
+
+  }, [])
   const comments = [
     {
       fullName: 'Nguyen Van A',

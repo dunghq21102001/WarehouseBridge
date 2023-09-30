@@ -1,5 +1,5 @@
 import './App.css'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import Home from './pages/Home'
 import Header from './components/Header'
 import About from './pages/About'
@@ -19,14 +19,32 @@ import "react-toastify/dist/ReactToastify.css";
 import LoadingLocal from './components/LoadingLocal'
 import { useSelector } from 'react-redux'
 import ConfirmEmail from './pages/ConfirmEmail'
+import Admin from './pages/Admin'
 function App() {
   const system = useSelector(state => state.system)
+  const user = useSelector((state) => state.auth)
+
+  const CheckAuth = ({ children }) => {
+    if (user.auth && user.auth.listRoles[0] !== 'Admin') return <Navigate to={'/'} />
+    else if (user.auth && user.auth.listRoles[0] === 'Admin') return <Navigate to={'/admin'} />
+    return children
+  }
+
+  const CheckPermission = ({ children }) => {
+    if (!user.auth || user.auth.listRoles[0] != 'Admin') return <Navigate to={'/'} />
+    return children
+  }
+
+  const CheckIfAdmin = ({ children }) => {
+    if (user.auth?.listRoles[0] == 'Admin') return <Navigate to={'/admin'} />
+    return children
+  }
 
 
   return (
     <>
       <div className='w-full'>
-        <Header />
+        {user.auth?.listRoles[0] == 'Admin' ? '' : <Header />}
         <div className='w-full min-h-screen'>
           <ScrollToTop />
           <Routes>
@@ -40,11 +58,12 @@ function App() {
             <Route path='/contact' element={<Contact />} />
             <Route path='/profile' element={<Profile />} />
             <Route path='/profile/:pnname' element={<PartnerProfile />} />
-            <Route path='/login' element={<Login />} />
+            <Route path='/login' element={<CheckAuth><Login /></CheckAuth>} />
             <Route path='/ConfirmEmail' element={<ConfirmEmail />} />
+            <Route path='/admin' element={<CheckPermission><Admin /></CheckPermission>} />
           </Routes>
         </div>
-        <Footer />
+        {user.auth?.listRoles[0] == 'Admin' ? '' : <Footer />}
         <ToastContainer />
         {system?.loading == true ? <LoadingLocal /> : ''}
       </div>

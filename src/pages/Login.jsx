@@ -29,7 +29,9 @@ function Login() {
         localStorage.setItem('user', JSON.stringify(res.data))
         localStorage.setItem('token', res.data?.token)
         dispatch(changeLoadingState(false))
-        navigate('/')
+
+        if (res.data.listRoles[0] == 'Admin') navigate('/admin')
+        else navigate('/')
         noti.success('Đăng nhập thành công', 2000)
       })
       .catch(err => {
@@ -45,7 +47,7 @@ function Login() {
     if (!/[a-z]/.test(password)) return noti.error('Mật khẩu phải chứa ít nhất 1 chữ thường!');
     if (!/\d/.test(password)) return noti.error('Mật khẩu phải chứa ít nhất 1 số!');
     if (!/[!@#$%^&*]/.test(password)) return noti.error('Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt!');
-    if(!validate.email(username))return noti.error('Bạn phải nhập đúng định dạng email');
+    if (!validate.email(username)) return noti.error('Bạn phải nhập đúng định dạng email');
 
     dispatch(changeLoadingState(true))
     API.register({ email: username, password: password, username: realUsername, fullname: 'null', address: 'null', avatar: 'null', phoneNumber: '0900000000', birthday: '1999-09-28T18:25:05.201Z' })

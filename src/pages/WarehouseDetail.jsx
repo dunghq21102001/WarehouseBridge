@@ -1,11 +1,26 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { AiFillEye, AiFillStar } from 'react-icons/ai'
 import { MdLocationOn } from 'react-icons/md'
 import { FaMoneyBillAlt } from 'react-icons/fa'
 import WarehouseItem from "../components/WarehouseItem"
+import noti from '../common/noti'
+import { useParams } from "react-router-dom"
+import API from "../API"
 
 function WarehouseDetail() {
     const [indexTab, setIndexTab] = useState(1)
+    const [detail, setDetail] = useState({})
+    const { id } = useParams()
+    console.log(id);
+    useEffect(() => {
+        API.warehouseDetailById(id)
+            .then(res => {
+                console.log(res.data);
+            })
+            .catch(err => {
+                noti.error(err?.response.data)
+            })
+    }, [])
     const listTab = [
         { id: 1, name: 'Tổng quan', icon: <AiFillEye /> },
         { id: 2, name: 'Giá cả', icon: <FaMoneyBillAlt /> },

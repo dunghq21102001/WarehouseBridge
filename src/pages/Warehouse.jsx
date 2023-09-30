@@ -1,29 +1,26 @@
+import { useEffect, useState } from "react"
 import WarehouseItem from "../components/WarehouseItem"
-
+import API from '../API'
+import { useDispatch } from "react-redux"
+import noti from '../common/noti'
+import { changeLoadingState } from '../reducers/SystemReducer'
 function Warehouse() {
-  const listWarehouse = [
-    {
-      id: 1,
-      name: 'MyStorage',
-      image: 'https://dunghq21102001.github.io/exe101_tmp/img/khokechung//kho1.jpg',
-      address: 'Số 103 Đường Vạn Phúc, Quận Hà Đông, Hà Nội',
-      description: 'Kho kệ chung: là giải pháp tối ưu chi phí nhất cho cá nhân và doanh nghiệp'
-    },
-    {
-      id: 2,
-      name: 'MyStorage',
-      image: 'https://dunghq21102001.github.io/exe101_tmp/img/khokechung//kho1.jpg',
-      address: 'Số 103 Đường Vạn Phúc, Quận Hà Đông, Hà Nội',
-      description: 'Kho kệ chung: là giải pháp tối ưu chi phí nhất cho cá nhân và doanh nghiệp'
-    },
-    {
-      id: 3,
-      name: 'MyStorage',
-      image: 'https://dunghq21102001.github.io/exe101_tmp/img/khokechung//kho1.jpg',
-      address: 'Số 103 Đường Vạn Phúc, Quận Hà Đông, Hà Nội',
-      description: 'Kho kệ chung: là giải pháp tối ưu chi phí nhất cho cá nhân và doanh nghiệp'
-    },
-  ]
+  const dispatch = useDispatch()
+  const [listWarehouse, setListWarehouse] = useState([])
+
+  useEffect(() => {
+    dispatch(changeLoadingState(true))
+    API.warehouses()
+      .then(res => {
+        dispatch(changeLoadingState(false))
+        setListWarehouse(res.data)
+      })
+      .catch(err => {
+        dispatch(changeLoadingState(false))
+        noti.error(err.response?.data)
+      })
+
+  }, [])
   return (
     <div className="w-full bg-[#eeeeee] min-h-screen pt-10">
       <h1 className='text-[26px] lg:text-[47px] uppercase font-bold text-primary text-center'>Tất cả <span className='text-secondary'>loại kho</span></h1>
