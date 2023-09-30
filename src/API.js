@@ -35,4 +35,12 @@ export default class API {
     }
 
     // Warehouses detail
+    static warehouseDetailById(id) {
+        return axios.get(`${this.BASE_URL}/api/WarehouseDetails/GetWarehouseDetailByWarehouse/${id}`)
+    }
+
+    // Warehouses image
+    static imageByWarehouseId(id) {
+        return axios.get(`${this.BASE_URL}/api/ImageWarehouses/GetImageWarehouseByWarehouse/${id}`)
+    }
 }
