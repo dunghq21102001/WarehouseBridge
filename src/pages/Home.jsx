@@ -7,30 +7,15 @@ import { FaShieldAlt } from 'react-icons/fa'
 import SliderComment from '../components/SliderComment'
 import AboutUs from '../components/AboutUs'
 import { useNavigate } from 'react-router-dom'
-import WarehouseItem from '../components/WarehouseItem'
-import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { changeLoadingState } from '../reducers/SystemReducer'
 import API from '../API'
 import noti from '../common/noti'
+import ListWarehouseHome from '../components/ListWarehouseHome'
 function Home() {
   const navigate = useNavigate()
-  const [listWarehouse, setListWarehouse] = useState([])
   const dispatch = useDispatch()
 
-  useEffect(() => {
-    dispatch(changeLoadingState(true))
-    API.warehouses()
-      .then(res => {
-        dispatch(changeLoadingState(false))
-        setListWarehouse(res.data)
-      })
-      .catch(err => {
-        dispatch(changeLoadingState(false))
-        noti.error(err.response?.data)
-      })
-
-  }, [])
   const comments = [
     {
       fullName: 'Nguyen Van A',
@@ -72,19 +57,7 @@ function Home() {
       <AboutUs />
 
       {/* screen 3 */}
-      <div className='w-full min-h-screen'>
-        <div className='w-[60%] mx-auto flex items-center flex-col'>
-          <h1 className='text-secondary font-bold text-[16px] md:text-[20px] lg:text-[26px] title-cus relative text-center uppercase'>Warehouse Bridge</h1>
-          <h1 className='text-[26px] lg:text-[47px] uppercase font-bold text-primary'>kho <span className='text-secondary'>nổi bật</span></h1>
-        </div>
-        <div className='w-[80%] mx-auto grid grid-cols-12 gap-3'>
-          {listWarehouse.map(item => (
-            <div key={item.id} className='col-span-12 md:col-span-6 lg:col-span-4'>
-              <WarehouseItem item={item} />
-            </div>
-          ))}
-        </div>
-      </div>
+      <ListWarehouseHome />
 
       {/* screen 4 */}
       <div className='w-full min-h-[500px] hidden md:flex'>

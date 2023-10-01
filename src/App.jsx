@@ -20,25 +20,36 @@ import LoadingLocal from './components/LoadingLocal'
 import { useSelector } from 'react-redux'
 import ConfirmEmail from './pages/ConfirmEmail'
 import Admin from './pages/Admin'
+import { useMemo } from 'react'
 function App() {
   const system = useSelector(state => state.system)
   const user = useSelector((state) => state.auth)
 
-  const CheckAuth = ({ children }) => {
-    if (user.auth && user.auth.listRoles[0] !== 'Admin') return <Navigate to={'/'} />
-    else if (user.auth && user.auth.listRoles[0] === 'Admin') return <Navigate to={'/admin'} />
-    return children
-  }
+  // const CheckAuth = ({ children }) => {
+  //   if (user.auth && user.auth.listRoles[0] != 'Admin') return <Navigate to={'/'} />
+  //   if (user.auth && user.auth.listRoles[0] == 'Admin') return <Navigate to={'/admin'} />
+  //   else return children
+  // }
 
-  const CheckPermission = ({ children }) => {
-    if (!user.auth || user.auth.listRoles[0] != 'Admin') return <Navigate to={'/'} />
-    return children
-  }
+  const CheckAuth = useMemo(() => {
+    return ({ children }) => {
+      if (user.auth && user.auth.listRoles[0] != 'Admin') return <Navigate to={'/'} />
+      if (user.auth && user.auth.listRoles[0] == 'Admin') return <Navigate to={'/admin/admin-warehouses'} />
+      return children
+    }
+  }, [user])
 
-  const CheckIfAdmin = ({ children }) => {
-    if (user.auth?.listRoles[0] == 'Admin') return <Navigate to={'/admin'} />
-    return children
-  }
+  // const CheckPermission = ({ children }) => {
+  //   if (!user.auth || user.auth.listRoles[0] != 'Admin') return <Navigate to={'/'} />
+  //   return children
+  // }
+
+  const CheckPermission = useMemo(() => {
+    return ({ children }) => {
+      if (!user.auth || user.auth.listRoles[0] != 'Admin') return <Navigate to={'/'} />
+      return children
+    }
+  }, [user])
 
 
   return (
@@ -48,7 +59,11 @@ function App() {
         <div className='w-full min-h-screen'>
           <ScrollToTop />
           <Routes>
-            <Route path='/' element={<Home />} />
+            <Route path='/' element={
+              <CheckAuth>
+                <Home />
+              </CheckAuth>
+            } />
             <Route path='/about' element={<About />} />
             <Route path='/partner' element={<Partner />} />
             <Route path='/warehouse' element={<Warehouse />} />
@@ -60,7 +75,7 @@ function App() {
             <Route path='/profile/:pnname' element={<PartnerProfile />} />
             <Route path='/login' element={<CheckAuth><Login /></CheckAuth>} />
             <Route path='/ConfirmEmail' element={<ConfirmEmail />} />
-            <Route path='/admin' element={<CheckPermission><Admin /></CheckPermission>} />
+            <Route path='/admin/*' element={<CheckPermission><Admin /></CheckPermission>} />
           </Routes>
         </div>
         {user.auth?.listRoles[0] == 'Admin' ? '' : <Footer />}

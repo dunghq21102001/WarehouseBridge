@@ -76,4 +76,26 @@ export default class menus {
             },
         ]
     }
+
+    static adminMenu() {
+        return [
+            {
+                name: 'warehouses',
+                path: 'admin-warehouses'
+            },
+            {
+                name: 'categories',
+                path: 'admin-categories'
+            },
+            {
+                name: 'partners',
+                path: 'admin-partners'
+            },
+            {
+                name: 'blogs',
+                path: 'admin-blogs'
+            },
+
+        ]
+    }
 }
