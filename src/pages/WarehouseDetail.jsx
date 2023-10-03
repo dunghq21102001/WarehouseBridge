@@ -4,20 +4,45 @@ import { MdLocationOn } from 'react-icons/md'
 import { FaMoneyBillAlt } from 'react-icons/fa'
 import WarehouseItem from "../components/WarehouseItem"
 import noti from '../common/noti'
-import { useParams } from "react-router-dom"
+import { useLocation, useParams } from "react-router-dom"
 import API from "../API"
-
+import { useDispatch } from "react-redux"
+import { changeLoadingState } from "../reducers/SystemReducer"
+import '../css/WarehouseDetail.css'
+import GoogleMapReact from 'google-map-react';
+import func from '../common/func'
+const AnyReactComponent = ({ text }) => <div>{text}</div>
 function WarehouseDetail() {
+    const dispatch = useDispatch()
     const [indexTab, setIndexTab] = useState(1)
-    const [detail, setDetail] = useState({})
+    const [listDetail, setListDetail] = useState([])
+    const [curIndex, setCurIndex] = useState(0)
+    const [isValidCoordinate, setIsValidCoordinate] = useState(true)
     const { id } = useParams()
-    console.log(id);
+    const location = useLocation()
+    const { state } = location
+    const { latitude, longitude, firstImage } = state || {}
+
+    if (!func.isValidCoordinates(latitude, longitude) && isValidCoordinate) {
+        setIsValidCoordinate(false)
+    }
+    const defaultProps = {
+        center: {
+            lat: latitude || 10.882359,
+            lng: longitude || 106.782523
+        },
+        zoom: 15
+    };
+
     useEffect(() => {
+        dispatch(changeLoadingState(true))
         API.warehouseDetailById(id)
             .then(res => {
-                console.log(res.data);
+                dispatch(changeLoadingState(false))
+                setListDetail(res.data)
             })
             .catch(err => {
+                dispatch(changeLoadingState(false))
                 noti.error(err?.response.data)
             })
     }, [])
@@ -53,14 +78,26 @@ function WarehouseDetail() {
     const changeTab = (index) => {
         setIndexTab(index)
     }
+
+    const changeWarehouseType = (index) => {
+        setCurIndex(index)
+    }
     return (
         <div className="w-full bg-whitex">
             <div className="w-[90%] mx-auto mt-10 flex justify-between">
                 <div className="w-[65%]">
                     <div className="w-full relative overflow-hidden h-[500px]">
-                        <img className="w-full top-0 left-0 absolute" src="https://img.freepik.com/free-photo/interior-large-distribution-warehouse-with-shelves-stacked-with-palettes-goods-ready-market_342744-1481.jpg?w=2000" alt="" />
+                        <img className="w-full top-0 left-0 absolute" src={firstImage} alt="" />
                     </div>
                     <p className="text-primary font-bold text-[50px] mt-4">King Kho</p>
+                    {listDetail.length > 0 ? <p className="text-primary font-bold">Các loại kích thước kho:</p> : null}
+                    <div className="w-full flex items-center justify-start flex-wrap my-2">
+                        {listDetail.map((item, index) => (
+                            <div onClick={() => changeWarehouseType(index)} key={item.id} className={`bg-white border-[#0f1728] border-solid border-[1px] rounded-md flex items-center cursor-pointer w-[50px] justify-center mr-4 text-[14px] ${index == curIndex ? 'isActive' : null}`}>
+                                {item?.width}x{item?.height}
+                            </div>
+                        ))}
+                    </div>
                     <p className="text-[#666]">
                         Một số đặc điểm và lợi ích của cho thuê kho tự quản bao gồm:
                         <br />
@@ -75,36 +112,58 @@ function WarehouseDetail() {
                         5.Tiết kiệm chi phí: So với việc xây dựng và quản lý một kho lưu trữ riêng, thuê kho tự quản có thể giảm thiểu các chi phí vốn, chi phí hoạt động và chi phí duy trì.
                     </p>
 
-                    <div className="w-full mt-10 mb-4 px-4 py-2 flex items-center justify-between">
-                        {listTab.map(tab => (
-                            <p onClick={() => changeTab(tab.id)} className={`flex items-center text-[24px] text-secondary cursor-pointer hover:bg-[#dbdbdb] p-1 ${indexTab == tab.id ? 'bg-[#dbdbdb]' : ''}`} key={tab.id}>
-                                {tab.icon}&nbsp;<span className="text-primary">{tab.name}</span>
-                            </p>
-                        ))}
-                    </div>
-                    <div className="w-full mt-4 mb-10">
-                        {/* tab 1 */}
-                        <div className={`w-full ${indexTab == 1 ? 'block' : 'hidden'}`}>
-                            <p className="text-[#666]">
-                                Cho thuê kho tự quản là dịch vụ cung cấp không gian lưu trữ cho cá nhân hoặc doanh nghiệp để quản lý và kiểm soát trực tiếp hàng hóa của mình. Người thuê có linh hoạt về không gian và quyền tổ chức lưu trữ theo nhu cầu. Kho tự quản có đặc điểm về an ninh, vị trí thuận tiện và tiết kiệm chi phí so với việc tự xây dựng kho lưu trữ. Đây là một giải pháp hiệu quả để quản lý và lưu trữ hàng hóa một cách chuyên nghiệp.
-                            </p>
+                    {listDetail.length > 0
+                        ? <div className="w-full mt-10 mb-4 px-4 py-2 flex items-center justify-between">
+                            {listTab.map(tab => (
+                                <p onClick={() => changeTab(tab.id)} className={`flex items-center text-[24px] text-secondary cursor-pointer hover:bg-[#dbdbdb] p-1 ${indexTab == tab.id ? 'bg-[#dbdbdb]' : ''}`} key={tab.id}>
+                                    {tab.icon}&nbsp;<span className="text-primary">{tab.name}</span>
+                                </p>
+                            ))}
                         </div>
+                        : null}
+                    {listDetail.length > 0
+                        ? <div className="w-full mt-4 mb-10">
+                            {/* tab 1 */}
+                            <div className={`w-full ${indexTab == 1 ? 'block' : 'hidden'}`}>
+                                <p className="text-[#666]">
+                                    Cho thuê kho tự quản là dịch vụ cung cấp không gian lưu trữ cho cá nhân hoặc doanh nghiệp để quản lý và kiểm soát trực tiếp hàng hóa của mình. Người thuê có linh hoạt về không gian và quyền tổ chức lưu trữ theo nhu cầu. Kho tự quản có đặc điểm về an ninh, vị trí thuận tiện và tiết kiệm chi phí so với việc tự xây dựng kho lưu trữ. Đây là một giải pháp hiệu quả để quản lý và lưu trữ hàng hóa một cách chuyên nghiệp.
+                                </p>
+                            </div>
 
-                        {/* tab2 */}
-                        <div className={`w-full ${indexTab == 2 ? 'block' : 'hidden'}`}>
-                            Giá cả
-                        </div>
+                            {/* tab2 */}
+                            <div className={`w-full ${indexTab == 2 ? 'block' : 'hidden'}`}>
+                                <p className="text-[24px]"><span className="font-bold text-primary">Giá kho:</span> {func.convertVND(listDetail[curIndex]?.warehousePrice)}</p><br />
+                                <p className="text-[24px]"><span className="font-bold text-primary">Giá dịch vụ:</span> {func.convertVND(listDetail[curIndex]?.servicePrice)}</p><br />
+                            </div>
 
-                        {/* tab3 */}
-                        <div className={`w-full ${indexTab == 3 ? 'block' : 'hidden'}`}>
-                            vị trí
-                        </div>
+                            {/* tab3 */}
+                            <div className={`w-full ${indexTab == 3 ? 'block' : 'hidden'}`}>
+                                {isValidCoordinate
+                                    ? <div className="w-full h-[500px]">
+                                        <GoogleMapReact
+                                            bootstrapURLKeys={{
+                                                key: 'AIzaSyCAPfe1hBNDgKaDLdgayN3KAGsHjebY7Cg',
+                                                // language: 'en',
+                                            }}
+                                            defaultCenter={defaultProps.center}
+                                            defaultZoom={defaultProps.zoom}
+                                        >
+                                            <AnyReactComponent
+                                                lat={latitude}
+                                                lng={longitude}
+                                                text="Warehouse"
+                                            />
+                                        </GoogleMapReact>
+                                    </div>
+                                    : <p className="font-bold text-[18px] text-red-500">Kinh độ và vĩ độ không hợp lệ</p>}
+                            </div>
 
-                        {/* tab4 */}
-                        <div className={`w-full ${indexTab == 4 ? 'block' : 'hidden'}`}>
-                            đánh giá
+                            {/* tab4 */}
+                            <div className={`w-full ${indexTab == 4 ? 'block' : 'hidden'}`}>
+                                <p className="font-bold text-[18px] text-primary">Không có dữ liệu</p>
+                            </div>
                         </div>
-                    </div>
+                        : null}
                 </div>
                 <div className="w-[30%]">
                     <div className="w-[80%] text-center py-3 mx-auto bg-secondary text-white text-[24px] btn-secondary">

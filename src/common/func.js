@@ -22,4 +22,15 @@ export default class func {
     static cloneObject(data) {
         return { ...data }
     }
+
+    static isValidCoordinates(latitude, longitude) {
+        return (
+            !isNaN(parseFloat(latitude)) &&
+            !isNaN(parseFloat(longitude)) &&
+            latitude >= -90 &&
+            latitude <= 90 &&
+            longitude >= -180 &&
+            longitude <= 180
+        )
+    }
 }

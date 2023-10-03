@@ -61,6 +61,21 @@
     color: #0f1728;
 }
 
+.btn-cancel {
+    border: 1px solid #fff;
+    background-color: #d5d5d5;
+    color: #000;
+    cursor: pointer;
+    transition: .2s ease-in;
+}
+
+.btn-cancel:hover {
+    background-color: white;
+    color: #0f1728;
+    border-color: #a3a3a3;
+}
+
+
 
 .input-cus {
     /* border-radius: 10px; */
@@ -74,4 +89,23 @@
 
 .err-in {
     border: 1px solid red;
+}
+
+.del-icon {
+    color: red;
+}
+
+.edit-icon {
+    color: rgb(20, 152, 20);
+}
+
+.del-icon,
+.edit-icon {
+    font-size: 24px;
+    margin: 0 10px;
+}
+
+.del-icon:hover,
+.edit-icon:hover {
+    opacity: .3;
 }

@@ -1,46 +1,74 @@
-import axios from "axios"
+import axios from "axios";
+
+let token
+function checkToken() {
+    token = localStorage.getItem('token')
+    // if (token == null) return window.location.href = '/login'
+}
+checkToken()
+const instance = axios.create({
+    baseURL: 'https://localhost:5001',
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token,
+    },
+});
+
 export default class API {
-    static BASE_URL = 'https://localhost:5001'
-
-
     // auth
     static login(data) {
-        return axios.post(`${this.BASE_URL}/Login`, data)
-    }
-    static register(data) {
-        return axios.post(`${this.BASE_URL}/Register`, data)
-    }
-    static confirmEmail(code, userId) {
-        return axios.get(`${this.BASE_URL}/ConfirmEmail?code=${code}&userId=${userId}`)
+        return instance.post('/Login', data);
     }
 
-    //Warehouses
+    static register(data) {
+        return instance.post('/Register', data);
+    }
+
+    static confirmEmail(code, userId) {
+        return instance.get(`/ConfirmEmail?code=${code}&userId=${userId}`);
+    }
+
+    // Warehouses
     static warehouses() {
-        return axios.get(`${this.BASE_URL}/api/Warehouses`)
+        return instance.get('/api/Warehouses');
     }
+
     static warehouseById(id) {
-        return axios.get(`${this.BASE_URL}/api/Warehouses/${id}`)
+        return instance.get(`/api/Warehouses/${id}`);
     }
+
     static warehouseByProvider(providerId) {
-        return axios.get(`${this.BASE_URL}/api/Warehouses/GetWarehouseByProvider/${providerId}`)
+        return instance.get(`/api/Warehouses/GetWarehouseByProvider/${providerId}`);
     }
+
     static warehouseByCategory(categoryId) {
-        return axios.get(`${this.BASE_URL}/api/Warehouses/GetWarehouseByCategory/${categoryId}`)
+        return instance.get(`/api/Warehouses/GetWarehouseByCategory/${categoryId}`);
     }
+
+    static addWarehouse(data) {
+        return instance.post('/Admin/api/Warehouses', data);
+    }
+
+    static deleteWarehouse(id) {
+        return instance.delete(`/Admin/api/Warehouses/${id}`)
+    }
+
+    // provider
     static provider() {
-        return axios.get(`${this.BASE_URL}/api/Providers`)
+        return instance.get('/api/Providers');
     }
+
     static providerById(id) {
-        return axios.get(`${this.BASE_URL}/api/Providers/${id}`)
+        return instance.get(`/api/Providers/${id}`);
     }
 
     // Warehouses detail
     static warehouseDetailById(id) {
-        return axios.get(`${this.BASE_URL}/api/WarehouseDetails/GetWarehouseDetailByWarehouse/${id}`)
+        return instance.get(`/api/WarehouseDetails/GetWarehouseDetailByWarehouse/${id}`);
     }
 
     // Warehouses image
     static imageByWarehouseId(id) {
-        return axios.get(`${this.BASE_URL}/api/ImageWarehouses/GetImageWarehouseByWarehouse/${id}`)
+        return instance.get(`/api/ImageWarehouses/GetImageWarehouseByWarehouse/${id}`);
     }
 }
