@@ -71,4 +71,22 @@ export default class API {
     static imageByWarehouseId(id) {
         return instance.get(`/api/ImageWarehouses/GetImageWarehouseByWarehouse/${id}`);
     }
+
+    //category
+    static categories() {
+        return instance.get('/api/Categories');
+    }
+
+    static addCategory(data) {
+        return instance.post('/Admin/api/Categories', data);
+    }
+
+    static deleteCategory(id) {
+        return instance.delete(`/Admin/api/Categories/${id}`)
+    }
+
+    static updateCategory(data) {
+        return instance.put('/Admin/api/Categories', data)
+    }
+
 }
