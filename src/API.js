@@ -89,4 +89,21 @@ export default class API {
         return instance.put('/Admin/api/Categories', data)
     }
 
+    //Provider
+    static providers() {
+        return instance.get('/api/Providers');
+    }
+
+    static addProvider(data) {
+        return instance.post('/Admin/api/Providers', data);
+    }
+
+    static deleteProvider(id) {
+        return instance.delete(`/Admin/api/Providers/${id}`)
+    }
+
+    static updateProvider(data) {
+        return instance.put('/Admin/api/Providers', data)
+    }
+
 }
