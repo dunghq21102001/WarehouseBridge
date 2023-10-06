@@ -3,16 +3,31 @@ import axios from "axios";
 let token
 function checkToken() {
     token = localStorage.getItem('token')
+    return token
     // if (token == null) return window.location.href = '/login'
 }
 checkToken()
 const instance = axios.create({
     baseURL: 'https://localhost:5001',
+    // baseURL: 'https://warehouse.bsite.net/',
     headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + token,
     },
-});
+})
+
+instance.interceptors.request.use(
+    (config) => {
+        // Trước mỗi yêu cầu API, kiểm tra token
+        checkToken();
+        // Thêm token vào tiêu đề Authorization
+        config.headers['Authorization'] = 'Bearer ' + token;
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
 
 export default class API {
     // auth
