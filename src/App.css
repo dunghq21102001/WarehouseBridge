@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 * {
-    font-family: "Montserrat",sans-serif;
+    font-family: "Montserrat", sans-serif;
 }
 
 .bg-primary {
@@ -108,4 +108,11 @@
 .del-icon:hover,
 .edit-icon:hover {
     opacity: .3;
+}
+
+.truncate-cus {
+    width: 90%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

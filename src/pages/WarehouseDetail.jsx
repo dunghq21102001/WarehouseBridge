@@ -14,6 +14,7 @@ import func from '../common/func'
 const AnyReactComponent = ({ text }) => <div>{text}</div>
 function WarehouseDetail() {
     const dispatch = useDispatch()
+    const [listWarehouse, setListWarehouse] = useState([])
     const [indexTab, setIndexTab] = useState(1)
     const [listDetail, setListDetail] = useState([])
     const [curIndex, setCurIndex] = useState(0)
@@ -21,15 +22,15 @@ function WarehouseDetail() {
     const { id } = useParams()
     const location = useLocation()
     const { state } = location
-    const { latitude, longitude, firstImage } = state || {}
+    const { WHname, latitude, longitude, firstImage } = state || {}
 
     if (!func.isValidCoordinates(latitude, longitude) && isValidCoordinate) {
         setIsValidCoordinate(false)
     }
     const defaultProps = {
         center: {
-            lat: latitude || 10.882359,
-            lng: longitude || 106.782523
+            lat: 10.882359,
+            lng: 106.782523
         },
         zoom: 15
     };
@@ -45,35 +46,20 @@ function WarehouseDetail() {
                 dispatch(changeLoadingState(false))
                 noti.error(err?.response.data)
             })
+
+        API.warehouses()
+            .then(res => {
+                setListWarehouse(res.data.slice(0, 3))
+            })
+            .catch(err => { })
+
+
     }, [])
     const listTab = [
         { id: 1, name: 'Tổng quan', icon: <AiFillEye /> },
         { id: 2, name: 'Giá cả', icon: <FaMoneyBillAlt /> },
         { id: 3, name: 'Vị trí', icon: <MdLocationOn /> },
         { id: 4, name: 'Đánh giá', icon: <AiFillStar /> },
-    ]
-    const listWarehouse = [
-        {
-            id: 1,
-            name: 'MyStorage',
-            image: 'https://dunghq21102001.github.io/exe101_tmp/img/khokechung//kho1.jpg',
-            address: 'Số 103 Đường Vạn Phúc, Quận Hà Đông, Hà Nội',
-            description: 'Kho kệ chung: là giải pháp tối ưu chi phí nhất cho cá nhân và doanh nghiệp'
-        },
-        {
-            id: 2,
-            name: 'MyStorage',
-            image: 'https://dunghq21102001.github.io/exe101_tmp/img/khokechung//kho1.jpg',
-            address: 'Số 103 Đường Vạn Phúc, Quận Hà Đông, Hà Nội',
-            description: 'Kho kệ chung: là giải pháp tối ưu chi phí nhất cho cá nhân và doanh nghiệp'
-        },
-        {
-            id: 3,
-            name: 'MyStorage',
-            image: 'https://dunghq21102001.github.io/exe101_tmp/img/khokechung//kho1.jpg',
-            address: 'Số 103 Đường Vạn Phúc, Quận Hà Đông, Hà Nội',
-            description: 'Kho kệ chung: là giải pháp tối ưu chi phí nhất cho cá nhân và doanh nghiệp'
-        },
     ]
     const changeTab = (index) => {
         setIndexTab(index)
@@ -89,15 +75,7 @@ function WarehouseDetail() {
                     <div className="w-full relative overflow-hidden h-[500px]">
                         <img className="w-full top-0 left-0 absolute" src={firstImage} alt="" />
                     </div>
-                    <p className="text-primary font-bold text-[50px] mt-4">King Kho</p>
-                    {listDetail.length > 0 ? <p className="text-primary font-bold">Các loại kích thước kho:</p> : null}
-                    <div className="w-full flex items-center justify-start flex-wrap my-2">
-                        {listDetail.map((item, index) => (
-                            <div onClick={() => changeWarehouseType(index)} key={item.id} className={`bg-white border-[#0f1728] border-solid border-[1px] rounded-md flex items-center cursor-pointer w-[50px] justify-center mr-4 text-[14px] ${index == curIndex ? 'isActive' : null}`}>
-                                {item?.width}x{item?.height}
-                            </div>
-                        ))}
-                    </div>
+                    <p className="text-primary font-bold text-[50px] mt-4">{WHname}</p>
                     <p className="text-[#666]">
                         Một số đặc điểm và lợi ích của cho thuê kho tự quản bao gồm:
                         <br />
@@ -131,9 +109,20 @@ function WarehouseDetail() {
                             </div>
 
                             {/* tab2 */}
-                            <div className={`w-full ${indexTab == 2 ? 'block' : 'hidden'}`}>
-                                <p className="text-[24px]"><span className="font-bold text-primary">Giá kho:</span> {func.convertVND(listDetail[curIndex]?.warehousePrice)}</p><br />
-                                <p className="text-[24px]"><span className="font-bold text-primary">Giá dịch vụ:</span> {func.convertVND(listDetail[curIndex]?.servicePrice)}</p><br />
+                            <div className={`w-full flex items-start justify-center ${indexTab == 2 ? 'block' : 'hidden'}`}>
+                                <div className="w-[50%]">
+                                    {listDetail.length > 0 ? <p className="text-primary font-bold text-[20px]">Các loại kích thước kho:</p> : null}
+                                    <div className="w-full flex items-center justify-start flex-wrap my-2">
+                                        {listDetail.map((item, index) => (
+                                            <div onClick={() => changeWarehouseType(index)} key={item.id} className={`bg-white border-[#0f1728] border-solid border-[1px] rounded-md flex items-center cursor-pointer w-[80px] justify-center mr-4 text-[14px] ${index == curIndex ? 'isActive' : null}`}>
+                                                {item?.width}x{item?.depth}x{item?.height}
+                                            </div>
+                                        ))}
+                                    </div></div>
+                                <div>
+                                    <p className="text-[16px]"><span className="font-bold text-primary">Giá kho:</span> {func.convertVND(listDetail[curIndex]?.warehousePrice)}</p><br />
+                                    <p className="text-[14px]"><span className="font-bold text-primary">Giá dịch vụ:</span> {func.convertVND(listDetail[curIndex]?.servicePrice)}</p><br />
+                                </div>
                             </div>
 
                             {/* tab3 */}
@@ -143,6 +132,7 @@ function WarehouseDetail() {
                                         <GoogleMapReact
                                             bootstrapURLKeys={{
                                                 key: 'AIzaSyCAPfe1hBNDgKaDLdgayN3KAGsHjebY7Cg',
+                                                // key: 'AIzaSyDQg29CzefG-QLdH9Agrxl3VokTjiQyfCA',
                                                 // language: 'en',
                                             }}
                                             defaultCenter={defaultProps.center}

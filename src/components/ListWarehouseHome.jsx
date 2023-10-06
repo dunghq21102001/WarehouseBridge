@@ -18,7 +18,7 @@ function ListWarehouseHome() {
     API.warehouses()
       .then(res => {
         dispatch(changeLoadingState(false))
-        setListWarehouse(res.data)
+        setListWarehouse(res.data.slice(0, 3))
       })
       .catch(err => {
         dispatch(changeLoadingState(false))

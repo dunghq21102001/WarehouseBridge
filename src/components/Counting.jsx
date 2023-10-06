@@ -13,7 +13,7 @@ function Counting({ name, number, icon }) {
         setTimeout(() => {
             const randomJump = Math.floor(Math.random() * 10) + 1
             setCurrentNumber(prevNumber => Math.min(prevNumber + randomJump, number))
-        }, 100)
+        }, 5100)
     }
     return (
         <div ref={ref} className='flex flex-col items-center flex-wrap counting-border w-[120px] px-3 py-2 m-2'>

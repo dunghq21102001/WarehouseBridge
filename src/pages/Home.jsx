@@ -1,7 +1,7 @@
 import '../css/Home.css'
 import img2 from '../assets/images/kho2.jpg'
 import { BsListCheck } from 'react-icons/bs'
-import { BiLogoFacebook, BiLogoInstagramAlt, BiLogoTwitter, BiMoney, BiSolidCheckboxChecked } from 'react-icons/bi'
+import { BiMoney, BiSolidCheckboxChecked } from 'react-icons/bi'
 import { AiFillSetting, AiOutlineLineChart } from 'react-icons/ai'
 import { FaShieldAlt } from 'react-icons/fa'
 import SliderComment from '../components/SliderComment'
@@ -12,6 +12,7 @@ import { changeLoadingState } from '../reducers/SystemReducer'
 import API from '../API'
 import noti from '../common/noti'
 import ListWarehouseHome from '../components/ListWarehouseHome'
+import OutstandingPartner from '../components/OutstandingPartner'
 function Home() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -152,58 +153,7 @@ function Home() {
       </div>
 
       {/* screen 7 */}
-      <div className='w-full my-10'>
-        <div className='w-[60%] mx-auto flex items-center flex-col'>
-          <h1 className='text-secondary font-bold text-[16px] md:text-[20px] lg:text-[26px] title-cus relative text-center uppercase'>Warehouse Bridge</h1>
-          <h1 className='text-[26px] lg:text-[47px] uppercase font-bold text-primary'>đối tác <span className='text-secondary'>nổi bật</span></h1>
-        </div>
-        <div className='w-[80%] mx-auto grid grid-cols-12 gap-3 mt-3'>
-          <div className='col-span-12 md:col-span-6 lg:col-span-3 shadow-lg pb-4 my-3'>
-            <img src="https://s3-eu-west-1.amazonaws.com/tpd/logos/62a6b838121e5619aa08681b/0x0.png" className='w-full' alt="" />
-            <div className='w-[60%] mx-auto flex items-center justify-around my-3'>
-              <BiLogoFacebook className='icon-s7' />
-              <BiLogoTwitter className='icon-s7' />
-              <BiLogoInstagramAlt className='icon-s7' />
-            </div>
-            <p className='text-[24px] text-primary text-center'>King Kho</p>
-            <p className='text-center text-[#666]'>Đối tác</p>
-          </div>
-
-          <div className='col-span-12 md:col-span-6 lg:col-span-3 shadow-lg pb-4 my-3'>
-            <img src="https://s3-eu-west-1.amazonaws.com/tpd/logos/62a6b838121e5619aa08681b/0x0.png" className='w-full' alt="" />
-            <div className='w-[60%] mx-auto flex items-center justify-around my-3'>
-              <BiLogoFacebook className='icon-s7' />
-              <BiLogoTwitter className='icon-s7' />
-              <BiLogoInstagramAlt className='icon-s7' />
-            </div>
-            <p className='text-[24px] text-primary text-center'>King Kho</p>
-            <p className='text-center text-[#666]'>Đối tác</p>
-          </div>
-
-          <div className='col-span-12 md:col-span-6 lg:col-span-3 shadow-lg pb-4 my-3'>
-            <img src="https://s3-eu-west-1.amazonaws.com/tpd/logos/62a6b838121e5619aa08681b/0x0.png" className='w-full' alt="" />
-            <div className='w-[60%] mx-auto flex items-center justify-around my-3'>
-              <BiLogoFacebook className='icon-s7' />
-              <BiLogoTwitter className='icon-s7' />
-              <BiLogoInstagramAlt className='icon-s7' />
-            </div>
-            <p className='text-[24px] text-primary text-center'>King Kho</p>
-            <p className='text-center text-[#666]'>Đối tác</p>
-          </div>
-
-          <div className='col-span-12 md:col-span-6 lg:col-span-3 shadow-lg pb-4 my-3'>
-            <img src="https://s3-eu-west-1.amazonaws.com/tpd/logos/62a6b838121e5619aa08681b/0x0.png" className='w-full' alt="" />
-            <div className='w-[60%] mx-auto flex items-center justify-around my-3'>
-              <BiLogoFacebook className='icon-s7' />
-              <BiLogoTwitter className='icon-s7' />
-              <BiLogoInstagramAlt className='icon-s7' />
-            </div>
-            <p className='text-[24px] text-primary text-center'>King Kho</p>
-            <p className='text-center text-[#666]'>Đối tác</p>
-          </div>
-        </div>
-      </div>
-
+      <OutstandingPartner />
     </div>
   )
 }
