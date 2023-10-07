@@ -56,23 +56,23 @@ function Partner() {
                             <div className="innerCard">
                                 <div className="frontSide">
                                     <div className='w-full h-[200px] overflow-hidden'>
-                                        <img src={item?.img} className='w-full' alt="" />
+                                        <img src={item?.image} className='w-full' alt="" />
                                     </div>
                                     <p className='text-primary text-[20px] mt-5'>
                                         {item?.name}
                                     </p>
-                                    <p className='text-[#666] text-[14px]'>{item?.description}</p>
+                                    <p className='text-[#666] text-[14px]'>{item?.shortDescription}</p>
                                 </div>
                                 <div className="backSide">
                                     <p className='text-primary text-[20px] mt-10'>
                                         {item?.name}
                                     </p>
-                                    <p className='text-[#666] text-[14px]'>{item?.description}</p>
-                                    <div className='flex w-[80%] mx-auto items-center justify-around mt-10'>
+                                    <p className='text-[#666] text-[14px]'>{item?.shortDescription}</p>
+                                    {/* <div className='flex w-[80%] mx-auto items-center justify-around mt-10'>
                                         <BiLogoFacebook className='icon' />
                                         <BiLogoTwitter className='icon' />
                                         <BiLogoInstagramAlt className='icon' />
-                                    </div>
+                                    </div> */}
                                     <button onClick={() => changeRoute(item?.id)} className='btn-primary w-[80%] mt-10 py-2'>Xem thông tin</button>
                                 </div>
                             </div>

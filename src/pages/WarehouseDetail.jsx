@@ -161,18 +161,14 @@ function WarehouseDetail() {
                     </div>
                     <p className="mt-10 text-[30px] text-primary font-bold">Danh mục</p>
                     <div className="flex w-full flex-wrap mt-3">
-                        <div className="w-full relative mt-2">
-                            <img className="w-full" src="https://img.freepik.com/free-photo/interior-large-distribution-warehouse-with-shelves-stacked-with-palettes-goods-ready-market_342744-1481.jpg?w=2000" alt="" />
-                            <div className="absolute bottom-0 left-0 p-2 bg-secondary text-[20px] text-white font-bold">Kho lạnh</div>
-                        </div>
-                        <div className="w-full relative mt-2">
-                            <img className="w-full" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQH45Ye7IRd3U6VHEsjtPkxt_HgNyzAx2HJ3_eT8tKJYf87MyI9znKzUYwKhWNx-guB_QI&usqp=CAU" alt="" />
-                            <div className="absolute bottom-0 left-0 p-2 bg-secondary text-[20px] text-white font-bold">Kho thương mại điện tử</div>
-                        </div>
-                        <div className="w-full relative mt-2">
-                            <img className="w-full" src="https://media.istockphoto.com/id/1138429558/photo/rows-of-shelves.jpg?s=612x612&w=0&k=20&c=0E4uvaa-THb-Wj-QZKpUSPgwjfIMFW3vH7NRx1iWMIc=" alt="" />
-                            <div className="absolute bottom-0 left-0 p-2 bg-secondary text-[20px] text-white font-bold">Kho mini</div>
-                        </div>
+                        {listWarehouse.map((item, index) => (
+                            <div key={index} className="w-full relative mt-2">
+                                <img className="w-full" src={item?.imageURL} alt={item?.imageURL} />
+                                <div className="absolute bottom-0 left-0 p-2 bg-secondary text-[20px] text-white font-bold">
+                                    {item?.name}
+                                </div>
+                            </div>
+                        ))}
                     </div>
 
                     <p className="mt-10 text-[30px] text-primary font-bold">Hỗ trợ, liên hệ</p>

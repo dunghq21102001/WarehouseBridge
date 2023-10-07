@@ -54,19 +54,17 @@ function PartnerProfile() {
       <div className="w-full lg:w-[26%]">
         <div className="w-full pb-4 bg-white">
           <div className="relative h-[300px] md:h-[600px] lg:h-[200px] overflow-hidden">
-            <img className="w-full absolute top-0 left-0 right-0" src="https://img.freepik.com/premium-vector/world-logistic-company-logo-vector-design-transport-logistic-logo_518759-206.jpg?w=2000" alt="" />
+            <img className="w-full absolute top-0 left-0 right-0" src={item?.image} alt={item?.image} />
           </div>
-          <p className="text-primary text-[24px] font-bold mt-4 text-center">{pnname}</p>
-          <p className="text-[#666] text-[16px] text-center">Warehouse Company</p>
-          <p className="text-[#666] text-[16px] text-center">Bay Area, San Francisco, CA</p>
+          {/* <p className="text-primary text-[24px] font-bold mt-4 text-center">{pnname}</p> */}
+          <p className="text-primary text-[24px] font-bold mt-4 text-center">{item?.name}</p>
+          <p className="text-[#666] text-[16px] text-center">{item?.address}</p>
         </div>
 
         <div className="w-full bg-white mt-10 p-3">
           <p className="text-[16px] text-[#666]">
             <span className="font-bold">Giới thiệu:</span>&nbsp;
-            Chào mừng đến với trang web logistic - nền tảng trực tuyến đáng tin cậy để quản lý và tối ưu hoá hoạt động vận chuyển hàng hóa của bạn. Chúng tôi tự hào giới thiệu một giải pháp hiệu quả, đơn giản và linh hoạt cho các doanh nghiệp và tổ chức trong lĩnh vực logistic.
-            <br />
-            Website logistic của chúng tôi là một nền tảng đa chức năng, cung cấp một loạt các công cụ và dịch vụ để quản lý quá trình vận chuyển hàng hóa của bạn một cách hiệu quả. Bằng cách sử dụng nền tảng của chúng tôi, bạn có thể dễ dàng tổ chức, theo dõi và tối ưu hoá hoạt động logistic của mình.
+            {item?.description}
           </p>
           <hr className="my-3" />
           <div className="w-full py-3 flex items-center px-2 justify-between">
