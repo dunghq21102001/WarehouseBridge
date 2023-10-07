@@ -1,5 +1,14 @@
+import GoogleMapReact from 'google-map-react';
 import '../css/Home.css'
+const AnyReactComponent = ({ text }) => <div>{text}</div>
 function Contact() {
+  const defaultProps = {
+    center: {
+      lat: 10.882359,
+      lng: 106.782523
+    },
+    zoom: 15
+  };
   return (
     <div className="w-full">
       <div className='w-full md:w-[80%] lg:w-[50%] mx-auto flex justify-center mt-10'>
@@ -21,6 +30,23 @@ function Contact() {
           <p className='text-[#666]'>Tầng 6 NVH Sinh Viên - ĐHQG, TP.HCM</p>
         </div>
 
+      </div>
+      <div className="w-full h-[500px]">
+        <GoogleMapReact
+          bootstrapURLKeys={{
+            key: 'AIzaSyCAPfe1hBNDgKaDLdgayN3KAGsHjebY7Cg',
+            // key: 'AIzaSyDQg29CzefG-QLdH9Agrxl3VokTjiQyfCA',
+            // language: 'en',
+          }}
+          defaultCenter={defaultProps.center}
+          defaultZoom={defaultProps.zoom}
+        >
+          <AnyReactComponent
+            lat={10.882359}
+            lng={106.782523}
+            text="Warehouse"
+          />
+        </GoogleMapReact>
       </div>
     </div>
   )
