@@ -24,9 +24,9 @@ function WarehouseDetail() {
     const { state } = location
     const { WHname, latitude, longitude, firstImage } = state || {}
 
-    if (!func.isValidCoordinates(latitude, longitude) && isValidCoordinate) {
-        setIsValidCoordinate(false)
-    }
+    // if (!func.isValidCoordinates(latitude, longitude) && isValidCoordinate) {
+    //     setIsValidCoordinate(false)
+    // }
     const defaultProps = {
         center: {
             lat: 10.882359,
@@ -127,12 +127,12 @@ function WarehouseDetail() {
 
                             {/* tab3 */}
                             <div className={`w-full ${indexTab == 3 ? 'block' : 'hidden'}`}>
-                                {isValidCoordinate
+                                {/* {isValidCoordinate
                                     ? <div className="w-full h-[500px]">
                                         <GoogleMapReact
                                             bootstrapURLKeys={{
-                                                key: 'AIzaSyCAPfe1hBNDgKaDLdgayN3KAGsHjebY7Cg',
-                                                // key: 'AIzaSyDQg29CzefG-QLdH9Agrxl3VokTjiQyfCA',
+                                                // key: 'AIzaSyCAPfe1hBNDgKaDLdgayN3KAGsHjebY7Cg',
+                                                key: 'AIzaSyDQg29CzefG-QLdH9Agrxl3VokTjiQyfCA',
                                                 // language: 'en',
                                             }}
                                             defaultCenter={defaultProps.center}
@@ -145,7 +145,24 @@ function WarehouseDetail() {
                                             />
                                         </GoogleMapReact>
                                     </div>
-                                    : <p className="font-bold text-[18px] text-red-500">Kinh độ và vĩ độ không hợp lệ</p>}
+                                    : <p className="font-bold text-[18px] text-red-500">Kinh độ và vĩ độ không hợp lệ</p>} */}
+                                <div className="w-full h-[500px]">
+                                    <GoogleMapReact
+                                        bootstrapURLKeys={{
+                                            // key: 'AIzaSyCAPfe1hBNDgKaDLdgayN3KAGsHjebY7Cg',
+                                            key: 'AIzaSyDQg29CzefG-QLdH9Agrxl3VokTjiQyfCA',
+                                            // language: 'en',
+                                        }}
+                                        defaultCenter={defaultProps.center}
+                                        defaultZoom={defaultProps.zoom}
+                                    >
+                                        <AnyReactComponent
+                                            lat={latitude}
+                                            lng={longitude}
+                                            text="Warehouse"
+                                        />
+                                    </GoogleMapReact>
+                                </div>
                             </div>
 
                             {/* tab4 */}

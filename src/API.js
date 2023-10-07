@@ -8,8 +8,8 @@ function checkToken() {
 }
 checkToken()
 const instance = axios.create({
-    baseURL: 'https://localhost:5001',
-    // baseURL: 'https://warehouse.bsite.net/',
+    // baseURL: 'https://localhost:5001',
+    baseURL: 'https://warehouse.bsite.net/',
     headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + token,
