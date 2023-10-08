@@ -31,7 +31,7 @@ function Contact() {
         </div>
 
       </div>
-      <div className="w-full h-[500px]">
+      <div className="w-full md:w-[70%] mx-auto h-[500px]">
         <GoogleMapReact
           bootstrapURLKeys={{
             key: 'AIzaSyCAPfe1hBNDgKaDLdgayN3KAGsHjebY7Cg',

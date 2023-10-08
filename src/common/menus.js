@@ -9,14 +9,14 @@ export default class menus {
                 childs: [],
                 params: []
             },
-            {
-                pathName: 'about',
-                name: 'about',
-                title: 'về chúng tôi',
-                isActive: false,
-                childs: [],
-                params: []
-            },
+            // {
+            //     pathName: 'about',
+            //     name: 'about',
+            //     title: 'về chúng tôi',
+            //     isActive: false,
+            //     childs: [],
+            //     params: []
+            // },
             {
                 pathName: 'partner',
                 name: 'partner',

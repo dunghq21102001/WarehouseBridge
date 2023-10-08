@@ -1,5 +1,5 @@
 import axios from "axios";
-
+import noti from './common/noti'
 let token
 function checkToken() {
     token = localStorage.getItem('token')

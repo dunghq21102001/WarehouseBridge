@@ -12,8 +12,8 @@ function Login() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const [isRegister, setIsRegister] = useState(false)
-  const [username, setUsername] = useState('admin@localhost')
-  const [password, setPassword] = useState('Admin@123')
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [realUsername, setRealUsername] = useState('')
   const [password2, setPassword2] = useState('')
   const [showP, isShowP] = useState(false)
@@ -89,7 +89,7 @@ function Login() {
             <div className='w-full flex flex-col items-center'>
               <h1 className='text-[28px] text-[#666] font-bold'>ĐĂNG NHẬP</h1>
               <input type="text" value={username} onBlur={validateUsername} onChange={(e) => setUsername(e.target.value)} className={`input-cus w-[80%] px-3 py-2 my-3 bg-[#eaeaea] ${isValidEmail == false ? 'err-in' : ''}`} placeholder='abcd@gmail.com' />
-              <input type="text" value={password} onBlur={() => validatePass(password)} onChange={(e) => setPassword(e.target.value)} className={`input-cus w-[80%] px-3 py-2 my-3 bg-[#eaeaea] ${isValidPass == false ? 'err-in' : ''}`} placeholder='Mật khẩu' />
+              <input type="password" value={password} onBlur={() => validatePass(password)} onChange={(e) => setPassword(e.target.value)} className={`input-cus w-[80%] px-3 py-2 my-3 bg-[#eaeaea] ${isValidPass == false ? 'err-in' : ''}`} placeholder='Mật khẩu' />
               <button className='btn-primary w-[80%] mt-3 px-3 py-2' onClick={login}>Đăng nhập</button>
               <p className='my-3 text-center'>Bạn chưa có tài khoản? <span className='text-[#fea116] cursor-pointer' onClick={() => setIsRegister(!isRegister)}>Đăng ký</span> ngay!</p>
             </div>
@@ -101,8 +101,8 @@ function Login() {
               <h1 className='text-[28px] text-[#666] font-bold'>ĐĂNG KÝ</h1>
               <input type="text" value={username} onBlur={validateUsername} onChange={(e) => setUsername(e.target.value)} className={`input-cus w-[80%] px-3 py-2 my-3 bg-[#eaeaea] ${isValidEmail == false ? 'err-in' : ''}`} placeholder='abcd@gmail.com' />
               <input type="text" value={realUsername} onBlur={validateRealUsername} onChange={(e) => setRealUsername(e.target.value)} className={`input-cus w-[80%] px-3 py-2 my-3 bg-[#eaeaea] ${isValidUsername == false ? 'err-in' : ''}`} placeholder='Tên người dùng' />
-              <input type="text" value={password} onBlur={() => validatePass(password)} onChange={(e) => setPassword(e.target.value)} className={`input-cus w-[80%] px-3 py-2 my-3 bg-[#eaeaea] ${isValidPass == false ? 'err-in' : ''}`} placeholder='Mật khẩu' />
-              <input type="text" value={password2} onBlur={() => validatePass(password2)} onChange={(e) => setPassword2(e.target.value)} className={`input-cus w-[80%] px-3 py-2 my-3 bg-[#eaeaea] ${isValidPass == false ? 'err-in' : ''}`} placeholder='Nhập lại mật khẩu' />
+              <input type="password" value={password} onBlur={() => validatePass(password)} onChange={(e) => setPassword(e.target.value)} className={`input-cus w-[80%] px-3 py-2 my-3 bg-[#eaeaea] ${isValidPass == false ? 'err-in' : ''}`} placeholder='Mật khẩu' />
+              <input type="password" value={password2} onBlur={() => validatePass(password2)} onChange={(e) => setPassword2(e.target.value)} className={`input-cus w-[80%] px-3 py-2 my-3 bg-[#eaeaea] ${isValidPass == false ? 'err-in' : ''}`} placeholder='Nhập lại mật khẩu' />
               <button onClick={register} className='btn-primary w-[80%] mt-3 px-3 py-2'>Đăng ký</button>
               <p className='my-3 text-center'>Bạn đã có tài khoản? <span className='text-[#fea116] cursor-pointer' onClick={() => setIsRegister(!isRegister)}>Đăng nhập</span> ngay!</p>
             </div>

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import API from "../API"
 import { useDispatch } from "react-redux"
+import '../css/WarehouseItem.css'
 import { changeLoadingState } from '../reducers/SystemReducer'
 function WarehouseItem({ item }) {
     const navigate = useNavigate()
@@ -25,16 +26,18 @@ function WarehouseItem({ item }) {
                     WHname: item?.name,
                     latitude: item?.latitudeIP,
                     longitude: item?.longitudeIP,
-                    firstImage: listImage[0]?.imageURL
+                    listImage: listImage,
+                    description: item?.description,
+                    shortDescription: item?.shortDescription
                 }
             })
     }
     return (
         <div className='shadow-lg pb-4 my-3 w-full'>
-            <div className="w-full h-[300px] overflow-hidden flex items-center"><img src={listImage[0]?.imageURL} className='w-full' alt="" /></div>
+            <div className="w-full h-[200px] overflow-hidden flex items-center"><img src={listImage[0]?.imageURL} className='w-full' alt="" /></div>
             <div className='w-full px-6'>
-                <p className='text-primary text-[24px] font-bold mt-3'>{item?.name}</p>
-                <p className='text-[#666] mt-3 font-bold'>
+                <p className='text-primary text-[24px] font-bold mt-3 truncate-cus' title={item?.name}>{item?.name}</p>
+                <p title={item?.address} className='text-[#666] mt-3 font-bold truncate-item'>
                     {item?.address}
                 </p>
                 {/* <div className='flex items-center justify-between flex-wrap w-full my-3 text-[#666]'>
@@ -42,7 +45,7 @@ function WarehouseItem({ item }) {
                     <p>220k/tháng</p> |
                     <p>320k/tháng</p>
                 </div> */}
-                <p className='text-[#666] truncate-cus'>
+                <p className='text-[#666] truncate-cus' title={item?.shortDescription}>
                     {item?.shortDescription}
                 </p>
                 <div className='flex mt-3 justify-center w-full'>
