@@ -7,15 +7,21 @@ import { useEffect, useState } from "react"
 import API from "../API"
 import noti from '../common/noti'
 import { changeLoadingState } from "../reducers/SystemReducer"
+
 function PartnerProfile() {
   const { pnname } = useParams()
   const dispatch = useDispatch();
   const [item, setItem] = useState({})
+  const [list, setList] = useState([])
   useEffect(() => {
+    fetchLProviderById()
+    fetchListWarehouseByProvider()
+  }, [])
+
+  function fetchLProviderById() {
     dispatch(changeLoadingState(true))
     API.providerById(pnname)
       .then(res => {
-        console.log(res);
         dispatch(changeLoadingState(false))
         setItem(res.data)
       })
@@ -23,30 +29,43 @@ function PartnerProfile() {
         noti.error(err.response?.data)
         dispatch(changeLoadingState(false))
       })
-  }, [])
-  const listWarehouse = [
-    {
-      id: 1,
-      name: 'MyStorage',
-      image: 'https://dunghq21102001.github.io/exe101_tmp/img/khokechung//kho1.jpg',
-      address: 'Số 103 Đường Vạn Phúc, Quận Hà Đông, Hà Nội',
-      description: 'Kho kệ chung: là giải pháp tối ưu chi phí nhất cho cá nhân và doanh nghiệp'
-    },
-    {
-      id: 2,
-      name: 'MyStorage',
-      image: 'https://dunghq21102001.github.io/exe101_tmp/img/khokechung//kho1.jpg',
-      address: 'Số 103 Đường Vạn Phúc, Quận Hà Đông, Hà Nội',
-      description: 'Kho kệ chung: là giải pháp tối ưu chi phí nhất cho cá nhân và doanh nghiệp'
-    },
-    {
-      id: 3,
-      name: 'MyStorage',
-      image: 'https://dunghq21102001.github.io/exe101_tmp/img/khokechung//kho1.jpg',
-      address: 'Số 103 Đường Vạn Phúc, Quận Hà Đông, Hà Nội',
-      description: 'Kho kệ chung: là giải pháp tối ưu chi phí nhất cho cá nhân và doanh nghiệp'
-    },
-  ]
+  }
+
+  function fetchListWarehouseByProvider() {
+    dispatch(changeLoadingState(true))
+    API.warehouseByProvider(pnname)
+      .then(res => {
+        dispatch(changeLoadingState(false))
+        setList(res.data)
+      })
+      .catch((err) => {
+        noti.error(err.response?.data)
+        dispatch(changeLoadingState(false))
+      })
+  }
+  // const listWarehouse = [
+  //   {
+  //     id: 1,
+  //     name: 'MyStorage',
+  //     image: 'https://dunghq21102001.github.io/exe101_tmp/img/khokechung//kho1.jpg',
+  //     address: 'Số 103 Đường Vạn Phúc, Quận Hà Đông, Hà Nội',
+  //     description: 'Kho kệ chung: là giải pháp tối ưu chi phí nhất cho cá nhân và doanh nghiệp'
+  //   },
+  //   {
+  //     id: 2,
+  //     name: 'MyStorage',
+  //     image: 'https://dunghq21102001.github.io/exe101_tmp/img/khokechung//kho1.jpg',
+  //     address: 'Số 103 Đường Vạn Phúc, Quận Hà Đông, Hà Nội',
+  //     description: 'Kho kệ chung: là giải pháp tối ưu chi phí nhất cho cá nhân và doanh nghiệp'
+  //   },
+  //   {
+  //     id: 3,
+  //     name: 'MyStorage',
+  //     image: 'https://dunghq21102001.github.io/exe101_tmp/img/khokechung//kho1.jpg',
+  //     address: 'Số 103 Đường Vạn Phúc, Quận Hà Đông, Hà Nội',
+  //     description: 'Kho kệ chung: là giải pháp tối ưu chi phí nhất cho cá nhân và doanh nghiệp'
+  //   },
+  // ]
   return (
     <div className="w-full bg-[#eee] flex justify-around pt-16 flex-col lg:flex-row">
 
@@ -64,9 +83,9 @@ function PartnerProfile() {
         <div className="w-full bg-white mt-10 p-3">
           <p className="text-[16px] text-[#666]">
             <span className="font-bold">Giới thiệu:</span>&nbsp;
-            {item?.description}
+            {item?.shortDescription}
           </p>
-          <hr className="my-3" />
+          {/* <hr className="my-3" />
           <div className="w-full py-3 flex items-center px-2 justify-between">
             <BiLogoFacebook className="text-[#3b5998] text-[35px]" /> <span>https://facebook.com/warehouse</span>
           </div>
@@ -75,7 +94,7 @@ function PartnerProfile() {
           </div>
           <div className="w-full py-3 flex items-center px-2 justify-between">
             <BiLogoInstagramAlt className="text-[#d42d68] text-[35px]" /> <span>https://instagram.com/warehouse</span>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -114,7 +133,7 @@ function PartnerProfile() {
         </div>
 
         <div className="w-full grid grid-cols-12 gap-3">
-          {listWarehouse.map( item => (
+          {list.map( item => (
             <div key={item.id} className='col-span-12 md:col-span-6'>
               <WarehouseItem item={item} />
             </div>

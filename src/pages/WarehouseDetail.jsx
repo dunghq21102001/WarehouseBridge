@@ -14,6 +14,7 @@ import func from '../common/func'
 const AnyReactComponent = ({ text }) => <div>{text}</div>
 function WarehouseDetail() {
     const dispatch = useDispatch()
+    const [listWarehouseByCategory, setListWarehouseByCategory] = useState([])
     const [listWarehouse, setListWarehouse] = useState([])
     const [indexTab, setIndexTab] = useState(1)
     const [listDetail, setListDetail] = useState([])
@@ -36,6 +37,12 @@ function WarehouseDetail() {
     };
 
     useEffect(() => {
+        fetchListWarehouseDetailById()
+        fetchListWarehouseByCategoryId()
+        fetchListWarehouseById()
+    }, [])
+
+    function fetchListWarehouseDetailById() {
         dispatch(changeLoadingState(true))
         API.warehouseDetailById(id)
             .then(res => {
@@ -47,14 +54,35 @@ function WarehouseDetail() {
                 noti.error(err?.response.data)
             })
 
-        API.warehouses()
+    }
+
+    function fetchListWarehouseByCategoryId() {
+        dispatch(changeLoadingState(true))
+        API.warehouseByCategory(listWarehouse?.categoryId)
             .then(res => {
-                setListWarehouse(res.data.slice(0, 3))
+                console.log(res);
+                dispatch(changeLoadingState(false))
+                setListWarehouseByCategory(res.data)
             })
-            .catch(err => { })
+            .catch(err => {
+                dispatch(changeLoadingState(false))
+                noti.error(err?.response.data)
+            })
+    }
 
+    function fetchListWarehouseById() {
+        dispatch(changeLoadingState(true))
+        API.warehouseById(id)
+            .then(res => {
+                dispatch(changeLoadingState(false))
+                setListWarehouse(res.data)
+            })
+            .catch(err => {
+                dispatch(changeLoadingState(false))
+                noti.error(err.response?.data)
+            })
+    }
 
-    }, [])
     const listTab = [
         { id: 1, name: 'Tổng quan', icon: <AiFillEye /> },
         { id: 2, name: 'Giá cả', icon: <FaMoneyBillAlt /> },
@@ -125,33 +153,11 @@ function WarehouseDetail() {
                                 </div>
                             </div>
 
-                            {/* tab3 */}
                             <div className={`w-full ${indexTab == 3 ? 'block' : 'hidden'}`}>
-                                {/* {isValidCoordinate
-                                    ? <div className="w-full h-[500px]">
-                                        <GoogleMapReact
-                                            bootstrapURLKeys={{
-                                                // key: 'AIzaSyCAPfe1hBNDgKaDLdgayN3KAGsHjebY7Cg',
-                                                key: 'AIzaSyDQg29CzefG-QLdH9Agrxl3VokTjiQyfCA',
-                                                // language: 'en',
-                                            }}
-                                            defaultCenter={defaultProps.center}
-                                            defaultZoom={defaultProps.zoom}
-                                        >
-                                            <AnyReactComponent
-                                                lat={latitude}
-                                                lng={longitude}
-                                                text="Warehouse"
-                                            />
-                                        </GoogleMapReact>
-                                    </div>
-                                    : <p className="font-bold text-[18px] text-red-500">Kinh độ và vĩ độ không hợp lệ</p>} */}
                                 <div className="w-full h-[500px]">
                                     <GoogleMapReact
                                         bootstrapURLKeys={{
-                                            // key: 'AIzaSyCAPfe1hBNDgKaDLdgayN3KAGsHjebY7Cg',
                                             key: 'AIzaSyDQg29CzefG-QLdH9Agrxl3VokTjiQyfCA',
-                                            // language: 'en',
                                         }}
                                         defaultCenter={defaultProps.center}
                                         defaultZoom={defaultProps.zoom}
@@ -178,7 +184,7 @@ function WarehouseDetail() {
                     </div>
                     <p className="mt-10 text-[30px] text-primary font-bold">Danh mục</p>
                     <div className="flex w-full flex-wrap mt-3">
-                        {listWarehouse.map((item, index) => (
+                        {listWarehouseByCategory.map((item, index) => (
                             <div key={index} className="w-full relative mt-2">
                                 <img className="w-full" src={item?.imageURL} alt={item?.imageURL} />
                                 <div className="absolute bottom-0 left-0 p-2 bg-secondary text-[20px] text-white font-bold">
@@ -199,8 +205,8 @@ function WarehouseDetail() {
                 <h1 className='text-[26px] lg:text-[47px] uppercase font-bold text-primary text-center'>Khám phá thêm <span className='text-secondary'>kho</span></h1>
 
                 <div className='w-[80%] mx-auto grid grid-cols-12 gap-3'>
-                    {listWarehouse.map(item => (
-                        <div key={item.id} className='col-span-12 md:col-span-6 lg:col-span-4'>
+                    {listWarehouseByCategory.map(item => (
+                        <div key={item.categoryId} className='col-span-12 md:col-span-6 lg:col-span-4'>
                             <WarehouseItem item={item} />
                         </div>
                     ))}
