@@ -9,6 +9,7 @@ import menus from '../common/menus'
 import { authen } from '../reducers/UserReducer'
 import MenuMobile from './MenuMobile';
 import noti from '../common/noti'
+import API from '../API'
 import { useDispatch, useSelector } from 'react-redux';
 import { Menu } from '@headlessui/react'
 function Header() {
@@ -19,6 +20,7 @@ function Header() {
   const [mainMenu, setMainMenu] = useState(menus.mainMenu)
   const [curRoute, setCurRoute] = useState('home')
   const [isShowMenuMobile, setIsShowMenuMobile] = useState(false)
+  const [listCate, setListCate] = useState([])
 
   useEffect(() => {
     const currentPathname = location.pathname.substring(1)
@@ -27,6 +29,10 @@ function Header() {
 
     if (matchedMenuItem) setCurRoute(matchedMenuItem.name)
     else setCurRoute('')
+
+    API.categories()
+    .then(res => setListCate(res.data))
+    .catch(err => {})
 
   }, [location.pathname, mainMenu])
 
@@ -107,8 +113,8 @@ function Header() {
               className={`text-[16px] mx-2  relative ${curRoute == item.name ? 'text-[#fea116]' : ''}`}>
               <span onClick={() => changeRoute(item.pathName)} className='hover:text-[#fea116] cursor-pointer'>{item.title}</span>
               <div className={`absolute top-[100%] left-[50%] text-primary bg-white shadow-lg w-[200%] ${item.isActive && item.params.length > 0 ? 'block' : 'hidden'}`}>
-                {item.params.map(c => (
-                  <div onClick={() => gotoSubRoute(item.pathName, c.paramName)} className='hover:text-[#fea116] hover:bg-[#c4cee4] p-2 text-[14px] cursor-pointer' key={c.title}>{c.title}</div>
+                {listCate.map(c => (
+                  <div onClick={() => gotoSubRoute(item.pathName, c.name)} className='hover:text-[#fea116] hover:bg-[#c4cee4] p-2 text-[14px] cursor-pointer' key={c.name}>{c.name}</div>
                 ))}
               </div>
             </div>

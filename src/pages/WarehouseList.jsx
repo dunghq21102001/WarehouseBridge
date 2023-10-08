@@ -21,7 +21,7 @@ function WarehouseList() {
   }
   return (
     <div className="w-full bg-[#eeeeee] min-h-screen pt-10">
-      <h1 className='text-[26px] lg:text-[47px] uppercase font-bold text-primary text-center'>kho <span className='text-secondary'>
+      <h1 className='text-[26px] lg:text-[47px] uppercase font-bold text-primary text-center'><span className='text-secondary'>
         {revertText()}
       </span>
       </h1>
