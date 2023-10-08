@@ -24,7 +24,7 @@ function WarehouseDetail() {
     const { id } = useParams()
     const location = useLocation()
     const { state } = location
-    const { WHname, latitude, longitude, listImage, description, shortDescription } = state || {}
+    const { WHname, latitude, longitude, listImage, description, shortDescription, categoryId } = state || {}
 
     // if (!func.isValidCoordinates(latitude, longitude) && isValidCoordinate) {
     //     setIsValidCoordinate(false)
@@ -40,7 +40,6 @@ function WarehouseDetail() {
     useEffect(() => {
         fetchListWarehouseDetailById()
         fetchListWarehouseByCategoryId()
-        fetchListWarehouseById()
     }, [])
 
     function fetchListWarehouseDetailById() {
@@ -59,7 +58,7 @@ function WarehouseDetail() {
 
     function fetchListWarehouseByCategoryId() {
         dispatch(changeLoadingState(true))
-        API.warehouseByCategory(listWarehouse?.categoryId)
+        API.warehouseByCategory(categoryId)
             .then(res => {
                 console.log(res);
                 dispatch(changeLoadingState(false))
@@ -68,19 +67,6 @@ function WarehouseDetail() {
             .catch(err => {
                 dispatch(changeLoadingState(false))
                 noti.error(err?.response.data)
-            })
-    }
-
-    function fetchListWarehouseById() {
-        dispatch(changeLoadingState(true))
-        API.warehouseById(id)
-            .then(res => {
-                dispatch(changeLoadingState(false))
-                setListWarehouse(res.data)
-            })
-            .catch(err => {
-                dispatch(changeLoadingState(false))
-                noti.error(err.response?.data)
             })
     }
 
@@ -192,8 +178,8 @@ function WarehouseDetail() {
                     </div>
                     <p className="mt-10 text-[30px] text-primary font-bold">Danh mục</p>
                     <div className="flex w-full flex-wrap mt-3">
-                        {listWarehouseByCategory.map((item, index) => (
-                            <div key={index} className="w-full relative mt-2">
+                        {listWarehouseByCategory.map((item) => (
+                            <div key={item?.id} className="w-full relative mt-2">
                                 <img className="w-full" src={item?.imageURL} alt={item?.imageURL} />
                                 <div className="absolute bottom-0 left-0 p-2 bg-secondary text-[20px] text-white font-bold">
                                     {item?.name}
@@ -214,7 +200,7 @@ function WarehouseDetail() {
 
                 <div className='w-[80%] mx-auto grid grid-cols-12 gap-3'>
                     {listWarehouseByCategory.map(item => (
-                        <div key={item.categoryId} className='col-span-12 md:col-span-6 lg:col-span-4'>
+                        <div key={item?.id} className='col-span-12 md:col-span-6 lg:col-span-4'>
                             <WarehouseItem item={item} />
                         </div>
                     ))}

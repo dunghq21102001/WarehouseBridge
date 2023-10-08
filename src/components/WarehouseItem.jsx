@@ -28,7 +28,8 @@ function WarehouseItem({ item }) {
                     longitude: item?.longitudeIP,
                     listImage: listImage,
                     description: item?.description,
-                    shortDescription: item?.shortDescription
+                    shortDescription: item?.shortDescription,
+                    categoryId: item?.categoryId
                 }
             })
     }
