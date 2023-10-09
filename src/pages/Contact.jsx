@@ -34,8 +34,8 @@ function Contact() {
       <div className="w-full md:w-[70%] mx-auto h-[500px]">
         <GoogleMapReact
           bootstrapURLKeys={{
-            key: 'AIzaSyCAPfe1hBNDgKaDLdgayN3KAGsHjebY7Cg',
-            // key: 'AIzaSyDQg29CzefG-QLdH9Agrxl3VokTjiQyfCA',
+            // key: 'AIzaSyCAPfe1hBNDgKaDLdgayN3KAGsHjebY7Cg',
+            key: 'AIzaSyDQg29CzefG-QLdH9Agrxl3VokTjiQyfCA',
             // language: 'en',
           }}
           defaultCenter={defaultProps.center}
@@ -44,7 +44,7 @@ function Contact() {
           <AnyReactComponent
             lat={10.882359}
             lng={106.782523}
-            text="Warehouse"
+            text="Center"
           />
         </GoogleMapReact>
       </div>

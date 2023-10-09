@@ -136,7 +136,7 @@ function WarehouseDetail() {
                                     <div className="w-full flex items-center justify-start flex-wrap my-2">
                                         {listDetail.map((item, index) => (
                                             <div onClick={() => changeWarehouseType(index)} key={item.id} className={`bg-white border-[#0f1728] border-solid border-[1px] rounded-md flex items-center cursor-pointer w-[140px] justify-center mr-4 text-[14px] my-2 ${index == curIndex ? 'isActive' : null}`}>
-                                                {item?.width} x {item?.depth} x {item?.height}
+                                                {item?.width} x {item?.depth} x {item?.height} {item?.unitType}
                                             </div>
                                         ))}
                                     </div>
@@ -151,7 +151,7 @@ function WarehouseDetail() {
                                 <div className="w-full h-[500px]">
                                     <GoogleMapReact
                                         bootstrapURLKeys={{
-                                            key: 'AIzaSyDQg29CzefG-QLdH9Agrxl3VokTjiQyfCA',
+                                            key: import.meta.env.gg_maps_public_key,
                                         }}
                                         defaultCenter={defaultProps.center}
                                         defaultZoom={defaultProps.zoom}
