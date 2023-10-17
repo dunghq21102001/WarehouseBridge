@@ -15,6 +15,7 @@ const AnyReactComponent = ({ text }) => <div>{text}</div>
 function WarehouseDetail() {
     const dispatch = useDispatch()
     const [listWarehouseByCategory, setListWarehouseByCategory] = useState([])
+    const [listCategory, setListCategory] = useState([])
     const [listWarehouse, setListWarehouse] = useState([])
     const [indexTab, setIndexTab] = useState(1)
     const [listDetail, setListDetail] = useState([])
@@ -40,6 +41,7 @@ function WarehouseDetail() {
     useEffect(() => {
         fetchListWarehouseDetailById()
         fetchListWarehouseByCategoryId()
+        fetchListCategory()
     }, [])
 
     function fetchListWarehouseDetailById() {
@@ -54,6 +56,19 @@ function WarehouseDetail() {
                 noti.error(err?.response.data)
             })
 
+    }
+
+    function fetchListCategory() {
+        dispatch(changeLoadingState(true))
+        API.categories()
+            .then(res => {
+                dispatch(changeLoadingState(false))
+                setListCategory(res.data)
+            })
+            .catch(err => {
+                dispatch(changeLoadingState(false))
+                noti.error(err?.response.data)
+            })
     }
 
     function fetchListWarehouseByCategoryId() {
@@ -178,9 +193,9 @@ function WarehouseDetail() {
                     </div>
                     <p className="mt-10 text-[30px] text-primary font-bold">Danh mục</p>
                     <div className="flex w-full flex-wrap mt-3">
-                        {listWarehouseByCategory.map((item) => (
+                        {listCategory.map((item) => (
                             <div key={item?.id} className="w-full relative mt-2">
-                                <img className="w-full" src={item?.imageURL} alt={item?.imageURL} />
+                                <img className="w-full" src={item?.imagerUrl} alt={item?.imagerUrl} />
                                 <div className="absolute bottom-0 left-0 p-2 bg-secondary text-[20px] text-white font-bold">
                                     {item?.name}
                                 </div>
