@@ -1,18 +1,25 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { MantineReactTable } from 'mantine-react-table';
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { MantineReactTable } from 'mantine-react-table'
 import API from '../../API'
 import noti from '../../common/noti'
-import { useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux'
 import { changeLoadingState } from '../../reducers/SystemReducer'
-import FormBase from '../../components/FormBase';
-import { Button } from '@mantine/core';
+import FormBase from '../../components/FormBase'
+import FormUpdate from '../../components/FormUpdate'
+import { Button } from '@mantine/core'
 import { AiOutlineEdit } from 'react-icons/ai'
 import { MdDelete } from 'react-icons/md'
+import { storage } from '../../firebase'
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 function AdminWarehouse() {
+
+  const firebaseStorage = storage
   const [list, setList] = useState([])
   const [isShow, setIsShow] = useState(false)
+  const [isShowUpdate, setIsShowUpdate] = useState(false)
   const [listProvider, setListProvider] = useState([])
   const [listCategory, setListCategory] = useState([])
+  const [detailWH, setDetailWH] = useState(null)
   const [formData, setFormData] = useState([
     { name: 'Tên', binding: 'name', type: 'input' },
     { name: 'Mô tả ngắn', binding: 'shortDescription', type: 'area' },
@@ -24,12 +31,40 @@ function AdminWarehouse() {
     { name: 'Nhà cung cấp', binding: 'providerId', type: 'select', options: [1, 2, 3], defaultValue: '' },
     { name: 'Danh mục', binding: 'categoryId', type: 'select', options: [1, 2, 3], defaultValue: '' },
   ])
+
   const dispatch = useDispatch()
 
   useEffect(() => {
     fetchListWarehouse()
     fetchListProvider()
+    fetchListCategory()
   }, [])
+
+  useEffect(() => {
+    if (listProvider.length > 0 && listCategory.length > 0) {
+      setFormData([
+        { name: 'Tên', binding: 'name', type: 'input' },
+        { name: 'Mô tả ngắn', binding: 'shortDescription', type: 'area' },
+        { name: 'Mô tả chi tiết', binding: 'description', type: 'area' },
+        { name: 'Địa chỉ', binding: 'address', type: 'input' },
+        { name: 'Kinh độ', binding: 'longitudeIP', type: 'input' },
+        { name: 'Vĩ độ', binding: 'latitudeIP', type: 'input' },
+        { name: 'Hình ảnh', binding: 'image', type: 'file' },
+        { name: 'Nhà cung cấp', binding: 'providerId', type: 'select', options: listProvider, defaultValue: listProvider[0] },
+        { name: 'Danh mục', binding: 'categoryId', type: 'select', options: listCategory, defaultValue: listCategory[0] },
+      ])
+    }
+  }, [listProvider, listCategory])
+
+  const getDetailWH = (data) => {
+    // console.log(data.original)
+    setDetailWH(data.original)
+    setIsShowUpdate(true)
+  }
+
+  const updateWH = (data) => {
+    console.log(data)
+  }
 
   function fetchListWarehouse() {
     dispatch(changeLoadingState(true))
@@ -54,14 +89,22 @@ function AdminWarehouse() {
       })
   }
 
+  function fetchListCategory() {
+    API.categories()
+      .then(res => {
+        setListCategory(res.data)
+      })
+      .catch(err => { })
+  }
+
   const getCommonEditTextFieldProps = useCallback(
     (cell) => {
       return {
-       
+
       }
     },
     [],
-  );
+  )
 
   const columns = useMemo(
     () => [
@@ -70,7 +113,7 @@ function AdminWarehouse() {
         header: 'ID',
         Cell: ({ cell, row }) => (
           <div>
-              ...
+            ...
           </div>
         ),
       },
@@ -84,14 +127,17 @@ function AdminWarehouse() {
       {
         accessorKey: 'shortDescription',
         header: 'Mô tả ngắn',
+        size: 400
       },
       {
         accessorKey: 'description',
         header: 'Mô tả chi tiết',
+        size: 800
       },
       {
         accessorKey: 'address',
         header: 'Địa chỉ',
+        size: 300
       },
       {
         accessorKey: 'latitudeIP',
@@ -107,38 +153,55 @@ function AdminWarehouse() {
 
   const handleCancel = () => {
     setIsShow(false)
+    setIsShowUpdate(false)
   }
 
   const actionAdd = () => {
     setIsShow(true)
   }
 
-  const addWarehouse = (data) => {
-    const finalData = {
-      warehourse: {
-        providerId: '6667b930-9fc3-46e2-b99c-08dbc0c63a22',
-        categoryId: 'ad16f379-a7f6-4ed3-ae9f-08dbc0c673a1',
-        name: data.name,
-        address: data.address,
-        description: data.description,
-        shortDescription: data.shortDescription,
-        longitudeIP: data.longitudeIP,
-        latitudeIP: data.latitudeIP
-      },
-      listImages: [
-        'https://scontent.fsgn19-1.fna.fbcdn.net/v/t39.30808-6/385460867_872705701083005_6731573408211292098_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=5614bc&_nc_ohc=QUwviCyTJdgAX_xlgEu&_nc_ht=scontent.fsgn19-1.fna&_nc_e2o=f&oh=00_AfCKK8mDKlOdRwOz4hytUzaxLWE4put248HXW5bqSjklXA&oe=651E77C3'
-      ]
-    }
+  const addWarehouse = async (data) => {
+    const images = data.images
+    if (images.length != 0) {
+      dispatch(changeLoadingState(true))
+      try {
+        const imageUrls = await Promise.all(images.map(async (image) => {
+          const imageName = `${new Date().getTime()}_${image.name}`
+          const imageRef = ref(storage, `images/${imageName}`)
+          await uploadBytes(imageRef, image)
+          const imageUrl = await getDownloadURL(imageRef)
+          return imageUrl
+        }))
 
-    API.addWarehouse(finalData)
-      .then(res => {
-        fetchListWarehouse()
-        setIsShow(false)
-        // noti.success(res.data, 3000)
-      })
-      .catch(err => {
-        noti.error(err.response?.data, 3000)
-      })
+        const finalData = {
+          warehourse: {
+            providerId: data.providerId || listProvider[0]?.id,
+            categoryId: data.categoryId || listCategory[0]?.id,
+            name: data.name,
+            address: data.address,
+            description: data.description,
+            shortDescription: data.shortDescription,
+            longitudeIP: data.longitudeIP,
+            latitudeIP: data.latitudeIP,
+          },
+          listImages: imageUrls,
+        }
+
+        API.addWarehouse(finalData)
+          .then(res => {
+            fetchListWarehouse()
+            setIsShow(false)
+            noti.success(res.data, 3000)
+          })
+          .catch(err => {
+            noti.error(err.response?.data, 3000)
+          })
+        dispatch(changeLoadingState(false))
+      } catch (error) {
+        console.log("Lỗi khi tải lên ảnh" + error, 3000);
+      }
+    } else noti.error('Bạn phải thêm ít nhất 1 ảnh để tạo kho!', 2500)
+
   }
 
   const handleDeleteRow = useCallback(
@@ -146,19 +209,19 @@ function AdminWarehouse() {
       if (
         !confirm(`Bạn có chắc muốn xoá kho ${row.getValue('name')}`)
       ) {
-        return;
+        return
       }
       API.deleteWarehouse(row.getValue('id'))
-      .then(res => {
-        fetchListWarehouse()
-        noti.success(res.data)
-      })
-      .catch(err => {
-        noti.error(err.response?.data)
-      })
+        .then(res => {
+          fetchListWarehouse()
+          noti.success(res.data)
+        })
+        .catch(err => {
+          noti.error(err.response?.data)
+        })
     },
     [],
-  );
+  )
 
   return (
     <div className='w-full'>
@@ -170,12 +233,21 @@ function AdminWarehouse() {
           enableEditing
           renderRowActions={({ row, table }) => (
             <div className='flex items-center'>
-              <button onClick={() => table.setEditingRow(row)} className=''><AiOutlineEdit className='edit-icon' /></button>
+              <button onClick={() => getDetailWH(row)} className=''><AiOutlineEdit className='edit-icon' /></button>
               <button onClick={() => handleDeleteRow(row)} className=''><MdDelete className='del-icon' /></button>
             </div>
           )}
         />
       </div>
+      {/* {isShowUpdate ?
+        <FormUpdate
+          title={formData}
+          onSubmit={updateWH}
+          buttonName={'Chỉnh sửa'}
+          initialData={detailWH}
+          onCancel={handleCancel}
+        />
+        : null} */}
       {isShow ?
         <FormBase title={formData}
           onSubmit={addWarehouse}

@@ -1,6 +1,6 @@
 import GoogleMapReact from 'google-map-react';
 import '../css/Home.css'
-const AnyReactComponent = ({ text }) => <div>{text}</div>
+import PinLocation from '../components/PinLocation';
 function Contact() {
   const defaultProps = {
     center: {
@@ -19,33 +19,29 @@ function Contact() {
       <div className='flex w-[80%] flex-col md:flex-row mx-auto mt-6 items-center justify-between px-4 flex-wrap text-[12px]'>
         <div>
           <p className='text-secondary font-bold text-[18px] text-center md:text-left my-2'>EMAIL</p>
-          <p className='text-[#666]'>warehousebridge.service@gmail.com</p>
+          <p className='text-[#666] font-bold'>warehousebridge.service@gmail.com</p>
         </div>
         <div>
           <p className='text-secondary font-bold text-[18px] text-center md:text-left my-2'>LIÊN HỆ</p>
-          <p className='text-[#666]'>0975688774</p>
+          <p className='text-[#666] font-bold'>0975688774</p>
         </div>
         <div>
           <p className='text-secondary font-bold text-[18px] text-center md:text-left my-2'>ĐỊA CHỈ</p>
-          <p className='text-[#666]'>Tầng 6 NVH Sinh Viên - ĐHQG, TP.HCM</p>
+          <p className='text-[#666] font-bold'>Tầng 6 NVH Sinh Viên - ĐHQG, TP.HCM</p>
         </div>
 
       </div>
-      <div className="w-full md:w-[70%] mx-auto h-[500px]">
+      <div className="w-full md:w-[70%] mx-auto h-[500px] mt-5">
         <GoogleMapReact
           bootstrapURLKeys={{
-            // key: 'AIzaSyCAPfe1hBNDgKaDLdgayN3KAGsHjebY7Cg',
-            key: 'AIzaSyDQg29CzefG-QLdH9Agrxl3VokTjiQyfCA',
+            key: 'AIzaSyCAPfe1hBNDgKaDLdgayN3KAGsHjebY7Cg',
+            // key: 'AIzaSyDQg29CzefG-QLdH9Agrxl3VokTjiQyfCA',
             // language: 'en',
           }}
           defaultCenter={defaultProps.center}
           defaultZoom={defaultProps.zoom}
         >
-          <AnyReactComponent
-            lat={10.882359}
-            lng={106.782523}
-            text="Center"
-          />
+          <PinLocation lat={10.882359} lng={106.782523} text="Trụ sở WarehouseBridge" />
         </GoogleMapReact>
       </div>
     </div>

@@ -21,6 +21,7 @@ import { useSelector } from 'react-redux'
 import ConfirmEmail from './pages/ConfirmEmail'
 import Admin from './pages/Admin'
 import { useMemo } from 'react'
+import Payment from './pages/Payment'
 function App() {
   const system = useSelector(state => state.system)
   const user = useSelector((state) => state.auth)
@@ -33,8 +34,15 @@ function App() {
 
   const CheckAuth = useMemo(() => {
     return ({ children }) => {
-      if (user.auth && user.auth.listRoles[0] != 'Admin') return <Navigate to={'/'} />
-      if (user.auth && user.auth.listRoles[0] == 'Admin') return <Navigate to={'/admin/admin-warehouses'} />
+      // if (user.auth && user.auth.listRoles[0] != 'Admin') return <Navigate to={'/'} />
+      if (user.auth && user.auth.listRoles[0] == 'Admin') return <Navigate to={'/admin/admin-dashboard'} />
+      return children
+    }
+  }, [user])
+
+  const CheckLogined = useMemo(() => {
+    return ({ children }) => {
+      if (!user.auth) return <Navigate to={'/'} />
       return children
     }
   }, [user])
@@ -71,10 +79,19 @@ function App() {
             <Route path='/warehouse-detail/:id' element={<WarehouseDetail />} />
             <Route path='/news' element={<News />} />
             <Route path='/contact' element={<Contact />} />
-            <Route path='/profile' element={<Profile />} />
+            <Route path='/profile' element={
+              <CheckLogined>
+                <Profile />
+              </CheckLogined>
+            } />
             <Route path='/profile/:pnname' element={<PartnerProfile />} />
             <Route path='/login' element={<CheckAuth><Login /></CheckAuth>} />
             <Route path='/ConfirmEmail' element={<ConfirmEmail />} />
+            <Route path='/payment' element={
+              <CheckLogined>
+                <Payment />
+              </CheckLogined>
+            } />
             <Route path='/admin/*' element={<CheckPermission><Admin /></CheckPermission>} />
           </Routes>
         </div>

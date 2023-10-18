@@ -80,6 +80,10 @@ export default class menus {
     static adminMenu() {
         return [
             {
+                name: 'dashboard',
+                path: 'admin-dashboard'
+            },
+            {
                 name: 'warehouses',
                 path: 'admin-warehouses'
             },
@@ -95,7 +99,6 @@ export default class menus {
                 name: 'blogs',
                 path: 'admin-blogs'
             },
-
         ]
     }
 }

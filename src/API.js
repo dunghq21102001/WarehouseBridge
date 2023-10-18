@@ -8,8 +8,8 @@ function checkToken() {
 }
 checkToken()
 const instance = axios.create({
-    // baseURL: 'https://localhost:5001',
-    baseURL: 'https://warehouse.bsite.net/',
+    baseURL: 'https://localhost:5001',
+    // baseURL: 'https://warehouse.bsite.net/',
     headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + token,
@@ -68,6 +68,11 @@ export default class API {
         return instance.delete(`/Admin/api/Warehouses/${id}`)
     }
 
+    // warehouse detail
+    static warehouseDetailByID(id) {
+        return instance.get(`/api/WarehouseDetails/${id}`)
+    }
+
     // provider
     static provider() {
         return instance.get('/api/Providers');
@@ -119,6 +124,16 @@ export default class API {
 
     static updateProvider(data) {
         return instance.put('/Admin/api/Providers', data)
+    }
+
+    // payment + order
+
+    static getOrder() {
+        return instance.get(`/api/Orders`)
+    }
+
+    static postOrder(WHId) {
+        return instance.post(`/api/Orders?warehouseDetailId=${WHId}`)
     }
 
 }

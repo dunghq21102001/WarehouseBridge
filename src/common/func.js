@@ -5,7 +5,8 @@ export default class func {
     }
 
     static convertVND(price) {
-        return price.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })
+        if (price != null && price != undefined && price != '') return price.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })
+        else return 0
     }
 
     static removeElementByValue(array, element) {

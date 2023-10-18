@@ -14,7 +14,7 @@ function Footer() {
             <div className='w-[90%] md:w-[40%] flex flex-col items-start mt-8 md:mt-0'>
                 <p className='uppercase text-secondary'>liên hệ</p>
                 <p className='text-white flex my-2 items-center text-[12px] lg:text-[18px]'><MdLocationOn className='text-white text-[18px]' /> &nbsp;  Tầng 6 NVH Sinh Viên - ĐHQG, TP.HCM</p>
-                <p className='text-white flex my-2 items-center text-[12px] lg:text-[18px]'><BsFillTelephoneFill className='text-white text-[18px]' /> &nbsp;  +09756887740</p>
+                <p className='text-white flex my-2 items-center text-[12px] lg:text-[18px]'><BsFillTelephoneFill className='text-white text-[18px]' /> &nbsp;  +0975688774</p>
                 <p className='text-white flex my-2 items-center text-[12px] lg:text-[18px]'><AiFillMail className='text-white text-[18px]' /> &nbsp; warehousebridge.service@gmail.com</p>
             </div>
         </div>

@@ -36,7 +36,7 @@ function AboutUs() {
         <div className='w-[50%] lg:w-full flex flex-wrap justify-around items-center my-5 mx-auto'>
           <Counting name={'Số kho'} number={itemWH} icon={<FaWarehouse className='text-secondary text-[48px]' />} />
           <Counting name={'Đối tác'} number={itemPartner} icon={<FaUserCog className='text-secondary text-[48px]' />} />
-          <Counting name={'Địa điểm'} number={itemLocation} icon={<MdLocationOn className='text-secondary text-[48px]' />} />
+          <Counting name={'Địa điểm'} number={itemWH} icon={<MdLocationOn className='text-secondary text-[48px]' />} />
         </div>
       </div>
       <div className='w-[48%] items-center justify-center flex-wrap flex-col hidden lg:flex'>
