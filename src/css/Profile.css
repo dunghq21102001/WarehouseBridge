@@ -1,0 +1,8 @@
+.bg-custom {
+    background: linear-gradient(#0f1728, #fea116);
+}
+
+.active {
+    background-color: #ffffff1a;
+    color: #fff;
+}

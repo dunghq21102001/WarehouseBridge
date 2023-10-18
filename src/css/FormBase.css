@@ -43,3 +43,11 @@ form {
 .hide-scroll::-webkit-scrollbar {
     display: none; /* cho Chrome, Safari, and Opera */
 }
+
+.border-red-1 {
+    border: 1px solid red;
+}
+
+.border-tran {
+    border: 1px solid #fff;
+}

@@ -37,6 +37,10 @@ function Home() {
       comment: 'Kho duy trì môi trường lưu trữ hàng hóa tốt. Tôi không bao giờ phải lo lắng về sự an toàn và bảo quản của sản phẩm của mình.'
     },
   ];
+
+  const gotoOrder = () => {
+    navigate('/warehouse')
+  }
   return (
     <div className="w-full">
 
@@ -48,7 +52,7 @@ function Home() {
             <h1 className='text-white font-bold text-[30px] lg:text-[78px]'>WarehouseBridge</h1>
             <div>
               <button onClick={() => navigate('/about')} className='btn-secondary px-4 md:px-8 py-4 font-bold uppercase text-[10px] lg:text-[17px] mx-6'>về chúng tôi</button>
-              <button className='btn-primary  px-4 md:px-8 py-4 font-bold uppercase text-[10px] lg:text-[17px] mx-6'>đặt ngay</button>
+              <button onClick={gotoOrder} className='btn-primary px-4 md:px-8 py-4 font-bold uppercase text-[10px] lg:text-[17px] mx-6'>đặt ngay</button>
             </div>
           </div>
         </div>

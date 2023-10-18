@@ -4,24 +4,30 @@ import { MdLocationOn } from 'react-icons/md'
 import { FaMoneyBillAlt } from 'react-icons/fa'
 import WarehouseItem from "../components/WarehouseItem"
 import noti from '../common/noti'
-import { useLocation, useParams } from "react-router-dom"
+import { useLocation, useNavigate, useParams } from "react-router-dom"
 import API from "../API"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { changeLoadingState } from "../reducers/SystemReducer"
 import '../css/WarehouseDetail.css'
 import GoogleMapReact from 'google-map-react';
 import func from '../common/func'
+import PinLocation from "../components/PinLocation"
 const AnyReactComponent = ({ text }) => <div>{text}</div>
 function WarehouseDetail() {
+    const user = useSelector(state => state.auth)
     const dispatch = useDispatch()
+    const navigate = useNavigate()
     const [listWarehouseByCategory, setListWarehouseByCategory] = useState([])
     const [listCategory, setListCategory] = useState([])
     const [listWarehouse, setListWarehouse] = useState([])
+    const [curDetailSelected, setCurDetailSelected] = useState(null)
     const [indexTab, setIndexTab] = useState(1)
     const [listDetail, setListDetail] = useState([])
     const [curIndex, setCurIndex] = useState(0)
+    const [isOrder, setIsOrder] = useState(false)
     const [currentImageIndex, setCurrentImageIndex] = useState(0)
     const [isValidCoordinate, setIsValidCoordinate] = useState(true)
+    const [center, setCenter] = useState({})
     const { id } = useParams()
     const location = useLocation()
     const { state } = location
@@ -30,6 +36,7 @@ function WarehouseDetail() {
     // if (!func.isValidCoordinates(latitude, longitude) && isValidCoordinate) {
     //     setIsValidCoordinate(false)
     // }
+
     const defaultProps = {
         center: {
             lat: 10.882359,
@@ -41,8 +48,21 @@ function WarehouseDetail() {
     useEffect(() => {
         fetchListWarehouseDetailById()
         fetchListWarehouseByCategoryId()
+        const props = {
+            center: {
+                lat: latitude,
+                lng: longitude
+            },
+            zoom: 15
+        }
+        setCenter(props)
         fetchListCategory()
+
     }, [])
+
+    function cancelAll() {
+        setIsOrder(false)
+    }
 
     function fetchListWarehouseDetailById() {
         dispatch(changeLoadingState(true))
@@ -75,7 +95,6 @@ function WarehouseDetail() {
         dispatch(changeLoadingState(true))
         API.warehouseByCategory(categoryId)
             .then(res => {
-                console.log(res);
                 dispatch(changeLoadingState(false))
                 setListWarehouseByCategory(res.data)
             })
@@ -95,8 +114,9 @@ function WarehouseDetail() {
         setIndexTab(index)
     }
 
-    const changeWarehouseType = (index) => {
+    const changeWarehouseType = (index, id) => {
         setCurIndex(index)
+        setCurDetailSelected(id)
     }
 
     const nextImage = () => {
@@ -109,15 +129,45 @@ function WarehouseDetail() {
         )
     }
 
+
+    const isShowOrder = () => {
+        setIsOrder(true)
+        setCurDetailSelected(listDetail[0]?.id)
+    }
+
+    const handleParentClick = () => {
+        cancelAll()
+    }
+    const handleChildClick = (event) => {
+        event.stopPropagation()
+    }
+
+    const orderNow = (id) => {
+        if (user.auth) navigate('/payment', {
+            state: {
+                detailId: id
+            }
+        })
+        else {
+            navigate('/login')
+            noti.warning('Bạn phải đăng nhập để có thể đặt kho!!!', 3000)
+        }
+        // navigate('/payment', {
+        //     state: {
+        //         detailId: id
+        //     }
+        // })
+    }
+
     return (
         <div className="w-full bg-white">
             <div className="w-[90%] mx-auto mt-10 flex justify-between flex-col md:flex-row">
                 <div className="w-full md:w-[65%]">
                     <div className="w-full relative overflow-hidden h-[175px] sm:h-[300px] md:h-[400px]">
                         {/* <img className="w-full top-0 left-0 absolute" src={firstImage} alt="" /> */}
-                        <div className="w-full top-0 left-0 absolute flex justify-around">
+                        <div className="w-full h-[400px] top-0 left-0 absolute flex justify-around items-center">
                             <button className="absolute top-[50%] btn-primary translate-x-[-50%] left-[21px] px-3 py-1" onClick={prevImage}><AiFillCaretLeft /></button>
-                            <img className="w-full max-h-[400px]" src={listImage[currentImageIndex]?.imageURL} alt="Slider" />
+                            <img className="w-full object-fill" src={listImage[currentImageIndex]?.imageURL} alt="Slider" />
                             <button className="absolute top-[50%] translate-x-[-50%] btn-primary right-[-21px] px-3 py-1" onClick={nextImage}><AiFillCaretRight /></button>
                         </div>
                     </div>
@@ -150,7 +200,7 @@ function WarehouseDetail() {
                                     {listDetail.length > 0 ? <p className="text-primary font-bold text-[20px]">Các loại kích thước kho:</p> : null}
                                     <div className="w-full flex items-center justify-start flex-wrap my-2">
                                         {listDetail.map((item, index) => (
-                                            <div onClick={() => changeWarehouseType(index)} key={item.id} className={`bg-white border-[#0f1728] border-solid border-[1px] rounded-md flex items-center cursor-pointer w-[140px] justify-center mr-4 text-[14px] my-2 ${index == curIndex ? 'isActive' : null}`}>
+                                            <div onClick={() => changeWarehouseType(index, item.id)} key={item.id} className={`bg-white border-[#0f1728] border-solid border-[1px] rounded-md flex items-center cursor-pointer w-[140px] justify-center mr-4 text-[14px] my-2 ${index == curIndex ? 'isActive' : null}`}>
                                                 {item?.width} x {item?.depth} x {item?.height} {item?.unitType}
                                             </div>
                                         ))}
@@ -166,12 +216,13 @@ function WarehouseDetail() {
                                 <div className="w-full h-[500px]">
                                     <GoogleMapReact
                                         bootstrapURLKeys={{
-                                            key: import.meta.env.gg_maps_public_key,
+                                            key: import.meta.env.gg_maps_local_key,
                                         }}
-                                        defaultCenter={defaultProps.center}
-                                        defaultZoom={defaultProps.zoom}
+                                        defaultCenter={center.center}
+                                        defaultZoom={center.zoom}
                                     >
-                                        <AnyReactComponent
+                                        <PinLocation
+
                                             lat={latitude}
                                             lng={longitude}
                                             text={WHname}
@@ -188,14 +239,15 @@ function WarehouseDetail() {
                         : null}
                 </div>
                 <div className="w-full md:w-[30%]">
-                    <div className="w-[80%] text-center py-3 mx-auto bg-secondary text-white text-[24px] btn-secondary">
+                    <div onClick={isShowOrder} className="w-[80%] text-center py-3 mx-auto bg-secondary text-white text-[24px] btn-secondary">
                         Đặt ngay
                     </div>
                     <p className="mt-10 text-[30px] text-primary font-bold">Danh mục</p>
                     <div className="flex w-full flex-wrap mt-3">
                         {listCategory.map((item) => (
                             <div key={item?.id} className="w-full relative mt-2">
-                                <img className="w-full" src={item?.imagerUrl} alt={item?.imagerUrl} />
+                                <img className="w-full" src={item?.imageURL} alt='' />
+
                                 <div className="absolute bottom-0 left-0 p-2 bg-secondary text-[20px] text-white font-bold">
                                     {item?.name}
                                 </div>
@@ -221,6 +273,32 @@ function WarehouseDetail() {
                     ))}
                 </div>
             </div>
+
+
+            {isOrder
+                ? <div className="fog" onClick={handleParentClick}>
+                    <div onClick={handleChildClick} className="w-[95%] md:w-[60%] bg-white rounded-lg flex flex-col items-center p-4">
+                        <div className="w-full flex flex-col items-center">
+                            {listDetail.length > 0 ? <p className="text-primary font-bold text-[20px]">Các loại kích thước kho:</p> : null}
+                            <div className="w-full flex items-center justify-center flex-wrap my-2">
+                                {listDetail.map((item, index) => (
+                                    <div onClick={() => changeWarehouseType(index, item.id)} key={item.id} className={`bg-white border-[#0f1728] border-solid border-[1px] rounded-md flex items-center cursor-pointer w-[140px] justify-center mr-4 text-[14px] my-2 ${index == curIndex ? 'isActive' : null}`}>
+                                        {item?.width} x {item?.depth} x {item?.height} {item?.unitType}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="w-full flex flex-col items-center">
+                            <p className="text-[16px]"><span className="font-bold text-primary">Giá kho:</span> {func.convertVND(listDetail[curIndex]?.warehousePrice)}</p><br />
+                            <p className="text-[16px]"><span className="font-bold text-primary">Giá dịch vụ:</span> {func.convertVND(listDetail[curIndex]?.servicePrice)}</p><br />
+                        </div>
+                        <div className="w-full flex justify-around items-center">
+                            <button className="btn-cancel p-3 rounded-lg" onClick={cancelAll}>Huỷ</button>
+                            <button className="btn-primary p-3 rounded-lg" onClick={() => orderNow(curDetailSelected)}>Đặt ngay</button>
+                        </div>
+                    </div>
+                </div>
+                : null}
 
         </div>
     )

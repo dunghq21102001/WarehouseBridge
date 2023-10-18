@@ -12,8 +12,8 @@ function Login() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const [isRegister, setIsRegister] = useState(false)
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+  const [username, setUsername] = useState('dunghq21')
+  const [password, setPassword] = useState('Dung21102001@')
   const [realUsername, setRealUsername] = useState('')
   const [password2, setPassword2] = useState('')
   const [showP, isShowP] = useState(false)
@@ -23,7 +23,7 @@ function Login() {
   const login = () => {
     if (username.trim() == '' || password.trim() == '') return noti.error('Email và mật khẩu không được để trống !!!')
     dispatch(changeLoadingState(true))
-    API.login({ email: username, password: password })
+    API.login({ email: username.trim(), password: password.trim() })
       .then(res => {
         dispatch(authen(res.data))
         localStorage.setItem('user', JSON.stringify(res.data))

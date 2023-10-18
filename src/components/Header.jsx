@@ -31,8 +31,8 @@ function Header() {
     else setCurRoute('')
 
     API.categories()
-    .then(res => setListCate(res.data))
-    .catch(err => {})
+      .then(res => setListCate(res.data))
+      .catch(err => { })
 
   }, [location.pathname, mainMenu])
 
@@ -62,7 +62,7 @@ function Header() {
     noti.success('Đăng xuất thành công')
   }
   return (
-    <div className="w-full z-10 flex h-[80px] lg:h-[120px] sticky top-0 left-0 right-0">
+    <div className="w-full flex h-[80px] lg:h-[120px] sticky top-0 left-0 right-0 z-50">
       {isShowMenuMobile ? <MenuMobile isOpen={isShowMenuMobile} setIsShowMenuMobile={setIsShowMenuMobile} /> : ''}
       <div className="w-full lg:w-[20%] flex items-center justify-between lg:justify-center bg-primary px-2 py-4">
         <img src={logoImg} alt="" className='hidden lg:block w-[80%]' />
@@ -122,12 +122,23 @@ function Header() {
           {user.auth == null
             ? <div onClick={() => changeRoute('login')}
               className='absolute top-0 bottom-0 right-0 bg-secondary flex items-center justify-center cursor-pointer px-14 text-[16px] text-white duration-150'>đăng nhập</div>
-            : <div>
+            :
+            <div>
               <Menu>
                 <Menu.Button className="absolute top-[50%] translate-y-[-50%] bottom-0 right-5 flex items-center justify-center cursor-pointer text-[16px] text-white overflow-hidden w-[50px] h-[50px]">
-                  <img src='https://static.vecteezy.com/system/resources/thumbnails/009/734/564/small/default-avatar-profile-icon-of-social-media-user-vector.jpg' className='rounded-full object-fill' alt=''/>
+                  <img src='https://static.vecteezy.com/system/resources/thumbnails/009/734/564/small/default-avatar-profile-icon-of-social-media-user-vector.jpg' className='rounded-full object-fill' alt='' />
                 </Menu.Button>
                 <Menu.Items className="absolute top-[100%] right-2 flex flex-col items-end bg-white text-black py-1 shadow-md">
+                  <span className='text-[#999] ml-2'> Xin chào {user.auth?.username}</span>
+                  <Menu.Item>
+                    {({ active }) => (
+                      <p
+                        className={`${active ? 'bg-[#fea116] text-white p-1 cursor-pointer w-full text-right' : 'p-1 cursor-pointer w-full text-right'}`}
+                        onClick={() => navigate('/profile')}>
+                        Thông tin cá nhân
+                      </p>
+                    )}
+                  </Menu.Item>
                   <Menu.Item>
                     {({ active }) => (
                       <p
