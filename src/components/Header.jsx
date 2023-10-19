@@ -31,7 +31,9 @@ function Header() {
     else setCurRoute('')
 
     API.categories()
-      .then(res => setListCate(res.data))
+      .then(res => {
+        setListCate(res.data)
+      })
       .catch(err => { })
 
   }, [location.pathname, mainMenu])
@@ -42,8 +44,12 @@ function Header() {
     navigate(routeName)
   }
 
-  function gotoSubRoute(routeName, param) {
-    navigate(`/${routeName}/${param}`)
+  function gotoSubRoute(routeName, param, id) {
+    navigate(`/${routeName}/${param}`, {
+      state: {
+        cateId: id
+      }
+    })
   }
 
   function hiddenMenu() {
@@ -114,7 +120,7 @@ function Header() {
               <span onClick={() => changeRoute(item.pathName)} className='hover:text-[#fea116] cursor-pointer'>{item.title}</span>
               <div className={`absolute top-[100%] left-[50%] text-primary bg-white shadow-lg w-[200%] ${item.isActive && item.params.length > 0 ? 'block' : 'hidden'}`}>
                 {listCate.map(c => (
-                  <div onClick={() => gotoSubRoute(item.pathName, c.name)} className='hover:text-[#fea116] hover:bg-[#c4cee4] p-2 text-[14px] cursor-pointer' key={c.name}>{c.name}</div>
+                  <div onClick={() => gotoSubRoute(item.pathName, c.name, c.id)} className='hover:text-[#fea116] hover:bg-[#c4cee4] p-2 text-[14px] cursor-pointer' key={c.name}>{c.name}</div>
                 ))}
               </div>
             </div>

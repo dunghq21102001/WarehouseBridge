@@ -216,7 +216,7 @@ function WarehouseDetail() {
                                 <div className="w-full h-[500px]">
                                     <GoogleMapReact
                                         bootstrapURLKeys={{
-                                            key: import.meta.env.gg_maps_local_key,
+                                            key: import.meta.env.gg_maps_public_key,
                                         }}
                                         defaultCenter={center.center}
                                         defaultZoom={center.zoom}
@@ -246,8 +246,7 @@ function WarehouseDetail() {
                     <div className="flex w-full flex-wrap mt-3">
                         {listCategory.map((item) => (
                             <div key={item?.id} className="w-full relative mt-2">
-                                <img className="w-full" src={item?.imageURL} alt='' />
-
+                                <img className="w-full max-h-[200px] object-fill" src={item?.imagerUrl} alt='' />
                                 <div className="absolute bottom-0 left-0 p-2 bg-secondary text-[20px] text-white font-bold">
                                     {item?.name}
                                 </div>
