@@ -159,4 +159,12 @@ export default class API {
         return instance.get(`/api/Orders/${id}`)
     }
 
+    //post
+    static posts() {
+        return instance.get('/api/Post');
+    }
+
+    static providerWareHourse() {
+        return instance.get('/api/Providers/QuantityWarehouses');
+    }
 }
