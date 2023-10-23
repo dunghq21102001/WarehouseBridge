@@ -69,13 +69,24 @@ function FormBase({ title = [], onSubmit, buttonName, onCancel }) {
     }
 
     const handleFileChange = (event) => {
-        const files = event.target.files
+        const files = event.target.files;
+
+        const isImage = (file) => file.type.startsWith('image/');
+
         if (formData.images.length + files.length <= 4) {
-            setFormData({
-                ...formData,
-                images: [...formData.images, ...files],
-            })
-        } else noti.error("Bạn chỉ có thể thêm tối đa 4 ảnh", 2500)
+            const nonImageFiles = Array.from(files).filter((file) => !isImage(file));
+
+            if (nonImageFiles.length === 0) {
+                setFormData({
+                    ...formData,
+                    images: [...formData.images, ...files],
+                });
+            } else {
+                noti.error("Bạn chỉ có thể tải ảnh lên", 2500);
+            }
+        } else {
+            noti.error("Bạn chỉ có thể thêm tối đa 4 ảnh", 2500);
+        }
     }
 
 

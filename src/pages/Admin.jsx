@@ -7,6 +7,7 @@ import AdminPartner from '../pages/Admin/AdminPartner'
 import Sidebar from "../components/Sidebar"
 import { useEffect, useState } from "react"
 import Dashboard from "./Admin/Dashboard"
+import AdminWarehouseDetail from "./Admin/AdminWarehouseDetail"
 function Admin() {
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
     useEffect(() => {
@@ -33,6 +34,7 @@ function Admin() {
                 <Routes>
                     <Route index path="/admin-dashboard" element={<Dashboard />} />
                     <Route path="/admin-warehouses" element={<AdminWarehouse />} />
+                    <Route path="/admin-warehouses-details" element={<AdminWarehouseDetail />} />
                     <Route path="/admin-categories" element={<AdminCategory />} />
                     <Route path="/admin-partners" element={<AdminPartner />} />
                     <Route path="/admin-blogs" element={<AdminBlog />} />

@@ -88,6 +88,10 @@ export default class menus {
                 path: 'admin-warehouses'
             },
             {
+                name: 'warehouses details',
+                path: 'admin-warehouses-details'
+            },
+            {
                 name: 'categories',
                 path: 'admin-categories'
             },

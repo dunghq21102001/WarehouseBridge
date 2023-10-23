@@ -22,6 +22,7 @@ import ConfirmEmail from './pages/ConfirmEmail'
 import Admin from './pages/Admin'
 import { useMemo } from 'react'
 import Payment from './pages/Payment'
+import PaymentSuccess from './pages/PaymentSuccess'
 function App() {
   const system = useSelector(state => state.system)
   const user = useSelector((state) => state.auth)
@@ -90,6 +91,11 @@ function App() {
             <Route path='/payment' element={
               <CheckLogined>
                 <Payment />
+              </CheckLogined>
+            } />
+            <Route path='/payment-success' element={
+              <CheckLogined>
+                <PaymentSuccess />
               </CheckLogined>
             } />
             <Route path='/admin/*' element={<CheckPermission><Admin /></CheckPermission>} />

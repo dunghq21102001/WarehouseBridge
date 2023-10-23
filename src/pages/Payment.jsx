@@ -38,14 +38,15 @@ function Payment() {
         API.postOrder(WHDetail?.id)
             .then(res => {
                 dispatch(changeLoadingState(false))
-                console.log(res.data);
-                window.open(res.data, '_blank')
+                window.open(res.data, '_self')
+                // window.close()
             })
             .catch(err => {
                 dispatch(changeLoadingState(false))
                 noti.error(err?.response?.data)
             })
     }
+
     return (
         <div className="w-full min-h-screen">
             <div className="w-full relative py-5">

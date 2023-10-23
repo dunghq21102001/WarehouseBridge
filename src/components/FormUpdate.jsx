@@ -91,9 +91,15 @@ function FormUpdate({ title = [], onSubmit, buttonName, onCancel, initialData })
   const handleDeleteImage = (index) => {
     const updatedImages = [...formData.images]
     updatedImages.splice(index, 1)
+
+    // Cập nhật mảng URL hình ảnh bằng cách loại bỏ URL của ảnh bị xoá
+    const updatedImageUrls = [...formData.image]
+    updatedImageUrls.splice(index, 1)
+
     setFormData({
       ...formData,
       images: updatedImages,
+      image: updatedImageUrls,
     })
   }
 
@@ -141,9 +147,9 @@ function FormUpdate({ title = [], onSubmit, buttonName, onCancel, initialData })
                   name={inputTitle.binding}
                   onChange={handleFileChange}
                 />
-                {formData.images.length > 0 && (
+                {formData.images && formData.images.length > 0 && (
                   <div className="w-full flex flex-wrap items-center">
-                    {formData.images.map((file, index) => (
+                    {formData.images && formData.images.length > 0 && formData.images.map((file, index) => (
                       <div key={index} className="w-[80px] h-[80px] m-1 overflow-hidden relative">
                         <img
                           className="object-fill w-full"

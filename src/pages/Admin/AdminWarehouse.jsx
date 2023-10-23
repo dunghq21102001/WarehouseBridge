@@ -58,7 +58,28 @@ function AdminWarehouse() {
 
   const getDetailWH = (data) => {
     // console.log(data.original)
-    setDetailWH(data.original)
+    let tmpData
+    dispatch(changeLoadingState(true))
+    API.warehouseById(data.original.id)
+      .then(res => {
+        dispatch(changeLoadingState(false))
+        tmpData = res.data
+        tmpData['image'] = []
+
+        API.imageByWarehouseId(data.original.id)
+          .then(res => {
+            res.data.map(item => {
+              tmpData.image.push(item?.imageURL)
+            })
+            setDetailWH(tmpData)
+          })
+          .catch(err => {
+          })
+      })
+      .catch(err => {
+        dispatch(changeLoadingState(false))
+      })
+
     setIsShowUpdate(true)
   }
 
@@ -68,7 +89,7 @@ function AdminWarehouse() {
 
   function fetchListWarehouse() {
     dispatch(changeLoadingState(true))
-    API.warehouses()
+    API.warehousesByAdmin()
       .then(res => {
         dispatch(changeLoadingState(false))
         setList(res.data)
@@ -97,14 +118,6 @@ function AdminWarehouse() {
       .catch(err => { })
   }
 
-  const getCommonEditTextFieldProps = useCallback(
-    (cell) => {
-      return {
-
-      }
-    },
-    [],
-  )
 
   const columns = useMemo(
     () => [
@@ -120,9 +133,6 @@ function AdminWarehouse() {
       {
         accessorKey: 'name',
         header: 'Tên',
-        muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
-          ...getCommonEditTextFieldProps(cell),
-        }),
       },
       {
         accessorKey: 'shortDescription',
@@ -146,6 +156,15 @@ function AdminWarehouse() {
       {
         accessorKey: 'longitudeIP',
         header: 'Kinh độ'
+      },
+      {
+        accessorKey: 'isDisplay',
+        header: 'Trạng thái hiển thị',
+        Cell: ({ cell, row }) => (
+          <div>
+            {cell.getValue() == true ? 'Đang hiển thị' : 'Đang ẩn'}
+          </div>
+        ),
       }
     ],
     [],
@@ -239,7 +258,7 @@ function AdminWarehouse() {
           )}
         />
       </div>
-      {/* {isShowUpdate ?
+      {isShowUpdate ?
         <FormUpdate
           title={formData}
           onSubmit={updateWH}
@@ -247,7 +266,7 @@ function AdminWarehouse() {
           initialData={detailWH}
           onCancel={handleCancel}
         />
-        : null} */}
+        : null}
       {isShow ?
         <FormBase title={formData}
           onSubmit={addWarehouse}

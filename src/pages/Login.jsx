@@ -14,6 +14,8 @@ function Login() {
   const [isRegister, setIsRegister] = useState(false)
   const [username, setUsername] = useState('dunghq21')
   const [password, setPassword] = useState('Dung21102001@')
+  // const [username, setUsername] = useState('admin@localhost')
+  // const [password, setPassword] = useState(' Admin@123')
   const [realUsername, setRealUsername] = useState('')
   const [password2, setPassword2] = useState('')
   const [showP, isShowP] = useState(false)

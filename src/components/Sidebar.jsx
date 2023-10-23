@@ -3,6 +3,7 @@ import '../css/Sidebar.css'
 import menus from '../common/menus'
 import { FaWarehouse, FaBlog } from 'react-icons/fa'
 import { MdCategory, MdGroups2, MdDashboard } from 'react-icons/md'
+import { BsFillHouseGearFill } from 'react-icons/bs'
 import { useLocation, useNavigate } from 'react-router-dom'
 function Sidebar() {
     const navigate = useNavigate()
@@ -38,7 +39,12 @@ function Sidebar() {
                         <span className="nav-text">Nhà kho</span>
                     </div>
                 </li>
-
+                <li className={`${curTab == 'warehouses details' ? 'active' : ''}`} onClick={() => changeRoute('warehouses details', 'admin-warehouses-details')}>
+                    <div className='link-text'>
+                        <BsFillHouseGearFill className='nav-icon' />
+                        <span className="nav-text">Chi tiết kho</span>
+                    </div>
+                </li>
                 <li className={`${curTab == 'categories' ? 'active' : ''}`} onClick={() => changeRoute('categories', 'admin-categories')}>
                     <div className='link-text'>
                         <MdCategory className='nav-icon' />

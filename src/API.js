@@ -48,6 +48,10 @@ export default class API {
         return instance.get('/api/Warehouses');
     }
 
+    static warehousesByAdmin() {
+        return instance.get('/Admin/api/Warehouses');
+    }
+
     static warehouseById(id) {
         return instance.get(`/api/Warehouses/${id}`);
     }
@@ -69,8 +73,23 @@ export default class API {
     }
 
     // warehouse detail
+    static warehouseDetails() {
+        return instance.get(`/api/WarehouseDetails`)
+    }
     static warehouseDetailByID(id) {
         return instance.get(`/api/WarehouseDetails/${id}`)
+    }
+    static addWarehouseDetail(data) {
+        return instance.post(`/Admin/api/WarehouseDetails`, data)
+    }
+    static warehouseDetailsByAdmin() {
+        return instance.get(`/Admin/api/WarehouseDetails`)
+    }
+    static updateWarehouseDetailByID(data) {
+        return instance.put(`/Admin/api/WarehouseDetails`, data)
+    }
+    static deleteWarehouseDetailByID(id) {
+        return instance.delete(`/Admin/api/WarehouseDetails/${id}`)
     }
 
     // provider
@@ -134,6 +153,10 @@ export default class API {
 
     static postOrder(WHId) {
         return instance.post(`/api/Orders?warehouseDetailId=${WHId}`)
+    }
+
+    static getOderById(id) {
+        return instance.get(`/api/Orders/${id}`)
     }
 
 }
