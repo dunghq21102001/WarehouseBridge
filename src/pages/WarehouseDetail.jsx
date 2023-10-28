@@ -31,7 +31,8 @@ function WarehouseDetail() {
     const { id } = useParams()
     const location = useLocation()
     const { state } = location
-    const { WHname, latitude, longitude, listImage, description, shortDescription, categoryId } = state || {}
+    const { WHname, latitude, longitude, listImage, description, shortDescription, categoryId, orderNow } = state || {}
+
 
     // if (!func.isValidCoordinates(latitude, longitude) && isValidCoordinate) {
     //     setIsValidCoordinate(false)
@@ -58,6 +59,7 @@ function WarehouseDetail() {
         setCenter(props)
         fetchListCategory()
 
+        if(orderNow == true) isShowOrder()
     }, [])
 
     function cancelAll() {
@@ -142,7 +144,7 @@ function WarehouseDetail() {
         event.stopPropagation()
     }
 
-    const orderNow = (id) => {
+    const getOrderNow = (id) => {
         if (user.auth) navigate('/payment', {
             state: {
                 detailId: id
@@ -255,7 +257,7 @@ function WarehouseDetail() {
                     </div>
 
                     <p className="mt-10 text-[30px] text-primary font-bold">Hỗ trợ, liên hệ</p>
-                    <div className="w-[80%] text-center py-3 mx-auto bg-secondary btn-secondary text-white text-[24px] mt-5">
+                    <div onClick={() => window.open('tel:0975688774')} className="w-[80%] text-center py-3 mx-auto bg-secondary btn-secondary text-white text-[24px] mt-5">
                         +0975688774
                     </div>
                 </div>
@@ -293,7 +295,7 @@ function WarehouseDetail() {
                         </div>
                         <div className="w-full flex justify-around items-center">
                             <button className="btn-cancel p-3 rounded-lg" onClick={cancelAll}>Huỷ</button>
-                            <button className="btn-primary p-3 rounded-lg" onClick={() => orderNow(curDetailSelected)}>Đặt ngay</button>
+                            <button className="btn-primary p-3 rounded-lg" onClick={() => getOrderNow(curDetailSelected)}>Đặt ngay</button>
                         </div>
                     </div>
                 </div>

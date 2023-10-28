@@ -83,8 +83,52 @@ function AdminWarehouse() {
     setIsShowUpdate(true)
   }
 
-  const updateWH = (data) => {
-    console.log(data)
+  async function updateWH(data) {
+    if (Array.isArray(data?.image)) {
+      // const imageUrls = []
+
+      // for (const imageItem of data.image) {
+      //   if (imageItem instanceof File) {
+      //     // Đây là một object File, bạn có thể tải lên Firebase Storage
+      //     const imageName = `${new Date().getTime()}_${imageItem.name}`
+      //     const imageRef = ref(storage, `images/${imageName}`)
+      //     await uploadBytes(imageRef, imageItem)
+      //     const imageUrl = await getDownloadURL(imageRef)
+      //     imageUrls.push(imageUrl)
+      //   } else if (typeof imageItem === 'string') {
+      //     // Đây là một URL hình ảnh, bạn có thể xử lý nó tùy ý
+      //     imageUrls.push(imageItem)
+      //   }
+      // }
+      // Bây giờ imageUrls sẽ chứa URL của tất cả các hình ảnh đã tải lên Firebase Storage.
+      // có thể sử dụng imageUrls khi cần thiết.
+
+      const finalData = {
+        id: data?.id,
+        providerId: data?.providerId,
+        categoryId: data?.categoryId,
+        name: data?.name,
+        address: data?.address,
+        description: data?.description,
+        shortDescription: data?.shortDescription,
+        longitudeIP: data?.longitudeIP,
+        latitudeIP: data?.latitudeIP,
+        isDisplay: true
+      }
+      dispatch(changeLoadingState(true))
+      API.updateWarehouse(finalData)
+        .then(res => {
+          noti.success(res.data)
+          dispatch(changeLoadingState(false))
+          handleCancel()
+          fetchListWarehouse()
+        })
+        .catch(err => {
+          noti.error(err?.response?.data)
+          dispatch(changeLoadingState(false))
+        })
+    }
+
   }
 
   function fetchListWarehouse() {

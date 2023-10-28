@@ -16,8 +16,9 @@ function FormUpdate({ title = [], onSubmit, buttonName, onCancel, initialData })
 
 
   useEffect(() => {
+    // const allImages = [...initialData?.image.map(item => item.imageURL), ...formData.images.map(file => URL.createObjectURL(file))];
     if (initialData) {
-      setFormData(initialData);
+      setFormData({ ...initialData, images: initialData.image });
     }
   }, [initialData])
 
@@ -39,8 +40,8 @@ function FormUpdate({ title = [], onSubmit, buttonName, onCancel, initialData })
 
     title.forEach((inputTitle) => {
       if (inputTitle.type === 'input' || inputTitle.type === 'area') {
-        const fieldValue = data[inputTitle.binding] || '' // Mặc định giá trị là chuỗi rỗng nếu không tồn tại
-        if (!fieldValue.trim()) {
+        const fieldValue = String(data[inputTitle.binding] || '') // Mặc định giá trị là chuỗi rỗng nếu không tồn tại
+        if (!fieldValue?.trim()) {
           newErrors[inputTitle.binding] = 'Lỗi cho trường ' + inputTitle.name
         }
       }
@@ -77,22 +78,62 @@ function FormUpdate({ title = [], onSubmit, buttonName, onCancel, initialData })
     }
   }
 
+  // const handleFileChange = (event) => {
+  //   const files = event.target.files
+  //   if (formData.images.length + files.length <= 4) {
+  //     setFormData({
+  //       ...formData,
+  //       images: [...formData.images, ...files],
+  //     })
+  //   } else noti.error("Bạn chỉ có thể thêm tối đa 4 ảnh", 2500)
+  // }
+
+
   const handleFileChange = (event) => {
-    const files = event.target.files
-    if (formData.images.length + files.length <= 4) {
+    const files = event.target.files;
+    const maxImages = 4; // Số lượng ảnh tối đa
+
+    if (formData.images.length + files.length <= maxImages) {
+      const newImages = [...formData.images];
+      const newImageUrls = [...formData.image]; // Đảm bảo bạn có một mảng imageURL hoặc tương tự
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const imageUrl = URL.createObjectURL(file);
+        // newImages.push(file);
+        newImages.push(imageUrl)
+        newImageUrls.push(file);
+      }
+
       setFormData({
         ...formData,
-        images: [...formData.images, ...files],
-      })
-    } else noti.error("Bạn chỉ có thể thêm tối đa 4 ảnh", 2500)
-  }
+        image: newImageUrls,
+        images: newImages, // Cập nhật imageUrls nếu bạn sử dụng nó
+      });
+    } else {
+      noti.error("Bạn chỉ có thể thêm tối đa 4 ảnh", 2500);
+    }
+  };
 
+
+  // const handleDeleteImage = (index) => {
+  //   const updatedImages = [...formData.images]
+  //   updatedImages.splice(index, 1)
+
+  //   const updatedImageUrls = [...formData.image]
+  //   updatedImageUrls.splice(index, 1)
+
+  //   setFormData({
+  //     ...formData,
+  //     images: updatedImages,
+  //     image: updatedImageUrls,
+  //   })
+  // }
 
   const handleDeleteImage = (index) => {
     const updatedImages = [...formData.images]
     updatedImages.splice(index, 1)
 
-    // Cập nhật mảng URL hình ảnh bằng cách loại bỏ URL của ảnh bị xoá
     const updatedImageUrls = [...formData.image]
     updatedImageUrls.splice(index, 1)
 
@@ -105,7 +146,7 @@ function FormUpdate({ title = [], onSubmit, buttonName, onCancel, initialData })
 
   return (
     <div className="bg-fog" onClick={handleCancel}>
-      <form className="hide-scroll w-[95%] md:w-[70%] lg:w-[50%] h-[90%] md:h-[80%] lg:h-[60%] overflow-y-scroll" onSubmit={handleSubmit}>
+      <form className="hide-scroll w-[95%] md:w-[70%] lg:w-[50%] max-h-[80vh] overflow-y-scroll" onSubmit={handleSubmit}>
         {title.map((inputTitle) => (
           <div className="flex w-[80%] flex-col md:flex-row mx-auto my-4 md:my-2 justify-between" key={inputTitle.name}>
             <label>{inputTitle.name}</label>
@@ -142,7 +183,7 @@ function FormUpdate({ title = [], onSubmit, buttonName, onCancel, initialData })
             ) : inputTitle.type === 'file' ? (
               <div className="w-full md:w-[50%] flex flex-col">
                 <input
-                  className={`input-custom w-full ${errors[inputTitle.binding] ? 'border-red-1' : 'border-tran'}`}
+                  className={`input-custom w-full hidden ${errors[inputTitle.binding] ? 'border-red-1' : 'border-tran'}`}
                   type="file"
                   name={inputTitle.binding}
                   onChange={handleFileChange}
@@ -153,10 +194,11 @@ function FormUpdate({ title = [], onSubmit, buttonName, onCancel, initialData })
                       <div key={index} className="w-[80px] h-[80px] m-1 overflow-hidden relative">
                         <img
                           className="object-fill w-full"
-                          src={URL.createObjectURL(file)}
+                          // src={URL.createObjectURL(file)}
+                          src={file}
                           alt={`Selected Image ${index}`}
                         />
-                        <TiDeleteOutline onClick={() => handleDeleteImage(index)} className="absolute top-0 right-0 text-[30px] cursor-pointer" />
+                        <TiDeleteOutline onClick={() => handleDeleteImage(index)} className="absolute top-0 right-0 text-[30px] cursor-pointer hidden" />
                       </div>
                     ))}
                   </div>
