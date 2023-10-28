@@ -11,6 +11,7 @@ function FormBase({ title = [], onSubmit, buttonName, onCancel }) {
     title.forEach((inputTitle) => {
         initialErrors[inputTitle.binding] = ''
     })
+
     const [errors, setErrors] = useState(initialErrors)
 
     const handleChange = (event) => {
@@ -52,6 +53,7 @@ function FormBase({ title = [], onSubmit, buttonName, onCancel }) {
     }
 
     const handleSubmit = (event) => {
+        console.log(formData);
         event.preventDefault()
         if (onSubmit) {
             const validationErrors = validateFormData(formData)
@@ -101,7 +103,7 @@ function FormBase({ title = [], onSubmit, buttonName, onCancel }) {
 
     return (
         <div className="bg-fog" onClick={handleCancel}>
-            <form className="hide-scroll w-[95%] md:w-[70%] lg:w-[50%] h-[90%] md:h-[80%] lg:h-[60%] overflow-y-scroll" onSubmit={handleSubmit}>
+            <form className="hide-scroll w-[95%] md:w-[70%] lg:w-[50%] max-h-[80vh] overflow-y-scroll" onSubmit={handleSubmit}>
                 {title.map((inputTitle) => (
                     <div className="flex w-[80%] flex-col md:flex-row mx-auto my-4 md:my-2 justify-between" key={inputTitle.name}>
                         <label>{inputTitle.name}</label>
@@ -126,7 +128,7 @@ function FormBase({ title = [], onSubmit, buttonName, onCancel }) {
                             <select
                                 className={`select-custom w-full md:w-[50%] ${errors[inputTitle.binding] ? 'border-red-1' : 'border-tran'}`}
                                 name={inputTitle.binding}
-                                value={formData[inputTitle.binding] || inputTitle?.defaultValue?.id || ''}
+                                value={formData[inputTitle.binding] || inputTitle?.options[0]?.id || inputTitle?.defaultValue?.id || ''}
                                 onChange={handleChange}
                             >
                                 {inputTitle.options.map((option) => (

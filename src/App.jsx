@@ -93,7 +93,7 @@ function App() {
                 <Payment />
               </CheckLogined>
             } />
-            <Route path='/payment-success' element={
+            <Route path='/payment-info' element={
               <CheckLogined>
                 <PaymentSuccess />
               </CheckLogined>

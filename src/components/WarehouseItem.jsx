@@ -19,7 +19,7 @@ function WarehouseItem({ item }) {
                 dispatch(changeLoadingState(false))
             })
     }, [])
-    function goToDetail(id) {
+    function goToDetail(id, orderNow = false) {
         navigate(`/warehouse-detail/${id}`,
             {
                 state: {
@@ -29,9 +29,14 @@ function WarehouseItem({ item }) {
                     listImage: listImage,
                     description: item?.description,
                     shortDescription: item?.shortDescription,
-                    categoryId: item?.categoryId
+                    categoryId: item?.categoryId,
+                    orderNow: orderNow
                 }
             })
+    }
+
+    const getOrderNow = (id) => {
+        goToDetail(id, true)
     }
     return (
         <div className='shadow-lg pb-4 my-3 w-full'>
@@ -51,7 +56,7 @@ function WarehouseItem({ item }) {
                 </p>
                 <div className='flex mt-3 justify-center w-full'>
                     <button onClick={() => goToDetail(item?.id)} className='btn-secondary px-3 md:px-4 py-2 uppercase w-[45%] text-[10px] xl:text-[15px] mx-2'>Chi tiết</button>
-                    <button className='btn-primary  px-3 md:px-4 py-2 uppercase w-[45%] text-[10px] xl:text-[15px] mx-2'>đặt ngay</button>
+                    <button onClick={() => getOrderNow(item?.id)} className='btn-primary  px-3 md:px-4 py-2 uppercase w-[45%] text-[10px] xl:text-[15px] mx-2'>đặt ngay</button>
                 </div>
             </div>
         </div>

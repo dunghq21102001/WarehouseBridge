@@ -9,12 +9,14 @@ import { MantineReactTable } from "mantine-react-table"
 import func from '../../common/func'
 import FormBase from "../../components/FormBase"
 import noti from "../../common/noti"
+import FormUpdate from "../../components/FormUpdate"
 function AdminWarehouseDetail() {
   const dispatch = useDispatch()
   const [list, setList] = useState([])
   const [isShow, setIsShow] = useState(false)
   const [isShowUpdate, setIsShowUpdate] = useState(false)
   const [listWH, setListWH] = useState([])
+  const [whDetail, setwhDetail] = useState({})
   const [formData, setFormData] = useState([
     { name: 'Giá kho', binding: 'warehousePrice', type: 'input' },
     { name: 'Giá dịch vụ', binding: 'servicePrice', type: 'input' },
@@ -23,7 +25,7 @@ function AdminWarehouseDetail() {
     { name: 'Chiều sâu', binding: 'depth', type: 'input' },
     { name: 'Đơn vị', binding: 'unitType', type: 'input' },
     { name: 'Số lượng', binding: 'quantity', type: 'input' },
-    { name: 'Nhà kho', binding: 'warehouseId', type: 'select', options: [1, 2, 3], defaultValue: listWH[0] },
+    { name: 'Nhà kho', binding: 'warehouseId', type: 'select', options: [1, 2, 3], defaultValue: '' },
   ])
 
 
@@ -40,26 +42,28 @@ function AdminWarehouseDetail() {
         { name: 'Chiều rộng', binding: 'width', type: 'input' },
         { name: 'Chiều cao', binding: 'height', type: 'input' },
         { name: 'Chiều sâu', binding: 'depth', type: 'input' },
-        { name: 'Đơn vị', binding: 'unitType', type: 'input' },
+        // { name: 'Đơn vị', binding: 'unitType', type: 'input' },
         { name: 'Số lượng', binding: 'quantity', type: 'input' },
-        { name: 'Nhà kho', binding: 'warehouseId', type: 'select', options: listWH, defaultValue: '' },
+        { name: 'Nhà kho', binding: 'warehouseId', type: 'select', options: listWH, defaultValue: listWH[0] },
       ])
 
-
-      const warehouseNameMap = {}
-      listWH.forEach(warehouse => {
-        warehouseNameMap[warehouse.id] = warehouse.name
-      })
-
-      const updatedList = list.map(detail => ({
-        ...detail,
-        warehouseName: warehouseNameMap[detail.warehouseId],
-      }))
-
-      setList(updatedList)
+      getWHNameByDetail()
     }
   }, [listWH])
 
+  const getWHNameByDetail = () => {
+    const warehouseNameMap = {}
+    listWH.forEach(warehouse => {
+      warehouseNameMap[warehouse.id] = warehouse.name
+    })
+
+    const updatedList = list.map(detail => ({
+      ...detail,
+      warehouseName: warehouseNameMap[detail.warehouseId],
+    }))
+
+    setList(updatedList)
+  }
   const fetchWHDetail = () => {
     dispatch(changeLoadingState(true))
 
@@ -91,13 +95,14 @@ function AdminWarehouseDetail() {
 
   const addWarehouseDetail = (data) => {
     const fData = {
-      warehouseId: data.warehouseId,
+      warehouseId: data.warehouseId || listWH[0]?.id,
       warehousePrice: Number.parseInt(data.warehousePrice),
       servicePrice: Number.parseInt(data.servicePrice),
       width: Number.parseInt(data.width),
       height: Number.parseInt(data.height),
       depth: Number.parseInt(data.depth),
-      unitType: Number.parseInt(data.unitType),
+      // unitType: Number.parseInt(data.unitType),
+      unitType: 1,
       quantity: Number.parseInt(data.quantity)
     }
     dispatch(changeLoadingState(true))
@@ -108,10 +113,38 @@ function AdminWarehouseDetail() {
         dispatch(changeLoadingState(false))
       })
       .catch(err => {
+        noti.error(err?.response?.data?.errors[0])
         dispatch(changeLoadingState(false))
       })
   }
 
+  const updateWHDetail = (data) => {
+    // console.log(data)
+    dispatch(changeLoadingState(true))
+    API.updateWarehouseDetailByID({
+      id: data?.id,
+      warehouseId: data?.warehouseId,
+      warehousePrice: Number.parseInt(data.warehousePrice),
+      servicePrice: Number.parseInt(data.servicePrice),
+      width: Number.parseInt(data.width),
+      height: Number.parseInt(data.height),
+      depth: Number.parseInt(data.depth),
+      unitType: 1,
+      quantity: Number.parseInt(data?.quantity),
+      isDisplay: true
+    })
+      .then(res => {
+        handleCancel()
+        dispatch(changeLoadingState(false))
+        fetchWHDetail()
+        getWHNameByDetail()
+        noti.success(res.data)
+      })
+      .catch(err => {
+        noti.error(err?.response?.data?.errors[0])
+        dispatch(changeLoadingState(false))
+      })
+  }
 
   const handleCancel = () => {
     setIsShow(false)
@@ -183,19 +216,28 @@ function AdminWarehouseDetail() {
     ],
     [],
   )
-  const getDetailWH = (row) => { }
-  const handleDeleteRow = (row) => { 
+  const getDetailWH = (row) => {
+    API.whDetailByIDAdmin(row.original.id)
+      .then(res => {
+        setwhDetail(res.data)
+      })
+      .catch(err => noti.error(err?.response?.data))
+
+    setIsShowUpdate(true)
+  }
+
+  const handleDeleteRow = (row) => {
     if (
       !confirm(`Bạn có chắc muốn xoá không?`)
     ) {
       return
     }
     API.deleteWarehouseDetailByID(row.getValue('id'))
-    .then(res => {
-      fetchWHDetail()
-      noti.success(res.data)
-    })
-    .catch(err => {})
+      .then(res => {
+        fetchWHDetail()
+        noti.success(res.data)
+      })
+      .catch(err => { })
   }
   return (
     <div className="w-full">
@@ -219,6 +261,16 @@ function AdminWarehouseDetail() {
           onSubmit={addWarehouseDetail}
           buttonName={'Thêm mới'}
           onCancel={handleCancel} />
+        : null}
+
+      {isShowUpdate ?
+        <FormUpdate
+          title={formData}
+          onSubmit={updateWHDetail}
+          buttonName={'Chỉnh sửa'}
+          initialData={whDetail}
+          onCancel={handleCancel}
+        />
         : null}
     </div>
   )
