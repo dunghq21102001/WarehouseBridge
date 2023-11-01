@@ -8,6 +8,10 @@ import Sidebar from "../components/Sidebar"
 import { useEffect, useState } from "react"
 import Dashboard from "./Admin/Dashboard"
 import AdminWarehouseDetail from "./Admin/AdminWarehouseDetail"
+import AdminOrder from "./Admin/AdminOrder"
+import AdminContract from "./Admin/AdminContract"
+import AdminGoods from './Admin/AdminGoods'
+import AdminHashtag from './Admin/AdminHashtag'
 function Admin() {
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
     useEffect(() => {
@@ -35,9 +39,13 @@ function Admin() {
                     <Route index path="/admin-dashboard" element={<Dashboard />} />
                     <Route path="/admin-warehouses" element={<AdminWarehouse />} />
                     <Route path="/admin-warehouses-details" element={<AdminWarehouseDetail />} />
+                    <Route path="/admin-orders" element={<AdminOrder />} />
                     <Route path="/admin-categories" element={<AdminCategory />} />
                     <Route path="/admin-partners" element={<AdminPartner />} />
                     <Route path="/admin-blogs" element={<AdminBlog />} />
+                    <Route path="/admin-hashtags" element={<AdminHashtag />} />
+                    <Route path="/admin-contracts" element={<AdminContract />} />
+                    <Route path="/admin-goods" element={<AdminGoods />} />
                 </Routes>
             </div>
         </div>

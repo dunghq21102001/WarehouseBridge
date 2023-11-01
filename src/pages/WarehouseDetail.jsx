@@ -59,7 +59,7 @@ function WarehouseDetail() {
         setCenter(props)
         fetchListCategory()
 
-        if(orderNow == true) isShowOrder()
+        // if(orderNow == true) isShowOrder()
     }, [])
 
     function cancelAll() {
@@ -72,6 +72,8 @@ function WarehouseDetail() {
             .then(res => {
                 dispatch(changeLoadingState(false))
                 setListDetail(res.data)
+                setCurDetailSelected(res.data[0]?.id)
+                if (orderNow == true) isShowOrder()
             })
             .catch(err => {
                 dispatch(changeLoadingState(false))
@@ -134,7 +136,7 @@ function WarehouseDetail() {
 
     const isShowOrder = () => {
         setIsOrder(true)
-        setCurDetailSelected(listDetail[0]?.id)
+        // setCurDetailSelected(listDetail[0]?.id)
     }
 
     const handleParentClick = () => {

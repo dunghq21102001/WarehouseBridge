@@ -28,15 +28,15 @@ function App() {
   const user = useSelector((state) => state.auth)
 
   // const CheckAuth = ({ children }) => {
-  //   if (user.auth && user.auth.listRoles[0] != 'Admin') return <Navigate to={'/'} />
-  //   if (user.auth && user.auth.listRoles[0] == 'Admin') return <Navigate to={'/admin'} />
+  //   if (user.auth && user.role != 'Admin') return <Navigate to={'/'} />
+  //   if (user.auth && user.role == 'Admin') return <Navigate to={'/admin'} />
   //   else return children
   // }
 
   const CheckAuth = useMemo(() => {
     return ({ children }) => {
-      // if (user.auth && user.auth.listRoles[0] != 'Admin') return <Navigate to={'/'} />
-      if (user.auth && user.auth.listRoles[0] == 'Admin') return <Navigate to={'/admin/admin-dashboard'} />
+      // if (user.auth && user.role != 'Admin') return <Navigate to={'/'} />
+      if (user.auth && user.role == 'Admin') return <Navigate to={'/admin/admin-dashboard'} />
       return children
     }
   }, [user])
@@ -49,22 +49,21 @@ function App() {
   }, [user])
 
   // const CheckPermission = ({ children }) => {
-  //   if (!user.auth || user.auth.listRoles[0] != 'Admin') return <Navigate to={'/'} />
+  //   if (!user.auth || user.role != 'Admin') return <Navigate to={'/'} />
   //   return children
   // }
 
   const CheckPermission = useMemo(() => {
     return ({ children }) => {
-      if (!user.auth || user.auth.listRoles[0] != 'Admin') return <Navigate to={'/'} />
+      if (!user.auth || user.role != 'Admin') return <Navigate to={'/'} />
       return children
     }
   }, [user])
 
-
   return (
     <>
       <div className='w-full'>
-        {user.auth?.listRoles[0] == 'Admin' ? '' : <Header />}
+        {user.role && user.role == 'Admin' ? '' : <Header />}
         <div className='w-full min-h-screen'>
           <ScrollToTop />
           <Routes>
@@ -101,7 +100,7 @@ function App() {
             <Route path='/admin/*' element={<CheckPermission><Admin /></CheckPermission>} />
           </Routes>
         </div>
-        {user.auth?.listRoles[0] == 'Admin' ? '' : <Footer />}
+        {user.role == 'Admin' ? '' : <Footer />}
         <ToastContainer />
         {system?.loading == true ? <LoadingLocal /> : ''}
       </div>

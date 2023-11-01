@@ -103,6 +103,22 @@ export default class menus {
                 name: 'blogs',
                 path: 'admin-blogs'
             },
+            {
+                name: 'orders',
+                path: 'admin-orders'
+            },
+            {
+                name: 'hashtags',
+                path: 'admin-hashtags'
+            },
+            {
+                name: 'contacts',
+                path: 'admin-contracts'
+            },
+            {
+                name: 'goods',
+                path: 'admin-goods'
+            },
         ]
     }
 }

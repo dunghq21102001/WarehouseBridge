@@ -57,6 +57,7 @@ function WarehouseItem({ item }) {
                 <div className='flex mt-3 justify-center w-full'>
                     <button onClick={() => goToDetail(item?.id)} className='btn-secondary px-3 md:px-4 py-2 uppercase w-[45%] text-[10px] xl:text-[15px] mx-2'>Chi tiết</button>
                     <button onClick={() => getOrderNow(item?.id)} className='btn-primary  px-3 md:px-4 py-2 uppercase w-[45%] text-[10px] xl:text-[15px] mx-2'>đặt ngay</button>
+                    {/* <button className='btn-primary  px-3 md:px-4 py-2 uppercase w-[45%] text-[10px] xl:text-[15px] mx-2'>đặt ngay</button> */}
                 </div>
             </div>
         </div>

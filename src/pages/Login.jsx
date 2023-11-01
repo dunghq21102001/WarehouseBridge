@@ -4,7 +4,7 @@ import image2 from '../assets/images/kho2.jpg'
 import noti from '../common/noti';
 import API from '../API';
 import { useDispatch, useSelector } from 'react-redux';
-import { authen } from '../reducers/UserReducer'
+import { authen, setRole } from '../reducers/UserReducer'
 import { changeLoadingState } from '../reducers/SystemReducer';
 import { useNavigate } from 'react-router-dom';
 import validate from '../common/validate';
@@ -14,10 +14,10 @@ function Login() {
   const [isRegister, setIsRegister] = useState(false)
   // const [username, setUsername] = useState('dunghq21')
   // const [password, setPassword] = useState('Dung21102001@')
-  // const [username, setUsername] = useState('admin@localhost')
-  // const [password, setPassword] = useState(' Admin@123')
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState(' ')
+  const [username, setUsername] = useState('admin@localhost')
+  const [password, setPassword] = useState(' Admin@123')
+  // const [username, setUsername] = useState('')
+  // const [password, setPassword] = useState('')
   const [realUsername, setRealUsername] = useState('')
   const [password2, setPassword2] = useState('')
   const [showP, isShowP] = useState(false)
@@ -30,8 +30,11 @@ function Login() {
     API.login({ email: username.trim(), password: password.trim() })
       .then(res => {
         dispatch(authen(res.data))
+        dispatch(setRole(res.data?.listRoles[0]))
         localStorage.setItem('user', JSON.stringify(res.data))
         localStorage.setItem('token', res.data?.token)
+        localStorage.setItem('role', res.data?.listRoles[0])
+
         dispatch(changeLoadingState(false))
 
         if (res.data.listRoles[0] == 'Admin') navigate('/admin')
@@ -45,13 +48,15 @@ function Login() {
   }
 
   const register = () => {
+    console.log(password.length);
     if (password != password2) return noti.error('Mật khẩu không khớp, vui lòng nhập lại mật khẩu!')
-    if (password.trim() < 5) return noti.error('Mật khẩu phải có ít nhất 6 ký tự!')
-    if (!/[A-Z]/.test(password)) return noti.error('Mật khẩu phải chứa ít nhất 1 chữ hoa!');
-    if (!/[a-z]/.test(password)) return noti.error('Mật khẩu phải chứa ít nhất 1 chữ thường!');
-    if (!/\d/.test(password)) return noti.error('Mật khẩu phải chứa ít nhất 1 số!');
-    if (!/[!@#$%^&*]/.test(password)) return noti.error('Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt!');
-    if (!validate.email(username)) return noti.error('Bạn phải nhập đúng định dạng email');
+    if (password.length < 6) return noti.error('Mật khẩu phải có ít nhất 6 ký tự!')
+    if (password2.length < 6) return noti.error('Mật khẩu phải có ít nhất 6 ký tự!')
+    if (!/[A-Z]/.test(password)) return noti.error('Mật khẩu phải chứa ít nhất 1 chữ hoa!')
+    if (!/[a-z]/.test(password)) return noti.error('Mật khẩu phải chứa ít nhất 1 chữ thường!')
+    if (!/\d/.test(password)) return noti.error('Mật khẩu phải chứa ít nhất 1 số!')
+    if (!/[!@#$%^&*]/.test(password)) return noti.error('Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt!')
+    if (!validate.email(username)) return noti.error('Bạn phải nhập đúng định dạng email')
 
     dispatch(changeLoadingState(true))
     API.register({ email: username, password: password, username: realUsername, fullname: 'null', address: 'null', avatar: 'null', phoneNumber: '0900000000', birthday: '1999-09-28T18:25:05.201Z' })

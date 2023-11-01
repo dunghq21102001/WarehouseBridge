@@ -39,7 +39,7 @@ function WarehousePayment({ wh, whDetail }) {
                     <p>{func.convertVND(whDetail?.warehousePrice)}</p>
                   </div>
                 </div>
-                <div className='w-full items-start justify-between flex'>
+                <div className='w-full items-start justify-between flex mt-[30px]'>
                   <span className='text-[18px] md:text-[24px] md:truncate-cus'>Phí dịch vụ</span>
                   <span className="text-[18px] md:text-[24px] h-[80px] w-full md:w-[40%] text-center md:text-right">{func.convertVND(whDetail?.servicePrice)}</span>
                 </div>

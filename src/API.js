@@ -53,8 +53,20 @@ export default class API {
         return instance.post('/Register', data)
     }
 
+    static getInfo() {
+        return instance.get(`/api/Account/GetInfor`)
+    }
+
     static confirmEmail(code, userId) {
         return instance.get(`/ConfirmEmail?code=${code}&userId=${userId}`)
+    }
+
+    static updateInfo(data) {
+        return instance.put(`/UpdateInfo`, data)
+    }
+
+    static changePass(pass, passAgain) {
+        return instance.put(`/UpdatePassword?pass=${pass}&confirmPass=${passAgain}`)
     }
 
     // Warehouses
@@ -111,6 +123,15 @@ export default class API {
     }
     static deleteWarehouseDetailByID(id) {
         return instance.delete(`/Admin/api/WarehouseDetails/${id}`)
+    }
+
+    //Rent Warehouse
+    static rentWarehouseList() {
+        return instance.get(`/api/RentWarehouse`)
+    }
+
+    static rentWarehouseDetail(id) {
+        return instance.get(`/api/RentWarehouse/${id}`)
     }
 
     // provider

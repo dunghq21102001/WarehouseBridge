@@ -6,7 +6,7 @@ import { HiMenu } from 'react-icons/hi'
 import { MdClose } from 'react-icons/md'
 import { BiLogoFacebook, BiLogoInstagram, BiLogoYoutube, BiLogoTwitter } from 'react-icons/bi'
 import menus from '../common/menus'
-import { authen } from '../reducers/UserReducer'
+import { authen, setRole } from '../reducers/UserReducer'
 import MenuMobile from './MenuMobile';
 import noti from '../common/noti'
 import API from '../API'
@@ -62,8 +62,10 @@ function Header() {
 
   function logout() {
     dispatch(authen(null))
+    dispatch(setRole(null))
     localStorage.removeItem('token')
     localStorage.removeItem('user')
+    localStorage.removeItem('role')
     navigate('/')
     noti.success('Đăng xuất thành công')
   }

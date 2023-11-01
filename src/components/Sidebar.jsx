@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
 import '../css/Sidebar.css'
 import menus from '../common/menus'
-import { FaWarehouse, FaBlog } from 'react-icons/fa'
+import {AiFillTags, AiOutlineDropbox} from 'react-icons/ai'
+import { FaWarehouse, FaBlog, FaFileContract } from 'react-icons/fa'
 import { MdCategory, MdGroups2, MdDashboard } from 'react-icons/md'
 import { BsFillHouseGearFill } from 'react-icons/bs'
+import { RiBillLine } from 'react-icons/ri'
 import { useLocation, useNavigate } from 'react-router-dom'
 function Sidebar() {
     const navigate = useNavigate()
@@ -45,6 +47,12 @@ function Sidebar() {
                         <span className="nav-text">Chi tiết kho</span>
                     </div>
                 </li>
+                <li className={`${curTab == 'orders' ? 'active' : ''}`} onClick={() => changeRoute('orders', 'admin-orders')}>
+                    <div className='link-text'>
+                        <RiBillLine className='nav-icon' />
+                        <span className="nav-text">Đơn hàng</span>
+                    </div>
+                </li>
                 <li className={`${curTab == 'categories' ? 'active' : ''}`} onClick={() => changeRoute('categories', 'admin-categories')}>
                     <div className='link-text'>
                         <MdCategory className='nav-icon' />
@@ -63,6 +71,24 @@ function Sidebar() {
                     <div className='link-text'>
                         <FaBlog className='nav-icon' />
                         <span className="nav-text">Bài viết</span>
+                    </div>
+                </li>
+                <li className={`${curTab == 'hashtags' ? 'active' : ''}`} onClick={() => changeRoute('hashtags', 'admin-hashtags')}>
+                    <div className='link-text'>
+                        <AiFillTags className='nav-icon' />
+                        <span className="nav-text">Hashtags</span>
+                    </div>
+                </li>
+                <li className={`${curTab == 'goods' ? 'active' : ''}`} onClick={() => changeRoute('goods', 'admin-goods')}>
+                    <div className='link-text'>
+                        <AiOutlineDropbox className='nav-icon' />
+                        <span className="nav-text">Hàng hoá</span>
+                    </div>
+                </li>
+                <li className={`${curTab == 'contracts' ? 'active' : ''}`} onClick={() => changeRoute('contracts', 'admin-contracts')}>
+                    <div className='link-text'>
+                        <FaFileContract className='nav-icon' />
+                        <span className="nav-text">Hợp đồng</span>
                     </div>
                 </li>
             </ul>

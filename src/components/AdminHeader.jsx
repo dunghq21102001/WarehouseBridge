@@ -1,7 +1,7 @@
 import { useDispatch } from 'react-redux'
 import logo from '../assets/images/fav.png'
 import { Menu } from '@headlessui/react'
-import { authen } from '../reducers/UserReducer'
+import { authen, setRole } from '../reducers/UserReducer'
 import noti from '../common/noti'
 import menus from '../common/menus'
 import '../css/AdminHeader.css'
@@ -36,8 +36,10 @@ function AdminHeader() {
 
     function logout() {
         dispatch(authen(null))
+        dispatch(setRole(null))
         localStorage.removeItem('token')
         localStorage.removeItem('user')
+        localStorage.removeItem('role')
         noti.success('Đăng xuất thành công')
     }
 
