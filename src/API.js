@@ -201,6 +201,26 @@ export default class API {
         return instance.get(`/api/Orders/${id}`)
     }
 
+    static getOrderAdmin() {
+        return instance.get(`/Admin/api/Orders`)
+    }
+
+    static getOrderDetailAdmin(id) {
+        return instance.get(`/Admin/api/Orders/${id}`)
+    }
+
+    static assignOrder(idOrder, staffId) {
+        return instance.put(`/Admin/api/Orders/AssignOrder/${idOrder}?StaffId=${staffId}`)
+    }
+
+    static orderUpdateCall(id) {
+        return instance.put(`/Admin/api/Orders/UpdateCall/${id}`)
+    }
+
+    static updateOrderStatus(data) {
+        return instance.put(`/Admin/api/Orders/UpdateStatus`, data)
+    }
+
     //post
     static posts() {
         return instance.get('/api/Post');
@@ -208,5 +228,19 @@ export default class API {
 
     static providerWareHourse() {
         return instance.get('/api/Providers/QuantityWarehouses');
+    }
+
+    // enum
+    static enumOrdersStatus() {
+        return instance.get(`/api/Enum/OrderStatus`)
+    }
+    static enumGoodUnit() {
+        return instance.get('/api/Enum/GoodUnit')
+    }
+    static enumContractStatus() {
+        return instance.get('/api/Enum/ContractStatus')
+    }
+    static enumDepositStatus() {
+        return instance.get('/api/Enum/DepositStatus')
     }
 }

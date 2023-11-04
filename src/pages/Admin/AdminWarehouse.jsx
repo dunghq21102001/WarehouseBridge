@@ -6,14 +6,12 @@ import { useDispatch } from 'react-redux'
 import { changeLoadingState } from '../../reducers/SystemReducer'
 import FormBase from '../../components/FormBase'
 import FormUpdate from '../../components/FormUpdate'
-import { Button } from '@mantine/core'
 import { AiOutlineEdit } from 'react-icons/ai'
 import { MdDelete } from 'react-icons/md'
 import { storage } from '../../firebase'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 function AdminWarehouse() {
 
-  const firebaseStorage = storage
   const [list, setList] = useState([])
   const [isShow, setIsShow] = useState(false)
   const [isShowUpdate, setIsShowUpdate] = useState(false)
