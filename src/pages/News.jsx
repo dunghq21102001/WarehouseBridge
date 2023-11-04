@@ -13,11 +13,13 @@ function News() {
   const [loading, isLoading] = useState(false)
   const dispatch = useDispatch();
   const [listNews, setListNews] = useState([])
+  const [listHastag, setListHastag] = useState([])
   const [listProviders, setListProviders] = useState([])
 
   useEffect(() => {
     fetchListPost()
     fetchListProvider()
+    fetchListPostHastag()
   }, [])
 
   function fetchListPost() {
@@ -26,6 +28,19 @@ function News() {
       .then(res => {
         dispatch(changeLoadingState(false))
         setListNews(res.data)
+      })
+      .catch((err) => {
+        noti.error(err.response?.data)
+        dispatch(changeLoadingState(false))
+      })
+  }
+
+  function fetchListPostHastag() {
+    dispatch(changeLoadingState(true))
+    API.postHastags()
+      .then(res => {
+        dispatch(changeLoadingState(false))
+        setListHastag(res.data)
       })
       .catch((err) => {
         noti.error(err.response?.data)
@@ -46,9 +61,9 @@ function News() {
       })
   }
 
-  const listTag = [
-    'Kho', 'Kho tự quản', 'Kho mini', 'Kho khô', 'Kho lạnh', 'Warehouse', 'Kho lưu trữ', 'Thùng', 'Nhà kho', 'Bài viết'
-  ]
+  // const listTag = [
+  //   'Kho', 'Kho tự quản', 'Kho mini', 'Kho khô', 'Kho lạnh', 'Warehouse', 'Kho lưu trữ', 'Thùng', 'Nhà kho', 'Bài viết'
+  // ]
   return (
     <div className="w-full min-h-screen">
 
@@ -160,8 +175,8 @@ function News() {
           <div className='w-full my-10'>
             <h1 className='text-[30px] text-primary font-bold'>Gắn thẻ</h1>
             <div className='w-full flex justify-around items-center flex-wrap'>
-              {listTag.map(tag => (
-                <button className='my-2 px-4 py-2 text-primary border-gray-300 border-[1px] border-solid' key={tag}>{tag}</button>
+              {listHastag.map(tag => (
+                <button className='my-2 px-4 py-2 text-primary border-gray-300 border-[1px] border-solid' key={tag.id}>{tag.hashtagName}</button>
               ))}
             </div>
           </div>

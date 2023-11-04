@@ -243,4 +243,9 @@ export default class API {
     static enumDepositStatus() {
         return instance.get('/api/Enum/DepositStatus')
     }
+    
+    //hastag
+    static postHastags() {
+        return instance.get('/api/Hashtag');
+    }
 }
