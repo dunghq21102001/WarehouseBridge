@@ -37,7 +37,7 @@ function News() {
 
   function fetchListPostHastag() {
     dispatch(changeLoadingState(true))
-    API.postHastags()
+    API.getHastags()
       .then(res => {
         dispatch(changeLoadingState(false))
         setListHastag(res.data)
@@ -73,10 +73,10 @@ function News() {
           {listNews.map(item => (
             <div key={item.namePostCategory} className="w-full flex items-start my-3 p-2 bg-gray-200 md:bg-white">
               <div className="h-[300px] w-[400px] hidden lg:block relative overflow-hidden mr-4">
-                <img src={item.image} alt="" className="object-cover absolute w-full h-full top-0 left-0" />
+                <img src={item.image} alt="" className="object-cover absolute w-full top-0 left-0 h-full" />
               </div>
               <div className='w-full'>
-                <p className="bg-secondary px-4 py-2 text-white w-[140px]">{item.name}</p>
+                <p className="bg-secondary px-4 py-2 text-white w-auto">{item.name}</p>
                 <div className='flex items-center w-full justify-start flex-wrap my-3'>
                   <p className='flex mr-4 items-center text-[18px] my-2 text-[#666]'><FaUserAlt className='text-secondary' />&nbsp; {item.fullnameAuthor}</p>
                   <p className='flex items-center text-[18px] my-2 text-[#666]'>

@@ -245,7 +245,7 @@ export default class API {
     }
     
     //hastag
-    static postHastags() {
+    static getHastags() {
         return instance.get('/api/Hashtag');
     }
 }
