@@ -10,6 +10,9 @@ import func from '../../common/func'
 import FormBase from "../../components/FormBase"
 import noti from "../../common/noti"
 import FormUpdate from "../../components/FormUpdate"
+import { confirmAlert } from 'react-confirm-alert'
+import 'react-confirm-alert/src/react-confirm-alert.css'
+
 function AdminWarehouseDetail() {
   const dispatch = useDispatch()
   const [list, setList] = useState([])
@@ -226,18 +229,39 @@ function AdminWarehouseDetail() {
     setIsShowUpdate(true)
   }
 
-  const handleDeleteRow = (row) => {
-    if (
-      !confirm(`Bạn có chắc muốn xoá không?`)
-    ) {
-      return
-    }
-    API.deleteWarehouseDetailByID(row.getValue('id'))
+  const handleDeleteRow = (data) => {
+    confirmAlert({
+      customUI: ({ onClose }) => {
+        return (
+          <div className='bg-[#f7f7f7] rounded-md p-4 shadow-md'>
+            <p className="text-[24px]">Bạn có chắc chắn muốn xoá chi tiết kho này?</p>
+            <div className="w-full flex justify-end mt-3">
+              <button className="px-3 py-1 mr-2 rounded-md btn-cancel" onClick={onClose}>Huỷ</button>
+              <button
+                className="px-3 py-1 rounded-md btn-primary"
+                onClick={() => {
+                  deleteWH(data.getValue('id'))
+                  onClose()
+                }}
+              >
+                Xoá
+              </button>
+            </div>
+          </div>
+        )
+      }
+    })
+  }
+
+  const deleteWH = (id) => {
+    API.deleteWarehouseDetailByID(id)
       .then(res => {
         fetchWHDetail()
         noti.success(res.data)
       })
-      .catch(err => { })
+      .catch(err => {
+        noti.error(err?.response?.data)
+      })
   }
   return (
     <div className="w-full">

@@ -4,7 +4,7 @@ import { Textarea } from "@mantine/core";
 import noti from "../common/noti";
 import { TiDeleteOutline } from "react-icons/ti";
 
-function FormUpdate({ title = [], onSubmit, buttonName, onCancel, initialData }) {
+function FormUpdate({ title = [], onSubmit, buttonName, onCancel, initialData, totalImage = 4, isUpdateImage = false }) {
   const [formData, setFormData] = useState({
     images: []
   })
@@ -91,7 +91,7 @@ function FormUpdate({ title = [], onSubmit, buttonName, onCancel, initialData })
 
   const handleFileChange = (event) => {
     const files = event.target.files;
-    const maxImages = 4; // Số lượng ảnh tối đa
+    const maxImages = totalImage; // Số lượng ảnh tối đa
 
     if (formData.images.length + files.length <= maxImages) {
       const newImages = [...formData.images];
@@ -111,7 +111,7 @@ function FormUpdate({ title = [], onSubmit, buttonName, onCancel, initialData })
         images: newImages, // Cập nhật imageUrls nếu bạn sử dụng nó
       });
     } else {
-      noti.error("Bạn chỉ có thể thêm tối đa 4 ảnh", 2500);
+      noti.error(`Bạn chỉ có thể thêm tối đa ${totalImage} ảnh`, 2500);
     }
   };
 
@@ -182,12 +182,12 @@ function FormUpdate({ title = [], onSubmit, buttonName, onCancel, initialData })
               </select>
             ) : inputTitle.type === 'file' ? (
               <div className="w-full md:w-[50%] flex flex-col">
-                <input
-                  className={`input-custom w-full hidden ${errors[inputTitle.binding] ? 'border-red-1' : 'border-tran'}`}
+                {isUpdateImage ? <input
+                  className={`input-custom w-full ${errors[inputTitle.binding] ? 'border-red-1' : 'border-tran'}`}
                   type="file"
                   name={inputTitle.binding}
                   onChange={handleFileChange}
-                />
+                /> : null}
                 {formData.images && formData.images.length > 0 && (
                   <div className="w-full flex flex-wrap items-center">
                     {formData.images && formData.images.length > 0 && formData.images.map((file, index) => (
@@ -198,7 +198,7 @@ function FormUpdate({ title = [], onSubmit, buttonName, onCancel, initialData })
                           src={file}
                           alt={`Selected Image ${index}`}
                         />
-                        <TiDeleteOutline onClick={() => handleDeleteImage(index)} className="absolute top-0 right-0 text-[30px] cursor-pointer hidden" />
+                        {isUpdateImage ? <TiDeleteOutline onClick={() => handleDeleteImage(index)} className="absolute top-0 right-0 text-[30px] cursor-pointer" /> : null}
                       </div>
                     ))}
                   </div>

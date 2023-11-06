@@ -10,6 +10,9 @@ import { AiOutlineEdit } from 'react-icons/ai'
 import { MdDelete } from 'react-icons/md'
 import { storage } from '../../firebase'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
+import { confirmAlert } from 'react-confirm-alert'
+import 'react-confirm-alert/src/react-confirm-alert.css'
+
 function AdminWarehouse() {
 
   const [list, setList] = useState([])
@@ -122,7 +125,7 @@ function AdminWarehouse() {
           fetchListWarehouse()
         })
         .catch(err => {
-          noti.error(err?.response?.data)
+          noti.error(err?.response?.data?.errors[0])
           dispatch(changeLoadingState(false))
         })
     }
@@ -265,24 +268,40 @@ function AdminWarehouse() {
 
   }
 
-  const handleDeleteRow = useCallback(
-    (row) => {
-      if (
-        !confirm(`Bạn có chắc muốn xoá kho ${row.getValue('name')}`)
-      ) {
-        return
+  const handleDeleteRow = (data) => {
+    confirmAlert({
+      customUI: ({ onClose }) => {
+        return (
+          <div className='bg-[#f7f7f7] rounded-md p-4 shadow-md'>
+            <p className="text-[24px]">Bạn có chắc chắn muốn xoá <br /> 	&quot;{data.getValue('name')}&quot; ?</p>
+            <div className="w-full flex justify-end mt-3">
+              <button className="px-3 py-1 mr-2 rounded-md btn-cancel" onClick={onClose}>Huỷ</button>
+              <button
+                className="px-3 py-1 rounded-md btn-primary"
+                onClick={() => {
+                  deleteWH(data.getValue('id'))
+                  onClose()
+                }}
+              >
+                Xoá
+              </button>
+            </div>
+          </div>
+        )
       }
-      API.deleteWarehouse(row.getValue('id'))
-        .then(res => {
-          fetchListWarehouse()
-          noti.success(res.data)
-        })
-        .catch(err => {
-          noti.error(err.response?.data)
-        })
-    },
-    [],
-  )
+    })
+  }
+
+  const deleteWH = (id) => {
+    API.deleteWarehouse(id)
+      .then(res => {
+        fetchListWarehouse()
+        noti.success(res.data)
+      })
+      .catch(err => {
+        noti.error(err.response?.data)
+      })
+  }
 
   return (
     <div className='w-full'>
@@ -300,6 +319,7 @@ function AdminWarehouse() {
           )}
         />
       </div>
+
       {isShowUpdate ?
         <FormUpdate
           title={formData}

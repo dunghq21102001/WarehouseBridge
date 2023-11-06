@@ -24,19 +24,19 @@ function PaymentSuccess() {
     const url = window.location.href
     const urlSearchParams = new URLSearchParams(url)
 
-    if (!urlSearchParams.get('resultCode')
-      // || !urlSearchParams.get('partnerCode')
-      || !urlSearchParams.get('orderId')
-      || !urlSearchParams.get('requestId')
-      || !urlSearchParams.get('amount')
-      || !urlSearchParams.get('orderInfo')
-      || !urlSearchParams.get('orderType')
-      || !urlSearchParams.get('transId')
-      || !urlSearchParams.get('orderType')
-      || !urlSearchParams.get('payType')
-      || !urlSearchParams.get('orderType')
-      || !urlSearchParams.get('signature')
-    ) return window.location.href = '/'
+    // if (!urlSearchParams.get('resultCode')
+    //   || !urlSearchParams.get('partnerCode')
+    //   || !urlSearchParams.get('orderId')
+    //   || !urlSearchParams.get('requestId')
+    //   || !urlSearchParams.get('amount')
+    //   || !urlSearchParams.get('orderInfo')
+    //   || !urlSearchParams.get('orderType')
+    //   || !urlSearchParams.get('transId')
+    //   || !urlSearchParams.get('orderType')
+    //   || !urlSearchParams.get('payType')
+    //   || !urlSearchParams.get('orderType')
+    //   || !urlSearchParams.get('signature')
+    // ) return window.location.href = '/'
     setPartnerCode(urlSearchParams.get('partnerCode'))
     setOrderId(urlSearchParams.get('orderId'))
     setRequestId(urlSearchParams.get('requestId'))
@@ -90,7 +90,7 @@ function PaymentSuccess() {
           <hr className='mt-8 hidden lg:block' />
           <img className='mt-8 w-[150px h-[150px] mx-auto block' src={resultCode == 0 ? 'https://freepngimg.com/save/18343-success-png-image/1200x1200' : 'https://icon-library.com/images/failed-icon/failed-icon-7.jpg'} alt="" />
           {resultCode == 0 ? <p className='text-center w-[80%] lg:w-[50%] mx-auto my-3 '>Đơn hàng của bạn đã thanh toán thành công, vui lòng <span className='text-[#af206f] font-bold uppercase'>không</span> tắt trình duyệt</p>
-            : null}
+            : <p className='text-center w-[80%] lg:w-[50%] mx-auto my-3 '>Đơn hàng của bạn đã thanh toán thất bại, vui lòng <span className='text-[#af206f] font-bold uppercase'>không</span> tắt trình duyệt</p>}
           <p className='text-center w-[80%] lg:w-[50%] mx-auto my-3 text-[#af206f] font-bold'>Trở lại trang thanh toán mua hàng trong {countdown}s . . .</p>
         </div>
       </div>
