@@ -43,7 +43,10 @@ function Profile() {
     API.getOrder()
       .then(res => {
         dispatch(changeLoadingState(false))
-        setListOrder(res.data)
+        if (Array.isArray(res.data)) {
+          setListOrder(res.data.reverse())
+        } else setListOrder(res.data)
+
       })
       .catch(err => {
         dispatch(changeLoadingState(false))
@@ -228,6 +231,25 @@ function Profile() {
       })
 
   }
+
+  const getStatus = (status) => {
+    let tmpStatus = ''
+    switch (status) {
+      case 'Success':
+        tmpStatus = 'Thành công'
+        break
+      case 'Waiting':
+        tmpStatus = 'Đang đợi'
+        break
+      case 'Fail':
+        tmpStatus = 'Thất bại'
+        break
+
+      default:
+        break
+    }
+    return tmpStatus
+  }
   return (
     <div className="w-full bg-[#f9f5f1] min-h-screen">
       <div className="w-full md:h-[250px] lg:h-[300px] bg-custom pt-5">
@@ -245,9 +267,9 @@ function Profile() {
             <p>{role}</p>
           </div>
         </div>
-        <div className='h-[30%] flex items-center justify-start flex-wrap px-5'>
+        <div className='h-[30%] flex items-center justify-start flex-wrap px-5 mt-2'>
           {listTab.map(i => (
-            <div onClick={() => setIndexTab(i.id)} key={i.id} className={`text-white font-bold px-3 py-2 cursor-pointer hover:bg-[#ffffff1a] mr-3 ${i.id == indexTab ? 'active' : ''}`}>
+            <div onClick={() => setIndexTab(i.id)} key={i.id} className={`text-white font-bold px-3 py-2 cursor-pointer  mr-1 lg:mr-3 ${i.id == indexTab ? 'active' : 'hover:bg-[#ffffff1a]'}`}>
               {i.name}
             </div>
           ))}
@@ -310,7 +332,8 @@ function Profile() {
                   <div className='flex items-center justify-between w-full'>
                     <span>Trạng thái</span>
                     <span className={`font-bold ${item?.paymentStatus == 'Waiting' ? 'text-orange-500' : item?.paymentStatus == 'Fail' ? 'text-gray-500' : 'text-green-500'}`}>
-                      {item?.paymentStatus == 'Waiting' ? 'Đang đợi' : 'Thành công'}
+                      {/* {item?.paymentStatus == 'Waiting' ? 'Đang đợi' : 'Thành công'} */}
+                      {getStatus(item?.paymentStatus)}
                     </span>
                   </div>
                   <div className='flex items-center justify-between w-full'>
@@ -349,7 +372,7 @@ function Profile() {
         </div>
 
         {/* tab 3 */}
-        <div className={`w-[90%] mx-auto shadow-xl rounded-lg mt-5 bg-white p-4 ${indexTab == 2 ? 'block' : 'hidden'}`}>
+        <div className={`w-[90%] mx-auto shadow-xl rounded-lg mt-5 bg-white p-4 ${indexTab == 3 ? 'block' : 'hidden'}`}>
           <div className='w-[90%] mx-auto grid grid-cols-12 gap-3'>
             {listOrder.length == 0
               ? <p className='text-center font-bold text-[#666]'>Không có dữ liệu</p>
@@ -362,7 +385,8 @@ function Profile() {
                   <div className='flex items-center justify-between w-full'>
                     <span>Trạng thái</span>
                     <span className={`font-bold ${item?.paymentStatus == 'Waiting' ? 'text-orange-500' : item?.paymentStatus == 'Fail' ? 'text-gray-500' : 'text-green-500'}`}>
-                      {item?.paymentStatus == 'Waiting' ? 'Đang đợi' : 'Thành công'}
+                      {/* {item?.paymentStatus == 'Waiting' ? 'Đang đợi' : 'Thành công'} */}
+                      {getStatus(item?.paymentStatus)}
                     </span>
                   </div>
                   <div className='flex items-center justify-between w-full'>

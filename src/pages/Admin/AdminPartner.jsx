@@ -130,16 +130,18 @@ function AdminPartner() {
         header: 'Link hình ảnh',
       },
       {
+        accessorKey: 'address',
+        header: 'Địa chỉ',
+      },
+      {
         accessorKey: 'shortDescription',
         header: 'Mô tả ngắn',
+        size: 300
       },
       {
         accessorKey: 'description',
         header: 'Mô tả',
-      },
-      {
-        accessorKey: 'address',
-        header: 'Địa chỉ',
+        size: 1000
       },
     ],
     [],

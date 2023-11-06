@@ -72,15 +72,43 @@ function Header() {
   return (
     <div className="w-full flex h-[80px] lg:h-[120px] sticky top-0 left-0 right-0 z-50">
       {isShowMenuMobile ? <MenuMobile isOpen={isShowMenuMobile} setIsShowMenuMobile={setIsShowMenuMobile} /> : ''}
-      <div className="w-full lg:w-[20%] flex items-center justify-between lg:justify-center bg-primary px-2 py-4">
+      <div className="w-full lg:w-[20%] flex items-center justify-between relative lg:justify-center bg-primary px-2 py-4">
         <img src={logoImg} alt="" className='hidden lg:block w-[80%]' />
-        {user.auth == null ?
-          <div onClick={() => changeRoute('login')} className="bg-secondary flex items-center justify-center cursor-pointer px-4 md:px-14 text-[12px] md:text-[16px] h-full text-white duration-150 lg:hidden border-[1px] border-solid border-[#fea116] hover:bg-[#0f1728]">ĐĂNG NHẬP</div>
-          : ''
+        {user.auth == null
+          ? <div onClick={() => changeRoute('login')} className="bg-secondary flex items-center justify-center cursor-pointer px-4 md:px-14 text-[12px] md:text-[16px] h-full text-white duration-150 lg:hidden border-[1px] border-solid border-[#fea116] hover:bg-[#0f1728]">ĐĂNG NHẬP</div>
+          : <div className='absolute top-[50%] translate-y-[-50%] left-4 w-[50px] h-[50px]'>
+            <Menu>
+              <Menu.Button className="flex items-center justify-center cursor-pointer text-[16px] text-white overflow-hidden w-[50px] h-[50px]">
+                <img src='https://static.vecteezy.com/system/resources/thumbnails/009/734/564/small/default-avatar-profile-icon-of-social-media-user-vector.jpg' className='rounded-full object-fill' alt='' />
+              </Menu.Button>
+              <Menu.Items className="absolute top-[105%] w-[150px] left-0 flex flex-col bg-white text-black py-1 shadow-md">
+                <span className='text-[#999] ml-2'> Xin chào {user.auth?.username}</span>
+                <Menu.Item>
+                  {({ active }) => (
+                    <p
+                      className={`${active ? 'bg-[#fea116] text-white p-1 cursor-pointer w-full text-left' : 'p-1 cursor-pointer w-full text-left'}`}
+                      onClick={() => navigate('/profile')}>
+                      Thông tin cá nhân
+                    </p>
+                  )}
+                </Menu.Item>
+                <Menu.Item>
+                  {({ active }) => (
+                    <p
+                      className={`${active ? 'bg-[#fea116] text-white p-1 cursor-pointer w-full text-left' : 'p-1 cursor-pointer w-full text-left'}`}
+                      onClick={logout}>
+                      Đăng xuất
+                    </p>
+                  )}
+                </Menu.Item>
+              </Menu.Items>
+            </Menu>
+          </div>
         }
-        <div className='block lg:hidden'>
+        <div className='block lg:hidden absolute top-[50%] translate-y-[-50%] right-4'>
           {isShowMenuMobile ? <MdClose onClick={hiddenMenu} className='text-[#fea116] text-[30px] md:text-[40px] cursor-pointer' /> : <HiMenu className='text-[#fea116] text-[30px] md:text-[40px] cursor-pointer' onClick={showMenu} />}
         </div>
+
       </div>
       <div className='w-[80%] hidden lg:flex flex-col h-full'>
         <div className='w-full flex justify-between px-3 py-2 bg-white'>

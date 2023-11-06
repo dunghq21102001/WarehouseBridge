@@ -3,7 +3,7 @@ import '../css/FormBase.css'
 import { TiDeleteOutline } from 'react-icons/ti'
 import { Textarea } from "@mantine/core"
 import noti from "../common/noti"
-function FormBase({ title = [], onSubmit, buttonName, onCancel }) {
+function FormBase({ title = [], onSubmit, buttonName, onCancel, totalImage = 4 }) {
     const [formData, setFormData] = useState({
         images: []
     })
@@ -53,7 +53,6 @@ function FormBase({ title = [], onSubmit, buttonName, onCancel }) {
     }
 
     const handleSubmit = (event) => {
-        console.log(formData);
         event.preventDefault()
         if (onSubmit) {
             const validationErrors = validateFormData(formData)
@@ -75,7 +74,7 @@ function FormBase({ title = [], onSubmit, buttonName, onCancel }) {
 
         const isImage = (file) => file.type.startsWith('image/');
 
-        if (formData.images.length + files.length <= 4) {
+        if (formData.images.length + files.length <= totalImage) {
             const nonImageFiles = Array.from(files).filter((file) => !isImage(file));
 
             if (nonImageFiles.length === 0) {
@@ -87,7 +86,7 @@ function FormBase({ title = [], onSubmit, buttonName, onCancel }) {
                 noti.error("Bạn chỉ có thể tải ảnh lên", 2500);
             }
         } else {
-            noti.error("Bạn chỉ có thể thêm tối đa 4 ảnh", 2500);
+            noti.error(`Bạn chỉ có thể thêm tối đa ${totalImage} ảnh`, 2500);
         }
     }
 

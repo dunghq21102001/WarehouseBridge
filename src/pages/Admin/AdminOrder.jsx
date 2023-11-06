@@ -4,6 +4,7 @@ import API from '../../API'
 import { useDispatch } from "react-redux"
 import { MantineReactTable } from 'mantine-react-table'
 import { AiOutlineEdit } from 'react-icons/ai'
+import { BiSolidPhoneCall } from 'react-icons/bi'
 import { MdDelete, MdOutlineAssignmentInd } from 'react-icons/md'
 import { GrUpdate } from 'react-icons/gr'
 import func from '../../common/func'
@@ -55,6 +56,14 @@ function AdminOrder() {
             ...
           </div>
         ),
+      },
+      {
+        accessorKey: 'customer.userName',
+        header: 'Khách hàng',
+      },
+      {
+        accessorKey: 'customer.phoneNumber',
+        header: 'Số điện thoại',
       },
       {
         accessorKey: 'deposit',
@@ -163,23 +172,44 @@ function AdminOrder() {
       id: orderIdSelected,
       orderStatus: orderStatusSelected != '' ? orderStatusSelected : listEnumOrder[0]?.value,
       // pickupDay: new Date().toISOString()
-      pickupDay: '2023-12-01T13:15:11.999Z'
+      pickupDay: pickupDay
     })
       .then(res => {
         noti.success(res.data)
         dispatch(changeLoadingState(false))
         setIsShowUpdateStatus(false)
+        setPickupDay('')
+        fetchOrder()
       })
       .catch(err => {
         noti.error(err?.response?.data)
         dispatch(changeLoadingState(false))
       })
   }
+
+  const handleDateChange = (event) => {
+    setPickupDay(event.target.value)
+  }
+
   const assignStaff = (data) => { }
+
+  const updateCall = (data) => {
+    dispatch(changeLoadingState(true))
+    API.orderUpdateCall(data.getValue('id'))
+      .then(res => {
+        noti.success(res.data)
+        fetchOrder()
+        dispatch(changeLoadingState(false))
+      })
+      .catch(err => {
+        dispatch(changeLoadingState(false))
+      })
+  }
+
   return (
     <div className='w-full'>
       <div className=' w-full md:w-[90%] mx-auto mt-10'>
-        <button className='btn-primary px-3 py-1 my-2' onClick={actionAdd}>Thêm</button>
+        {/* <button className='btn-primary px-3 py-1 my-2' onClick={actionAdd}>Thêm</button> */}
         <MantineReactTable
           columns={columns}
           data={listOrder}
@@ -188,8 +218,9 @@ function AdminOrder() {
             <div className='flex items-center'>
               <button onClick={() => changeLoadingStatus(row)}><GrUpdate className='text-primary text-[18px] mr-2' /></button>
               <button onClick={() => assignStaff(row)}><MdOutlineAssignmentInd className='text-secondary text-[22px] ml-2' /></button>
-              <button onClick={() => getDetail(row)} className=''><AiOutlineEdit className='edit-icon' /></button>
-              <button onClick={() => handleDeleteRow(row)} className=''><MdDelete className='del-icon' /></button>
+              <button className='text-primary text-[22px] ml-2' onClick={() => updateCall(row)}><BiSolidPhoneCall /></button>
+              {/* <button onClick={() => getDetail(row)} className=''><AiOutlineEdit className='edit-icon' /></button>
+              <button onClick={() => handleDeleteRow(row)} className=''><MdDelete className='del-icon' /></button> */}
             </div>
           )}
         />
@@ -197,13 +228,19 @@ function AdminOrder() {
       {isShowUpdateStatus
         ? <div className='bg-fog-cus'>
           <div className='rounded-lg bg-white p-5 w-[30%] flex flex-col items-end'>
-            <select className='block w-full mx-auto bg-gray-200 rounded-md py-2 my-2'>
+            <select className='block w-full mx-auto bg-gray-300 rounded-md py-2 my-2 px-1'>
               {listEnumOrder.map(i => (
                 <option key={i?.value} value={i?.value} onChange={() => setOrderStatusSelected(i?.value)}>
                   {i?.display}
                 </option>
               ))}
             </select>
+            <input
+              type="date"
+              value={pickupDay}
+              onChange={handleDateChange}
+              className='w-full mx-auto bg-gray-300 rounded-md py-2 my-2 px-1'
+            />
             <button className='btn-primary px-3 py-1 rounded-md' onClick={() => updateLoadingStatus()}>Lưu</button>
           </div>
         </div>

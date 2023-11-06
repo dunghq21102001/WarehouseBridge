@@ -36,8 +36,9 @@ instance.interceptors.response.use(
         if (error.response && error.response.status === 401) {
             localStorage.removeItem('token')
             localStorage.removeItem('user')
+            localStorage.removeItem('role')
             noti.error('Phiên đăng nhập đã hết hạn')
-            // window.location.href = '/login'
+            window.location.href = '/'
         }
         return Promise.reject(error)
     }
@@ -230,6 +231,35 @@ export default class API {
         return instance.get('/api/Providers/QuantityWarehouses');
     }
 
+    static addPost(data) {
+        return instance.post(`/api/Post`, data)
+    }
+
+    static updatePost(data) {
+        return instance.put(`/api/Post`, data)
+    }
+
+    static deletePost(id) {
+        return instance.delete(`/api/Post/${id}`)
+    }
+
+    // post category
+    static postCategory() {
+        return instance.get(`/api/PostCategory`)
+    }
+
+    static addPostCategory() {
+        return instance.post(`/api/PostCategory`)
+    }
+
+    static updatePostCategory() {
+        return instance.put(`/api/PostCategory`)
+    }
+
+    static deletePostCategory(id) {
+        return instance.delete(`/api/PostCategory/${id}`)
+    }
+
     // enum
     static enumOrdersStatus() {
         return instance.get(`/api/Enum/OrderStatus`)
@@ -243,7 +273,7 @@ export default class API {
     static enumDepositStatus() {
         return instance.get('/api/Enum/DepositStatus')
     }
-    
+
     //hastag
     static getHastags() {
         return instance.get('/api/Hashtag');
