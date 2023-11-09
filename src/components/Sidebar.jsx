@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import '../css/Sidebar.css'
 import menus from '../common/menus'
 import {AiFillTags, AiOutlineDropbox} from 'react-icons/ai'
-import { FaWarehouse, FaBlog, FaFileContract } from 'react-icons/fa'
+import { FaWarehouse, FaBlog, FaFileContract, FaUserFriends } from 'react-icons/fa'
 import { MdCategory, MdGroups2, MdDashboard } from 'react-icons/md'
 import { BsFillHouseGearFill } from 'react-icons/bs'
 import { RiBillLine } from 'react-icons/ri'
@@ -33,6 +33,12 @@ function Sidebar() {
                     <div className='link-text'>
                         <MdDashboard className='nav-icon' />
                         <span className="nav-text">Bảng điều khiển</span>
+                    </div>
+                </li>
+                <li className={`${curTab == 'users' ? 'active' : ''}`} onClick={() => changeRoute('users', 'admin-users')}>
+                    <div className='link-text'>
+                        <FaUserFriends className='nav-icon' />
+                        <span className="nav-text">Người dùng</span>
                     </div>
                 </li>
                 <li className={`${curTab == 'warehouses' ? 'active' : ''}`} onClick={() => changeRoute('warehouses', 'admin-warehouses')}>

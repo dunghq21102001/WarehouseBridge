@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { changeLoadingState } from "../../reducers/SystemReducer"
 import API from '../../API'
 import { useDispatch } from "react-redux"
-import { MantineReactTable } from 'mantine-react-table'
+import { MantineReactTable, useMantineReactTable } from 'mantine-react-table'
 import { AiOutlineEdit } from 'react-icons/ai'
 import { BiSolidPhoneCall } from 'react-icons/bi'
 import { MdDelete, MdOutlineAssignmentInd } from 'react-icons/md'
@@ -67,7 +67,7 @@ function AdminOrder() {
       },
       {
         accessorKey: 'deposit',
-        header: 'Số tiền đóng',
+        header: 'Cọc',
         Cell: ({ cell, row }) => (
           <div>
             {func.convertVND(cell.getValue())}
@@ -206,6 +206,7 @@ function AdminOrder() {
       })
   }
 
+
   return (
     <div className='w-full'>
       <div className=' w-full md:w-[90%] mx-auto mt-10'>
@@ -213,6 +214,7 @@ function AdminOrder() {
         <MantineReactTable
           columns={columns}
           data={listOrder}
+          initialState={{ columnVisibility: { id: false } }}
           enableEditing
           renderRowActions={({ row, table }) => (
             <div className='flex items-center'>

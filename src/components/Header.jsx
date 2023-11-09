@@ -1,4 +1,4 @@
-import { useEffect, useState, Fragment, useRef } from 'react'
+import { useEffect, useState, Fragment, useRef, useCallback } from 'react'
 import logoImg from '../assets/images/fav.png'
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AiFillMail, AiFillPhone } from 'react-icons/ai'
@@ -29,14 +29,13 @@ function Header() {
 
     if (matchedMenuItem) setCurRoute(matchedMenuItem.name)
     else setCurRoute('')
-
     API.categories()
       .then(res => {
         setListCate(res.data)
       })
       .catch(err => { })
 
-  }, [location.pathname, mainMenu])
+  }, [location.pathname])
 
   function changeRoute(routeName) {
     if (routeName == '') setCurRoute('home')
@@ -76,7 +75,7 @@ function Header() {
         <img src={logoImg} alt="" className='hidden lg:block w-[80%]' />
         {user.auth == null
           ? <div onClick={() => changeRoute('login')} className="bg-secondary flex items-center justify-center cursor-pointer px-4 md:px-14 text-[12px] md:text-[16px] h-full text-white duration-150 lg:hidden border-[1px] border-solid border-[#fea116] hover:bg-[#0f1728]">ĐĂNG NHẬP</div>
-          : <div className='absolute top-[50%] translate-y-[-50%] left-4 w-[50px] h-[50px]'>
+          : <div className='absolute top-[50%] translate-y-[-50%] left-4 w-[50px] h-[50px] block lg:hidden'>
             <Menu>
               <Menu.Button className="flex items-center justify-center cursor-pointer text-[16px] text-white overflow-hidden w-[50px] h-[50px]">
                 <img src='https://static.vecteezy.com/system/resources/thumbnails/009/734/564/small/default-avatar-profile-icon-of-social-media-user-vector.jpg' className='rounded-full object-fill' alt='' />

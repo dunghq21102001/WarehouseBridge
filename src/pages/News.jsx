@@ -10,11 +10,15 @@ import noti from '../common/noti'
 import { useDispatch } from 'react-redux'
 
 function News() {
-  const [loading, isLoading] = useState(false)
   const dispatch = useDispatch();
   const [listNews, setListNews] = useState([])
   const [listHastag, setListHastag] = useState([])
   const [listProviders, setListProviders] = useState([])
+  const [currentPage, setCurrentPage] = useState(1)
+  const [newsPerPage, setNewPerPage] = useState(5)
+  const [listPerPage, setListPerPage] = useState([])
+  const [totalPage, setTotalPage] = useState([])
+
 
   useEffect(() => {
     fetchListPost()
@@ -27,7 +31,14 @@ function News() {
     API.posts()
       .then(res => {
         dispatch(changeLoadingState(false))
+        getByPage(res.data)
         setListNews(res.data)
+        const tmpTotal = Math.round(res.data.length / newsPerPage)
+        let listOfPage = []
+        for (let i = 1; i <= tmpTotal; i++) {
+          listOfPage.push(i)
+        }
+        setTotalPage(listOfPage)
       })
       .catch((err) => {
         noti.error(err.response?.data)
@@ -61,6 +72,40 @@ function News() {
       })
   }
 
+  const getByPage = (listData = [], currentPage = 1) => {
+    const indexOfLastNews = currentPage * newsPerPage
+    const indexOfFirstNews = indexOfLastNews - newsPerPage
+    const current = listData.slice(indexOfFirstNews, indexOfLastNews)
+    setListPerPage(current)
+  }
+
+  const next = () => {
+    let tmpPage = currentPage + 1
+    if (tmpPage > listNews.length) {
+      setCurrentPage(1)
+      getByPage(listNews, 1)
+    } else {
+      setCurrentPage(currentPage + 1)
+      getByPage(listNews, currentPage + 1)
+    }
+  }
+
+  const pre = () => {
+    let tmpPage = currentPage - 1
+    if (tmpPage < 1) {
+      setCurrentPage(1)
+      getByPage(listNews, 1)
+    } else {
+      setCurrentPage(currentPage - 1)
+      getByPage(listNews, currentPage - 1)
+    }
+  }
+
+  const clickToPage = (page) => {
+    setCurrentPage(page)
+    getByPage(listNews, page)
+  }
+
   // const listTag = [
   //   'Kho', 'Kho tự quản', 'Kho mini', 'Kho khô', 'Kho lạnh', 'Warehouse', 'Kho lưu trữ', 'Thùng', 'Nhà kho', 'Bài viết'
   // ]
@@ -70,7 +115,7 @@ function News() {
       <div className="w-[90%] mx-auto mt-14 flex items-start justify-between flex-wrap">
         {/* half 1 */}
         <div className="w-full md:w-[60%] flex flex-wrap justify-center items-center">
-          {listNews.map(item => (
+          {listPerPage.map(item => (
             <div key={item.namePostCategory} className="w-full flex items-start my-3 p-2 bg-gray-200 md:bg-white">
               <div className="h-[300px] w-[400px] hidden lg:block relative overflow-hidden mr-4">
                 <img src={item.image} alt="" className="object-cover absolute w-full top-0 left-0 h-full" />
@@ -100,10 +145,16 @@ function News() {
 
           {/* paginate */}
           <div className='w-full md:w-[50%] flex items-center justify-center'>
-            <button className='text-[30px] text-primary mx-2 w-[40px] h-[40px] flex items-center justify-center'><BsFillCaretLeftSquareFill /></button>
-            <button className=' text-[20px] text-primary mx-2 w-[30px] h-[30px] flex items-center justify-center active-p'>1</button>
-            <button className=' text-[20px] text-primary mx-2 w-[30px] h-[30px] flex items-center justify-center'>2</button>
-            <button className='text-[30px] text-primary mx-2 w-[40px] h-[40px] flex items-center justify-center'><BsFillCaretRightSquareFill /></button>
+            <button onClick={pre} className='text-[30px] text-primary mx-2 w-[40px] h-[40px] flex items-center justify-center'><BsFillCaretLeftSquareFill /></button>
+            {totalPage.map(item => (
+              <button onClick={() => clickToPage(item)} key={item} className={`text-[20px] text-primary mx-2 w-[30px] h-[30px] flex items-center justify-center ${currentPage == item ? 'active-p' : ''}`}>{item}</button>
+            ))}
+            {totalPage.length == 0
+              ? <button className={`text-[20px] text-primary mx-2 w-[30px] h-[30px] flex items-center justify-center active-p`}>
+                1
+              </button>
+              : null}
+            <button onClick={next} className='text-[30px] text-primary mx-2 w-[40px] h-[40px] flex items-center justify-center'><BsFillCaretRightSquareFill /></button>
           </div>
         </div>
 

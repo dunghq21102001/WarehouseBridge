@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { MantineReactTable } from 'mantine-react-table'
 import API from '../../API'
 import noti from '../../common/noti'
@@ -310,6 +310,7 @@ function AdminWarehouse() {
         <MantineReactTable
           columns={columns}
           data={list}
+          initialState={{ columnVisibility: { id: false } }}
           enableEditing
           renderRowActions={({ row, table }) => (
             <div className='flex items-center'>

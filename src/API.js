@@ -10,7 +10,7 @@ function checkToken() {
 checkToken()
 const instance = axios.create({
     baseURL: 'https://localhost:5001',
-    // baseURL: 'https://warehouse.bsite.net/',
+    // baseURL: 'https://warebousebridge.azurewebsites.net/',
     headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + token,
@@ -68,6 +68,27 @@ export default class API {
 
     static changePass(pass, passAgain) {
         return instance.put(`/UpdatePassword?pass=${pass}&confirmPass=${passAgain}`)
+    }
+
+    // user
+    static users() {
+        return instance.get(`/api/User/GetListUser`)
+    }
+
+    static staffs() {
+        return instance.get(`/api/User/GetListStaff`)
+    }
+
+    static userById(id) {
+        return instance.get(`/api/User/${id}`)
+    }
+
+    static updateUserById(id, data) {
+        return instance.put(`/api/User/${id}`, data)
+    }
+
+    static createStaff(data) {
+        return instance.post(`/api/User/CreateStaffAccount`, data)
     }
 
     // Warehouses
@@ -277,5 +298,10 @@ export default class API {
     //hastag
     static getHastags() {
         return instance.get('/api/Hashtag');
+    }
+
+    //deposit
+    static deposit() {
+        return instance.get(`/Admin/api/Deposit`)
     }
 }

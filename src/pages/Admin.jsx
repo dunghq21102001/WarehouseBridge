@@ -12,6 +12,7 @@ import AdminOrder from "./Admin/AdminOrder"
 import AdminContract from "./Admin/AdminContract"
 import AdminGoods from './Admin/AdminGoods'
 import AdminHashtag from './Admin/AdminHashtag'
+import AdminUser from "./Admin/AdminUser"
 function Admin() {
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
     useEffect(() => {
@@ -38,6 +39,7 @@ function Admin() {
                 <Routes>
                     <Route index path="/admin-dashboard" element={<Dashboard />} />
                     <Route path="/admin-warehouses" element={<AdminWarehouse />} />
+                    <Route path="/admin-users" element={<AdminUser />} />
                     <Route path="/admin-warehouses-details" element={<AdminWarehouseDetail />} />
                     <Route path="/admin-orders" element={<AdminOrder />} />
                     <Route path="/admin-categories" element={<AdminCategory />} />

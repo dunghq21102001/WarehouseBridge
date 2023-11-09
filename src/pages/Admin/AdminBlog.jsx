@@ -98,19 +98,19 @@ function AdminBlog() {
         accessorKey: 'namePostCategory',
         header: 'Tên danh mục',
       },
-      {
-        accessorKey: 'hashtagName',
-        header: 'Hashtag',
-        Cell: ({ cell, row }) => (
-          <div>
-            {
-              cell.getValue().map(function (item, index) {
-                return <span key={`demo_snap_${index}`}>{(index ? ', ' : '') + item}</span>
-              })
-            }
-          </div>
-        ),
-      },
+      // {
+      //   accessorKey: 'hashtagName',
+      //   header: 'Hashtag',
+      //   Cell: ({ cell, row }) => (
+      //     <div>
+      //       {
+      //         cell.getValue() && cell.getValue().map(function (item, index) {
+      //           return <span key={`demo_snap_${index}`}>{(index ? ', ' : '') + item}</span>
+      //         })
+      //       }
+      //     </div>
+      //   ),
+      // },
       {
         accessorKey: 'creationDate',
         header: 'Ngày tạo',
@@ -281,6 +281,7 @@ function AdminBlog() {
         <button className='btn-primary px-3 py-1 my-2' onClick={actionAdd}>Thêm</button>
         <MantineReactTable
           columns={columns}
+          initialState={{ columnVisibility: { id: false } }}
           data={list}
           enableEditing
           renderRowActions={({ row, table }) => (
