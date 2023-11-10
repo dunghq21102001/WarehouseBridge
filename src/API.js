@@ -300,6 +300,22 @@ export default class API {
         return instance.get('/api/Hashtag');
     }
 
+    static addHastag(data) {
+        return instance.post(`/api/Hashtag`, data)
+    }
+
+    static deleteHastag(id) {
+        return instance.delete(`/api/Hashtag/${id}`)
+    }
+
+    static getHastagById(id) {
+        return instance.get(`/api/Hashtag/${id}`);
+    }
+
+    static updateHastag(data) {
+        return instance.put(`/api/Hashtag`, data)
+    }
+
     //deposit
     static deposit() {
         return instance.get(`/Admin/api/Deposit`)
