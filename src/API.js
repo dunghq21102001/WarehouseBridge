@@ -161,6 +161,10 @@ export default class API {
         return instance.get(`/api/RentWarehouse/${id}`)
     }
 
+    static rentWareHouseAdmin() {
+        return instance.get(`/Admin/api/RentWarehouse`)
+    }
+
     // provider
     static provider() {
         return instance.get('/api/Providers')
@@ -349,4 +353,13 @@ export default class API {
     static updateContract(id, data) {
         return instance.put(`/Admin/api/Contract/${id}`, data)
     }
+
+    //good
+    static getGoods() {
+        return instance.get('/Admin/api/Good');
+    }
+    static addGood(data) {
+        return instance.post(`/Admin/api/Good`, data)
+    }
+
 }
