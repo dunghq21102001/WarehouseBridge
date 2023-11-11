@@ -309,8 +309,8 @@ export default class API {
     // good
     static goods(rentId) {
         return instance.get(`/api/Good/${rentId}`)
+    }
 
-      
     // hashtag
     static addHastag(data) {
         return instance.post(`/api/Hashtag`, data)
