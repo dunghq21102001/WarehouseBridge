@@ -126,3 +126,13 @@
     align-items: center;
     justify-content: center;
 }
+
+.hide-scroll {
+    -ms-overflow-style: none; /* khai báo sử dụng Internet Explorer, Edge */
+    scrollbar-width: none; /* sử dụng Firefox */
+    overflow-y: scroll; 
+}
+
+.hide-scroll::-webkit-scrollbar {
+    display: none; /* cho Chrome, Safari, and Opera */
+}

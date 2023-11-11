@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import '../css/Profile.css'
 import { FaMoneyBillTransfer } from 'react-icons/fa6'
 import { useDispatch, useSelector } from 'react-redux'
-import { AiOutlineCamera } from 'react-icons/ai'
+import { AiOutlineCamera, AiOutlineCloseCircle } from 'react-icons/ai'
 import { storage } from '../firebase'
 import noti from '../common/noti'
 import func from '../common/func'
@@ -17,10 +17,12 @@ function Profile() {
   const [indexTab, setIndexTab] = useState(0)
   const [listOrder, setListOrder] = useState([])
   const [listWH, setListWH] = useState([])
+  const [contract, setContract] = useState({})
   const listTab = [
     { id: 0, name: 'Tổng quan' },
     { id: 1, name: 'Kho đã thuê' },
     { id: 2, name: 'Lịch sử giao dịch' },
+    // { id: 3, name: 'Hợp đồng' },
   ]
   const role = user.role
   const [name, setName] = useState('')
@@ -36,7 +38,10 @@ function Profile() {
   const [isShowChangeAvt, setIsShowAvt] = useState(false)
   const [isOpenPopup, setIsOpenPopup] = useState(false)
   const [tmpImg, setTmpImg] = useState('')
-
+  const [curWH, setCurWH] = useState(null)
+  const [isShowContract, setIsShowContract] = useState(false)
+  const [isShowGood, setIsShowGood] = useState(false)
+  const [goods, setGoods] = useState([])
 
   useEffect(() => {
     dispatch(changeLoadingState(true))
@@ -51,7 +56,8 @@ function Profile() {
       .catch(err => {
         dispatch(changeLoadingState(false))
       })
-    fetchWH()
+    // fetchWH()
+    fetchContract()
     fetchUser()
   }, [])
 
@@ -70,17 +76,41 @@ function Profile() {
       .catch(err => { })
   }
 
-  const fetchWH = () => {
+  const fetchContract = () => {
     dispatch(changeLoadingState(true))
-    API.rentWarehouseList()
+    API.contracts()
       .then(res => {
         dispatch(changeLoadingState(false))
-        setListWH(res.data)
+        setContract(res.data[0])
+        API.getOderById(res.data[0]?.orderId)
+          .then(res => {
+            dispatch(changeLoadingState(true))
+            API.warehouseDetailByID(res.data?.warehouseDetailId)
+              .then(res => {
+                dispatch(changeLoadingState(false))
+                API.warehouseById(res.data?.warehouseId)
+                  .then(res => {
+                    setCurWH(res.data)
+                  })
+              })
+              .catch(err => dispatch(changeLoadingState(false)))
+          })
+          .catch(er => { })
       })
-      .catch(err => {
-        dispatch(changeLoadingState(false))
-      })
+      .catch(err => dispatch(changeLoadingState(false)))
   }
+
+  // const fetchWH = () => {
+  //   dispatch(changeLoadingState(true))
+  //   API.rentWarehouseList()
+  //     .then(res => {
+  //       dispatch(changeLoadingState(false))
+  //       setListWH(res.data)
+  //     })
+  //     .catch(err => {
+  //       dispatch(changeLoadingState(false))
+  //     })
+  // }
 
   const getUserAgain = () => {
     API.getInfo()
@@ -152,6 +182,8 @@ function Profile() {
 
   const cancelAll = () => {
     setIsOpenPopup(false)
+    setIsShowContract(false)
+    setIsShowGood(false)
   }
 
   const openPopup = () => {
@@ -250,6 +282,22 @@ function Profile() {
     }
     return tmpStatus
   }
+
+  const actionShowContract = () => {
+    setIsShowContract(true)
+    dispatch(changeLoadingState(true))
+    API.goods(contract?.rentWarehouseId)
+      .then(res => {
+        dispatch(changeLoadingState(false))
+        setGoods(res.data)
+      })
+      .catch(er => dispatch(changeLoadingState(false)))
+  }
+
+  const actionShowGood = () => {
+    setIsShowGood(true)
+  }
+
   return (
     <div className="w-full bg-[#f9f5f1] min-h-screen">
       <div className="w-full md:h-[250px] lg:h-[300px] bg-custom pt-5">
@@ -319,6 +367,27 @@ function Profile() {
         </div>
 
         {/* tab 2 */}
+        <div className={`w-[90%] mx-auto shadow-xl rounded-lg mt-5 bg-white p-4 ${indexTab == 1 ? 'block' : 'hidden'}`}>
+          <div className='w-[90%] mx-auto grid grid-cols-12 gap-3'>
+            {curWH ?
+              <div className='col-span-4 shadow-lg'>
+                <div className='w-full h-[200px] overflow-hidden flex items-center justify-center'>
+                  <img src={curWH?.imageURL} alt="" />
+                </div>
+                <div className='w-full pl-2'>
+                  <p className='text-[18px] font-bold'>{curWH?.name}</p>
+                  <p className='text-[14px] text-gray-600'>{curWH?.address}</p>
+                  <div className='w-full flex items-center justify-around my-2'>
+                    <button className='px-3 py-1 rounded-md btn-secondary invisible' onClick={() => actionShowGood()}>Xem hàng hoá</button>
+                    <button className='px-3 py-1 rounded-md btn-primary' onClick={() => actionShowContract()}>Xem chi tiết</button>
+                  </div>
+                </div>
+              </div>
+              : null}
+          </div>
+        </div>
+
+        {/* tab 3 */}
         <div className={`w-[90%] mx-auto shadow-xl rounded-lg mt-5 bg-white p-4 ${indexTab == 2 ? 'block' : 'hidden'}`}>
           <div className='w-[90%] mx-auto grid grid-cols-12 gap-3'>
             {listOrder.length == 0
@@ -371,56 +440,10 @@ function Profile() {
           </div>
         </div>
 
-        {/* tab 3 */}
+        {/* tab 4 */}
         <div className={`w-[90%] mx-auto shadow-xl rounded-lg mt-5 bg-white p-4 ${indexTab == 3 ? 'block' : 'hidden'}`}>
           <div className='w-[90%] mx-auto grid grid-cols-12 gap-3'>
-            {listOrder.length == 0
-              ? <p className='text-center font-bold text-[#666]'>Không có dữ liệu</p>
-              : listOrder.map(item => (
-                <div key={item.id} className='my-2 p-3 col-span-12 md:col-span-6 lg:col-span-4 flex items-center justify-between shadow-lg flex-wrap flex-col lg:flex-row'>
-                  <div className='flex items-start justify-around w-full mb-2'>
-                    <FaMoneyBillTransfer className={`text-[24px] ${item?.orderStatus == 1 ? 'text-green-500' : 'text-red-500'}`} />
-                    <span className='font-bold'>- {func.convertVND(item?.deposit)}</span>
-                  </div>
-                  <div className='flex items-center justify-between w-full'>
-                    <span>Trạng thái</span>
-                    <span className={`font-bold ${item?.paymentStatus == 'Waiting' ? 'text-orange-500' : item?.paymentStatus == 'Fail' ? 'text-gray-500' : 'text-green-500'}`}>
-                      {/* {item?.paymentStatus == 'Waiting' ? 'Đang đợi' : 'Thành công'} */}
-                      {getStatus(item?.paymentStatus)}
-                    </span>
-                  </div>
-                  <div className='flex items-center justify-between w-full'>
-                    <span>Tài khoản/thẻ</span>
-                    <span className='font-bold'>Ví MoMo</span>
-                  </div>
-                  <div className='flex items-center justify-between w-full'>
-                    <span>Tổng phí</span>
-                    <span className='font-bold'>Miễn phí</span>
-                  </div>
-                  <div className='line block'></div>
-                  <div className='flex items-center justify-between w-full'>
-                    <span>Loại kho</span>
-                    <span className='font-bold'>{`${item?.width} x ${item?.depth} x ${item?.height} ${item?.unitType}`}</span>
-                  </div>
-                  <div className='flex items-center justify-between w-full'>
-                    <span>Mệnh giá</span>
-                    <span className='font-bold'>{func.convertVND(item?.warehousePrice)} </span>
-                  </div>
-                  <div className='flex items-center justify-between w-full'>
-                    <span>Phí dịch vụ</span>
-                    <span className='font-bold'>{func.convertVND(item?.servicePrice)}</span>
-                  </div>
-                  <div className="line"></div>
-                  <div className='flex items-center justify-between w-full'>
-                    <span>Tổng cuộc gọi</span>
-                    <span className='font-bold'>{item?.totalCall}</span>
-                  </div>
-                  <div className='flex items-center justify-between w-full'>
-                    <span>Kết nối trong ngày</span>
-                    <span className='font-bold'>{item?.contactInDay == false ? 'Không' : 'Có'}</span>
-                  </div>
-                </div>
-              ))}
+            hợp đồng
           </div>
         </div>
       </div>
@@ -448,6 +471,47 @@ function Profile() {
           </div>
           : null
       }
+
+      {
+        isShowContract
+          ?
+          <div className='bg-fog-cus'>
+            <div className='p-4 max-h-screen lg:max-h-[75vh] overflow-y-scroll rounded-md bg-white shadow-lg w-full lg:w-[50%] flex flex-wrap items-start justify-between'>
+              <div className='w-full relative'>
+                <span className='text-[24px] font-bold'>Hợp đồng</span>
+                <AiOutlineCloseCircle onClick={cancelAll} className='absolute right-2 top-2 text-[18px] cursor-pointer' />
+              </div>
+              <div className='w-[50%]'>
+                <p>Khách hàng: {contract?.customer?.userName}</p>
+                <p>Giá kho: {func.convertVND(contract?.warehousePrice)}</p>
+                <p>Giá dịch vụ: {func.convertVND(contract?.servicePrice)}</p>
+                <p>Phí đã cọc: {func.convertVND(contract?.depositFee)}</p>
+              </div>
+              <div className='w-[50%]'>
+                <p>Email: {contract?.customer?.email}</p>
+                <p>Mô tả: {contract?.description}</p>
+                <p>Ngày bắt đầu: {func.convertDate(contract?.startTime)}</p>
+                <p>Ngày kết thúc: {func.convertDate(contract?.endTime)}</p>
+              </div>
+              <div className='w-full mt-5'>
+                <span className='text-[24px] font-bold'>Hàng hoá</span>
+              </div>
+              <div className='w-full mx-auto grid grid-cols-12 gap-3'>
+                {goods.map(item => (
+                  <div key={item?.id} className='col-span-4'>
+                    <div className='w-full h-[250px] overflow-hidden border-gray-200 border-solid border-[1px] flex items-center justify-center'>
+                      <img src={item?.goodImages[0]?.imageUrl} alt="ảnh hàng hoá" />
+                    </div>
+                    <p className='w-full text-center'>{item?.goodName}</p>
+                    <p className='w-full text-center'>Số lượng: {item?.quantity}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          : null
+      }
+
     </div>
   )
 }

@@ -14,28 +14,42 @@ function AdminOrder() {
   const dispatch = useDispatch()
   const [orderStatusSelected, setOrderStatusSelected] = useState('')
   const [orderIdSelected, setOrderIdSelected] = useState('')
+  const [staffSelected, setStaffSelected] = useState('')
   const [listOrder, setListOrder] = useState([])
+  const [listStaff, setListStaff] = useState([])
   const [listEnumOrder, setListEnumOrder] = useState([])
   const [isShowAssign, setIsShowAssign] = useState(false)
   const [isShowAdd, setIsShowAdd] = useState(false)
   const [isShowUpdate, setIsShowUpdate] = useState(false)
   const [isShowUpdateStatus, setIsShowUpdateStatus] = useState(false)
   const [pickupDay, setPickupDay] = useState('')
+
   useEffect(() => {
     fetchOrderEnum()
     fetchOrder()
+    fetchStaff()
   }, [])
 
   const fetchOrder = () => {
     dispatch(changeLoadingState(true))
     API.getOrderAdmin()
       .then(res => {
-        setListOrder(res.data)
+        setListOrder(res.data.reverse())
         dispatch(changeLoadingState(false))
       })
       .catch(err => {
         dispatch(changeLoadingState(false))
       })
+  }
+
+  const fetchStaff = () => {
+    dispatch(changeLoadingState(true))
+    API.staffs()
+      .then(res => {
+        dispatch(changeLoadingState(false))
+        setListStaff(res.data)
+      })
+      .catch(err => dispatch(changeLoadingState(false)))
   }
 
 
@@ -51,11 +65,11 @@ function AdminOrder() {
       {
         accessorKey: 'id',
         header: 'ID',
-        Cell: ({ cell, row }) => (
-          <div>
-            ...
-          </div>
-        ),
+        // Cell: ({ cell, row }) => (
+        //   <div>
+        //     ...
+        //   </div>
+        // ),
       },
       {
         accessorKey: 'customer.userName',
@@ -137,6 +151,11 @@ function AdminOrder() {
       {
         accessorKey: 'contactInDay',
         header: 'Liên hệ trong ngày',
+        Cell: ({ cell, row }) => (
+          <div>
+            {cell.getValue() == true ? 'Có' : 'Không'}
+          </div>
+        ),
       },
 
       // {
@@ -170,8 +189,7 @@ function AdminOrder() {
     dispatch(changeLoadingState(true))
     API.updateOrderStatus({
       id: orderIdSelected,
-      orderStatus: orderStatusSelected != '' ? orderStatusSelected : listEnumOrder[0]?.value,
-      // pickupDay: new Date().toISOString()
+      orderStatus: orderStatusSelected != '' ? Number.parseInt(orderStatusSelected) : Number.parseInt(listEnumOrder[0]?.value),
       pickupDay: pickupDay
     })
       .then(res => {
@@ -191,7 +209,25 @@ function AdminOrder() {
     setPickupDay(event.target.value)
   }
 
-  const assignStaff = (data) => { }
+  const assignStaff = (data) => {
+    setIsShowAssign(true)
+    setOrderIdSelected(data.getValue('id'))
+  }
+
+  const actionAssignStaff = () => {
+    dispatch(changeLoadingState(true))
+    API.assignOrder(orderIdSelected, staffSelected != '' ? staffSelected : listStaff[0]?.id)
+      .then(res => {
+        dispatch(changeLoadingState(false))
+        fetchOrder()
+        noti.success(res.data)
+        setIsShowAssign(false)
+      })
+      .catch(err => {
+        dispatch(changeLoadingState(false))
+        noti.error('Giao phó kho thất bại! Vui lòng thử lại', 2500)
+      })
+  }
 
   const updateCall = (data) => {
     dispatch(changeLoadingState(true))
@@ -200,6 +236,7 @@ function AdminOrder() {
         noti.success(res.data)
         fetchOrder()
         dispatch(changeLoadingState(false))
+        window.location.href = 'tel://' + data.getValue('customer.phoneNumber')
       })
       .catch(err => {
         dispatch(changeLoadingState(false))
@@ -214,7 +251,7 @@ function AdminOrder() {
         <MantineReactTable
           columns={columns}
           data={listOrder}
-          initialState={{ columnVisibility: { id: false } }}
+          // initialState={{ columnVisibility: { id: false } }}
           enableEditing
           renderRowActions={({ row, table }) => (
             <div className='flex items-center'>
@@ -230,9 +267,9 @@ function AdminOrder() {
       {isShowUpdateStatus
         ? <div className='bg-fog-cus'>
           <div className='rounded-lg bg-white p-5 w-[30%] flex flex-col items-end'>
-            <select className='block w-full mx-auto bg-gray-300 rounded-md py-2 my-2 px-1'>
+            <select className='block w-full mx-auto bg-gray-300 rounded-md py-2 my-2 px-1' onChange={(e) => setOrderStatusSelected(e.target.value)}>
               {listEnumOrder.map(i => (
-                <option key={i?.value} value={i?.value} onChange={() => setOrderStatusSelected(i?.value)}>
+                <option key={i?.value} value={i?.value}>
                   {i?.display}
                 </option>
               ))}
@@ -243,7 +280,29 @@ function AdminOrder() {
               onChange={handleDateChange}
               className='w-full mx-auto bg-gray-300 rounded-md py-2 my-2 px-1'
             />
-            <button className='btn-primary px-3 py-1 rounded-md' onClick={() => updateLoadingStatus()}>Lưu</button>
+            <div>
+              <button className='btn-cancel px-3 py-1 rounded-md mr-2' onClick={() => setIsShowUpdateStatus(false)}>Huỷ</button>
+              <button className='btn-primary px-3 py-1 rounded-md' onClick={() => updateLoadingStatus()}>Lưu</button>
+            </div>
+          </div>
+        </div>
+        : null}
+
+
+      {isShowAssign
+        ? <div className='bg-fog-cus'>
+          <div className='rounded-lg bg-white p-5 w-[30%] flex flex-col items-end'>
+            <select className='block w-full mx-auto bg-gray-300 rounded-md py-2 my-2 px-1'>
+              {listStaff.map(i => (
+                <option key={i?.id} id={i?.value} onChange={() => setStaffSelected(i?.id)}>
+                  {i?.userName}
+                </option>
+              ))}
+            </select>
+            <div>
+              <button className='btn-cancel px-3 py-1 rounded-md mr-2' onClick={() => setIsShowAssign(false)}>Huỷ</button>
+              <button className='btn-primary px-3 py-1 rounded-md' onClick={() => actionAssignStaff()}>Lưu</button>
+            </div>
           </div>
         </div>
         : null}

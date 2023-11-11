@@ -16,14 +16,14 @@ function FormUpdate({ title = [], onSubmit, buttonName, onCancel, initialData, t
 
 
   useEffect(() => {
-    // const allImages = [...initialData?.image.map(item => item.imageURL), ...formData.images.map(file => URL.createObjectURL(file))];
     if (initialData) {
-      setFormData({ ...initialData, images: initialData.image });
+     if(initialData.avatar && typeof initialData.avatar == 'string') initialData['image'] = [initialData.avatar]
+      setFormData({ ...initialData, images: initialData.image  || [] });
     }
   }, [initialData])
 
   const handleChange = (event) => {
-    const { name, value } = event.target;
+    const { name, value } = event.target
     setFormData({
       ...formData,
       [name]: value,
@@ -153,7 +153,7 @@ function FormUpdate({ title = [], onSubmit, buttonName, onCancel, initialData, t
             {inputTitle.type === 'input' ? (
               <input
                 className={`input-custom w-full md:w-[50%] ${errors[inputTitle.binding] ? 'border-red-1' : 'border-tran'}`}
-                type="text"
+                type={inputTitle.binding === 'birthday' ? 'datetime-local' : 'text'}
                 name={inputTitle.binding}
                 value={formData[inputTitle.binding] || ''}
                 onChange={handleChange}

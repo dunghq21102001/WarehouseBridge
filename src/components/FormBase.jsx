@@ -109,7 +109,7 @@ function FormBase({ title = [], onSubmit, buttonName, onCancel, totalImage = 4 }
                         {inputTitle.type === 'input' ? (
                             <input
                                 className={`input-custom w-full md:w-[50%] ${errors[inputTitle.binding] ? 'border-red-1' : 'border-tran'}`}
-                                type="text"
+                                type={inputTitle.binding === 'birthday' ? 'datetime-local' : 'text'} // check for 'birthday' binding
                                 name={inputTitle.binding}
                                 value={formData[inputTitle.binding] || ''}
                                 onChange={handleChange}
