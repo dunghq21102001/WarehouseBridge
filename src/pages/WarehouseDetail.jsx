@@ -33,7 +33,6 @@ function WarehouseDetail() {
     const { state } = location
     const { WHname, latitude, longitude, listImage, description, shortDescription, categoryId, orderNow } = state || {}
 
-
     // if (!func.isValidCoordinates(latitude, longitude) && isValidCoordinate) {
     //     setIsValidCoordinate(false)
     // }
@@ -220,17 +219,14 @@ function WarehouseDetail() {
                                 <div className="w-full h-[500px]">
                                     <GoogleMapReact
                                         bootstrapURLKeys={{
-                                            key: import.meta.env.gg_maps_public_key,
+                                            // key: 'AIzaSyCAPfe1hBNDgKaDLdgayN3KAGsHjebY7Cg',
+                                            key: 'AIzaSyDQg29CzefG-QLdH9Agrxl3VokTjiQyfCA',
+                                            // language: 'en',
                                         }}
-                                        defaultCenter={center.center}
-                                        defaultZoom={center.zoom}
+                                        defaultCenter={defaultProps.center}
+                                        defaultZoom={defaultProps.zoom}
                                     >
-                                        <PinLocation
-
-                                            lat={latitude}
-                                            lng={longitude}
-                                            text={WHname}
-                                        />
+                                        <PinLocation lat={latitude} lng={longitude} text={WHname} />
                                     </GoogleMapReact>
                                 </div>
                             </div>
