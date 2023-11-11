@@ -126,9 +126,12 @@ function AdminPartner() {
         header: 'Số điện thoại',
       },
       {
-        accessorKey: 'image',
+        accessor: 'image', // Access the array of images
         header: 'Link hình ảnh',
-      },
+        Cell: ({ cell }) => (
+          <img key={cell.row.original.image} src={cell.row.original.image} alt="image" />
+        ),
+      }, 
       {
         accessorKey: 'address',
         header: 'Địa chỉ',

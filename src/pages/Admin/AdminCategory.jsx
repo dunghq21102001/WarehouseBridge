@@ -52,6 +52,7 @@ function AdminCategory() {
     dispatch(changeLoadingState(true))
     API.categories()
       .then(res => {
+        console.log(res);
         dispatch(changeLoadingState(false))
         setList(res.data)
       })
@@ -113,13 +114,16 @@ function AdminCategory() {
         ),
       },
       {
-        accessorKey: 'imagerUrl',
-        header: 'Link hình ảnh'
-      },
-      {
         accessorKey: 'name',
         header: 'Tên hình ảnh',
       },
+      {
+        accessor: 'imagerUrl', // Access the array of images
+        header: 'Link hình ảnh',
+        Cell: ({ cell }) => (
+          <img key={cell.row.original.imagerUrl} src={cell.row.original.imagerUrl} alt="imagerUrl" />
+        ),
+      },     
     ],
     [],
   )
