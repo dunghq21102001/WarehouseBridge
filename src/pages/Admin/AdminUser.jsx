@@ -7,7 +7,13 @@ import { changeLoadingState } from '../../reducers/SystemReducer'
 import { AiOutlineEdit } from 'react-icons/ai'
 import { MdDelete } from 'react-icons/md'
 import func from '../../common/func'
-
+import FormBase from '../../components/FormBase'
+import FormUpdate from '../../components/FormUpdate'
+import noti from '../../common/noti'
+import { storage } from '../../firebase'
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
+import { confirmAlert } from 'react-confirm-alert'
+import 'react-confirm-alert/src/react-confirm-alert.css'
 
 function AdminUser() {
     const dispatch = useDispatch()
@@ -16,33 +22,29 @@ function AdminUser() {
     const [detailUser, setDetailUser] = useState({})
     const [detailStaff, setDetailStaff] = useState({})
     const [isAddUser, setIsAddUser] = useState(false)
-    const [isAddStaff, setIsStaff] = useState(false)
+    const [isAddStaff, setIsAddStaff] = useState(false)
     const [isUpdateUser, setIsUpdateUser] = useState(false)
     const [isUpdateStaff, setIsUpdateStaff] = useState(false)
 
     const [formDataUser, setFormDataUser] = useState([
-        { name: 'Tên', binding: 'name', type: 'input' },
-        { name: 'Mô tả ngắn', binding: 'shortDescription', type: 'area' },
-        { name: 'Mô tả chi tiết', binding: 'description', type: 'area' },
+        { name: 'Tên người dùng', binding: 'username', type: 'input' },
+        { name: 'Tên', binding: 'fullname', type: 'input' },
+        { name: 'email', binding: 'email', type: 'input' },
+        { name: 'Số điện thoại', binding: 'phoneNumber', type: 'input' },
         { name: 'Địa chỉ', binding: 'address', type: 'input' },
-        { name: 'Kinh độ', binding: 'longitudeIP', type: 'input' },
-        { name: 'Vĩ độ', binding: 'latitudeIP', type: 'input' },
-        { name: 'Hình ảnh', binding: 'image', type: 'file' },
-        { name: 'Nhà cung cấp', binding: 'providerId', type: 'select', options: [1, 2, 3], defaultValue: '' },
-        { name: 'Danh mục', binding: 'categoryId', type: 'select', options: [1, 2, 3], defaultValue: '' },
-      ])
+        { name: 'Sinh nhật', binding: 'birthday', type: 'input' },
+        { name: 'Ảnh đại diện', binding: 'avatar', type: 'file' },
+    ])
 
-      const [formDataStaff, setFormDataStaff] = useState([
-        { name: 'Tên', binding: 'name', type: 'input' },
-        { name: 'Mô tả ngắn', binding: 'shortDescription', type: 'area' },
-        { name: 'Mô tả chi tiết', binding: 'description', type: 'area' },
+    const [formDataStaff, setFormDataStaff] = useState([
+        { name: 'Tên người dùng', binding: 'username', type: 'input' },
+        { name: 'Tên', binding: 'fullname', type: 'input' },
+        { name: 'email', binding: 'email', type: 'input' },
+        { name: 'Số điện thoại', binding: 'phoneNumber', type: 'input' },
         { name: 'Địa chỉ', binding: 'address', type: 'input' },
-        { name: 'Kinh độ', binding: 'longitudeIP', type: 'input' },
-        { name: 'Vĩ độ', binding: 'latitudeIP', type: 'input' },
-        { name: 'Hình ảnh', binding: 'image', type: 'file' },
-        { name: 'Nhà cung cấp', binding: 'providerId', type: 'select', options: [1, 2, 3], defaultValue: '' },
-        { name: 'Danh mục', binding: 'categoryId', type: 'select', options: [1, 2, 3], defaultValue: '' },
-      ])
+        { name: 'Sinh nhật', binding: 'birthday', type: 'input' },
+        { name: 'Ảnh đại diện', binding: 'avatar', type: 'file' },
+    ])
 
     useEffect(() => {
         fetchUser()
@@ -126,16 +128,218 @@ function AdminUser() {
         [],
     )
 
-    const actionAdd = () => { }
+    const handleCancel = () => {
+        setIsAddUser(false)
+        setIsAddStaff(false)
+        setIsUpdateStaff(false)
+        setIsUpdateUser(false)
+    }
 
-    const getDetail = (data) => { }
+    const actionAdd = () => {
+        setIsAddStaff(true)
+    }
 
-    const handleDeleteRow = (data) => { }
+    const addStaff = (data) => {
+        dispatch(changeLoadingState(true))
+        if (data.images) {
+            const storageRef = ref(storage, 'avatars/' + data.username + '-' + Date.now())
+            const imageFile = data.images[0]
+            uploadBytes(storageRef, imageFile)
+                .then((snapshot) => {
+                    getDownloadURL(snapshot.ref)
+                        .then((downloadURL) => {
+                            data.avatar = downloadURL
+                            createStaff(data)
+                        })
+                        .catch((error) => {
+                            console.error('Error getting download URL:', error)
+                            dispatch(changeLoadingState(false))
+                        })
+                })
+                .catch((error) => {
+                    console.error('Error uploading image:', error)
+                    dispatch(changeLoadingState(false))
+                })
+        } else {
+            data.avatar = 'null'
+            createStaff(data)
+        }
+    }
+
+    const createStaff = (data) => {
+        dispatch(changeLoadingState(true))
+        API.createStaff({
+            email: data?.email,
+            username: data?.username,
+            fullname: data.fullname,
+            address: data.address,
+            avatar: data.avatar,
+            phoneNumber: data?.phoneNumber,
+            password: 'Staff1!',
+            birthday: data?.birthday
+        })
+            .then(res => {
+                noti.success('Tạo nhân viên thành công')
+                dispatch(changeLoadingState(false))
+                fetchStaff()
+                handleCancel()
+            })
+            .catch(err => {
+                dispatch(changeLoadingState(false))
+                noti.error('Đã xảy ra lỗi, vui lòng thử lại')
+            })
+    }
+
+    const getDetail = (data) => {
+        setIsUpdateUser(true)
+        dispatch(changeLoadingState(true))
+        API.userById(data.getValue('id'))
+            .then(res => {
+                dispatch(changeLoadingState(false))
+                setDetailUser(res.data)
+            })
+            .catch(err => dispatch(changeLoadingState(false)))
+    }
+
+    const updateUser = (data) => {
+        dispatch(changeLoadingState(true))
+
+        if (data.images && data.images[0] instanceof File) {
+            const storageRef = ref(storage, 'avatars/' + data.username + '-' + Date.now())
+            const imageFile = data.images[0]
+
+            uploadBytes(storageRef, imageFile)
+                .then((snapshot) => {
+                    getDownloadURL(snapshot.ref)
+                        .then((downloadURL) => {
+                            data.avatar = downloadURL
+                            updateUData(data)
+                        })
+                        .catch((error) => {
+                            console.error('Error getting download URL:', error)
+                            dispatch(changeLoadingState(false))
+                        })
+                })
+                .catch((error) => {
+                    console.error('Error uploading image:', error)
+                    dispatch(changeLoadingState(false))
+                })
+        } else {
+            data.avatar = data.images ? data.images[0] : 'null'
+            updateUData(data)
+        }
+    }
+
+    const updateUData = (data) => {
+        API.updateUserById(data?.id, {
+            fullname: data?.fullname,
+            address: data?.address,
+            avatar: data?.avatar,
+            birthday: data?.birthday,
+            username: data?.username,
+            email: data?.email,
+            phoneNumber: data?.phoneNumber,
+        })
+            .then((res) => {
+                noti.success('Chỉnh sửa người dùng thành công')
+                fetchUser()
+                handleCancel()
+                dispatch(changeLoadingState(false))
+            })
+            .catch((err) => {
+                dispatch(changeLoadingState(false))
+                noti.error(err?.response?.data)
+            })
+    }
+    // const handleDeleteRow = (data) => { }
+
+    const getDetailStaff = (data) => {
+        setIsUpdateStaff(true)
+        dispatch(changeLoadingState(true))
+        API.userById(data.getValue('id'))
+            .then(res => {
+                dispatch(changeLoadingState(false))
+                setDetailStaff(res.data)
+            })
+            .catch(err => dispatch(changeLoadingState(false)))
+    }
+
+    const updateStaff = (data) => {
+        dispatch(changeLoadingState(true))
+
+        if (data.images && data.images[0] instanceof File) {
+            const storageRef = ref(storage, 'avatars/' + data.username + '-' + Date.now())
+            const imageFile = data.images[0]
+
+            uploadBytes(storageRef, imageFile)
+                .then((snapshot) => {
+                    getDownloadURL(snapshot.ref)
+                        .then((downloadURL) => {
+                            data.avatar = downloadURL
+                            updateStaffData(data)
+                        })
+                        .catch((error) => {
+                            console.error('Error getting download URL:', error)
+                            dispatch(changeLoadingState(false))
+                        })
+                })
+                .catch((error) => {
+                    console.error('Error uploading image:', error)
+                    dispatch(changeLoadingState(false))
+                })
+        } else {
+            data.avatar = data.images ? data.images[0] : 'null'
+            updateStaffData(data)
+        }
+    }
+
+    const updateStaffData = (data) => {
+        API.updateUserById(data?.id, {
+            fullname: data?.fullname,
+            address: data?.address,
+            avatar: data?.avatar,
+            birthday: data?.birthday,
+            username: data?.username,
+            email: data?.email,
+            phoneNumber: data?.phoneNumber,
+        })
+            .then((res) => {
+                noti.success('Chỉnh sửa người dùng thành công')
+                fetchStaff()
+                handleCancel()
+                dispatch(changeLoadingState(false))
+            })
+            .catch((err) => dispatch(changeLoadingState(false)))
+    }
+
+    // const handleDeleteRowStaff = (data) => {
+    //     confirmAlert({
+    //         customUI: ({ onClose }) => {
+    //           return (
+    //             <div className='bg-[#f7f7f7] rounded-md p-4 shadow-md'>
+    //               <p className="text-[24px]">Bạn có chắc chắn muốn xoá <br /> 	&quot;{data.getValue('name')}&quot; ?</p>
+    //               <div className="w-full flex justify-end mt-3">
+    //                 <button className="px-3 py-1 mr-2 rounded-md btn-cancel" onClick={onClose}>Huỷ</button>
+    //                 <button
+    //                   className="px-3 py-1 rounded-md btn-primary"
+    //                   onClick={() => {
+    //                     deleteWH(data.getValue('id'))
+    //                     onClose()
+    //                   }}
+    //                 >
+    //                   Xoá
+    //                 </button>
+    //               </div>
+    //             </div>
+    //           )
+    //         }
+    //       })
+    //  }
+
     return (
         <div className='w-full'>
             {/* user */}
             <div className=' w-full md:w-[90%] mx-auto mt-10'>
-                <button className='btn-primary px-3 py-1 my-2' onClick={actionAdd}>Thêm người dùng</button>
                 <MantineReactTable
                     columns={columns}
                     initialState={{ columnVisibility: { id: false } }}
@@ -144,7 +348,7 @@ function AdminUser() {
                     renderRowActions={({ row, table }) => (
                         <div className='flex items-center'>
                             <button onClick={() => getDetail(row)} className=''><AiOutlineEdit className='edit-icon' /></button>
-                            <button onClick={() => handleDeleteRow(row)} className=''><MdDelete className='del-icon' /></button>
+                            {/* <button onClick={() => handleDeleteRow(row)} className=''><MdDelete className='del-icon' /></button> */}
                         </div>
                     )}
                 />
@@ -160,12 +364,42 @@ function AdminUser() {
                     enableEditing
                     renderRowActions={({ row, table }) => (
                         <div className='flex items-center'>
-                            <button onClick={() => getDetail(row)} className=''><AiOutlineEdit className='edit-icon' /></button>
-                            <button onClick={() => handleDeleteRow(row)} className=''><MdDelete className='del-icon' /></button>
+                            <button onClick={() => getDetailStaff(row)} className=''><AiOutlineEdit className='edit-icon' /></button>
+                            {/* <button onClick={() => handleDeleteRowStaff(row)} className=''><MdDelete className='del-icon' /></button> */}
                         </div>
                     )}
                 />
             </div>
+            {isAddStaff
+                ? <FormBase title={formDataStaff}
+                    onSubmit={addStaff}
+                    buttonName={'Thêm mới'}
+                    onCancel={handleCancel}
+                    totalImage={1}
+                />
+                : null}
+            {isUpdateStaff
+                ? <FormUpdate
+                    title={formDataStaff}
+                    onSubmit={updateStaff}
+                    buttonName={'Chỉnh sửa'}
+                    initialData={detailStaff}
+                    onCancel={handleCancel}
+                    totalImage={1}
+                    isUpdateImage={true}
+                />
+                : null}
+            {isUpdateUser
+                ? <FormUpdate
+                    title={formDataUser}
+                    onSubmit={updateUser}
+                    buttonName={'Chỉnh sửa'}
+                    initialData={detailUser}
+                    onCancel={handleCancel}
+                    totalImage={1}
+                    isUpdateImage={true}
+                />
+                : null}
         </div>
     )
 }

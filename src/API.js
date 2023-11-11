@@ -131,6 +131,11 @@ export default class API {
     static warehouseDetailByID(id) {
         return instance.get(`/api/WarehouseDetails/${id}`)
     }
+
+    static warehouseDetailByWarehouseID(id) {
+        return instance.get(`/api/WarehouseDetails/GetWarehouseDetailByWarehouse/${id}`)
+    }
+
     static addWarehouseDetail(data) {
         return instance.post(`/Admin/api/WarehouseDetails`, data)
     }
@@ -300,8 +305,30 @@ export default class API {
         return instance.get('/api/Hashtag');
     }
 
+    // good
+    static goods(rentId) {
+        return instance.get(`/api/Good/${rentId}`)
+    }
+
     //deposit
     static deposit() {
         return instance.get(`/Admin/api/Deposit`)
+    }
+
+    // contract
+    static contracts() {
+        return instance.get(`/api/Contract`)
+    }
+
+    static contractByAdmin() {
+        return instance.get(`/Admin/api/Contract`)
+    }
+
+    static addContract(data) {
+        return instance.post(`/Admin/api/Contract`, data)
+    }
+
+    static updateContract(id, data) {
+        return instance.put(`/Admin/api/Contract/${id}`, data)
     }
 }

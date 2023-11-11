@@ -31,7 +31,9 @@ function Dashboard() {
     API.deposit()
       .then(res => {
         dispatch(changeLoadingState(false))
-        setDeposit(res.data)
+        let tmpList
+        if (Array.isArray(res.data)) tmpList = res.data.reverse()
+        setDeposit(tmpList)
       })
       .catch(err => {
         dispatch(changeLoadingState(false))
@@ -115,7 +117,7 @@ function Dashboard() {
           <BarChart />
         </div>
         <div className="w-full mt-6 max-h-[500px] rounded-md shadow-lg p-4 bg-[#faf9f9] flex items-center justify-center">
-          <LineChart/>
+          <LineChart />
         </div>
       </div>
 

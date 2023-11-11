@@ -47,12 +47,12 @@ function Sidebar() {
                         <span className="nav-text">Nhà kho</span>
                     </div>
                 </li>
-                <li className={`${curTab == 'warehouses details' ? 'active' : ''}`} onClick={() => changeRoute('warehouses details', 'admin-warehouses-details')}>
+                {/* <li className={`${curTab == 'warehouses details' ? 'active' : ''}`} onClick={() => changeRoute('warehouses details', 'admin-warehouses-details')}>
                     <div className='link-text'>
                         <BsFillHouseGearFill className='nav-icon' />
                         <span className="nav-text">Chi tiết kho</span>
                     </div>
-                </li>
+                </li> */}
                 <li className={`${curTab == 'orders' ? 'active' : ''}`} onClick={() => changeRoute('orders', 'admin-orders')}>
                     <div className='link-text'>
                         <RiBillLine className='nav-icon' />

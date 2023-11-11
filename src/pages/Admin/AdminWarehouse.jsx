@@ -6,18 +6,22 @@ import { useDispatch } from 'react-redux'
 import { changeLoadingState } from '../../reducers/SystemReducer'
 import FormBase from '../../components/FormBase'
 import FormUpdate from '../../components/FormUpdate'
-import { AiOutlineEdit } from 'react-icons/ai'
+import { AiOutlineEdit, AiOutlineCloseSquare } from 'react-icons/ai'
 import { MdDelete } from 'react-icons/md'
+import { BiDetail } from 'react-icons/bi'
 import { storage } from '../../firebase'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { confirmAlert } from 'react-confirm-alert'
 import 'react-confirm-alert/src/react-confirm-alert.css'
+import SubWHPage from './SubWHPage'
 
 function AdminWarehouse() {
 
   const [list, setList] = useState([])
   const [isShow, setIsShow] = useState(false)
   const [isShowUpdate, setIsShowUpdate] = useState(false)
+  const [isShowDetailList, setIsSHowDetailList] = useState(false)
+  const [selectedWH, setSelectedWH] = useState({})
   const [listProvider, setListProvider] = useState([])
   const [listCategory, setListCategory] = useState([])
   const [detailWH, setDetailWH] = useState(null)
@@ -303,6 +307,19 @@ function AdminWarehouse() {
       })
   }
 
+  const getDetailWHByID = (data) => {
+    // dispatch(changeLoadingState(true))
+    // API.warehouseDetailByWarehouseID(data.getValue('id'))
+    //   .then(res => {
+    //     setSelectedWH(res.data)
+    //     dispatch(changeLoadingState(false))
+    //   })
+    //   .catch(err => dispatch(changeLoadingState(false)))
+    setIsSHowDetailList(true)
+    setSelectedWH(data.getValue('id'))
+
+  }
+
   return (
     <div className='w-full'>
       <div className=' w-full md:w-[90%] mx-auto mt-10'>
@@ -314,6 +331,7 @@ function AdminWarehouse() {
           enableEditing
           renderRowActions={({ row, table }) => (
             <div className='flex items-center'>
+              <button onClick={() => getDetailWHByID(row)}><BiDetail className='text-[24px] text-secondary' /></button>
               <button onClick={() => getDetailWH(row)} className=''><AiOutlineEdit className='edit-icon' /></button>
               <button onClick={() => handleDeleteRow(row)} className=''><MdDelete className='del-icon' /></button>
             </div>
@@ -336,6 +354,14 @@ function AdminWarehouse() {
           buttonName={'Thêm mới'}
           onCancel={handleCancel}
         /> : ''}
+      {isShowDetailList
+        ? <div className='bg-fog-cus'>
+          <div className='w-[95%] bg-white lg:w-[90%] min-h-[90vh] relative'>
+            <AiOutlineCloseSquare onClick={() => setIsSHowDetailList(false)} className='cursor-pointer text-[24px] absolute right-4 top-4' />
+            <SubWHPage id={selectedWH} />
+          </div>
+        </div>
+        : null}
     </div>
   )
 }

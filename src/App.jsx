@@ -23,6 +23,7 @@ import Admin from './pages/Admin'
 import { useMemo } from 'react'
 import Payment from './pages/Payment'
 import PaymentSuccess from './pages/PaymentSuccess'
+import NotFound from './pages/NotFound'
 function App() {
   const system = useSelector(state => state.system)
   const user = useSelector((state) => state.auth)
@@ -92,12 +93,13 @@ function App() {
                 <Payment />
               </CheckLogined>
             } />
-            <Route path='/payment-info' element={
+            <Route path='/payment-success' element={
               <CheckLogined>
                 <PaymentSuccess />
               </CheckLogined>
             } />
             <Route path='/admin/*' element={<CheckPermission><Admin /></CheckPermission>} />
+            <Route path='*' element={<NotFound />} />
           </Routes>
         </div>
         {user.role == 'Admin' ? '' : <Footer />}
