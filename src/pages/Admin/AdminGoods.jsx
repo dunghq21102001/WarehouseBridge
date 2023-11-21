@@ -14,7 +14,7 @@ import { AiOutlineEdit } from "react-icons/ai"
 import { confirmAlert } from 'react-confirm-alert'
 
 function AdminGoods() {
-
+  const dispatch = useDispatch()
   const [list, setList] = useState([])
   const [listRentWareHouse, setListRentWareHouse] = useState([])
   const [isShow, setIsShow] = useState(false)
@@ -28,7 +28,6 @@ function AdminGoods() {
   ])
 
 
-  const dispatch = useDispatch()
   useEffect(() => {
     fetchListGood()
     fetchListRentWareHouse()
@@ -36,12 +35,13 @@ function AdminGoods() {
 
   useEffect(() => {
     if (listRentWareHouse.length > 0) {
-      const options = listRentWareHouse.map(warehouse => ({
-        value: warehouse.id,
-        label: warehouse.information,
-      }));
+      // const options = listRentWareHouse.map(warehouse => ({
+      //   value: warehouse.id,
+      //   label: warehouse.information,
+      // }));
+      console.log(listRentWareHouse);
       setFormData([
-        { name: 'Kho', binding: 'rentWarehouseId', type: 'select', options, defaultValue: options[0].value },
+        { name: 'Kho', binding: 'rentWarehouseId', type: 'select', options: listRentWareHouse, defaultValue: listRentWareHouse[0] },
         { name: 'Tên', binding: 'goodName', type: 'input' },
         { name: 'Số lượng', binding: 'quantity', type: 'input' },
         { name: 'Đơn', binding: 'quantity', type: 'input' },
@@ -75,14 +75,13 @@ function AdminGoods() {
 
 
   function fetchListRentWareHouse() {
+    dispatch(changeLoadingState(true))
     API.rentWareHouseAdmin()
       .then(res => {
-        console.log('====================================');
-        console.log(res);
-        console.log('====================================');
+        dispatch(changeLoadingState(false))
         setListRentWareHouse(res.data)
       })
-      .catch(err => { })
+      .catch(err => { dispatch(changeLoadingState(false)) })
   }
 
   const addGood = async (data) => {
