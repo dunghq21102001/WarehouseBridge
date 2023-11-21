@@ -13,6 +13,9 @@ import AdminContract from "./Admin/AdminContract"
 import AdminGoods from './Admin/AdminGoods'
 import AdminHashtag from './Admin/AdminHashtag'
 import AdminUser from "./Admin/AdminUser"
+import AdminRequest from "./Admin/AdminRequest"
+import AdminRequestDetails from "./Admin/AdminRequestDetail"
+
 function Admin() {
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
     useEffect(() => {
@@ -48,6 +51,8 @@ function Admin() {
                     <Route path="/admin-hashtags" element={<AdminHashtag />} />
                     <Route path="/admin-contracts" element={<AdminContract />} />
                     <Route path="/admin-goods" element={<AdminGoods />} />
+                    <Route path="/admin-request" element={<AdminRequest />} />
+                    <Route path="/admin-request-details" element={<AdminRequestDetails />} />
                 </Routes>
             </div>
         </div>

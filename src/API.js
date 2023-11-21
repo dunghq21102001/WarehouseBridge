@@ -11,6 +11,7 @@ checkToken()
 const instance = axios.create({
     baseURL: 'https://localhost:5001',
     // baseURL: 'https://warebousebridge.azurewebsites.net/',
+
     headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + token,
@@ -358,8 +359,18 @@ export default class API {
     static getGoods() {
         return instance.get('/Admin/api/Good');
     }
+
     static addGood(data) {
         return instance.post(`/Admin/api/Good`, data)
+    }
+
+    //request
+    static getRequests() {
+        return instance.get('/api/Request');
+    }
+
+    static getRequestStatus() {
+        return instance.get('/api/Enum/Requeststatus');
     }
 
 }

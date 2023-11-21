@@ -123,6 +123,14 @@ export default class menus {
                 name: 'goods',
                 path: 'admin-goods'
             },
+            {
+                name: 'request',
+                path: 'admin-request'
+            },
+            {
+                name: 'request details',
+                path: 'admin-request-details'
+            },
         ]
     }
 }
