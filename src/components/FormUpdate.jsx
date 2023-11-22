@@ -176,7 +176,7 @@ function FormUpdate({ title = [], onSubmit, buttonName, onCancel, initialData, t
               >
                 {inputTitle.options.map((option) => (
                   <option key={option?.id} value={option?.id}>
-                    {option?.name}
+                    {option?.name || option?.display}
                   </option>
                 ))}
               </select>

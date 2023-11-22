@@ -51,7 +51,7 @@ function Admin() {
                     <Route path="/admin-hashtags" element={<AdminHashtag />} />
                     <Route path="/admin-contracts" element={<AdminContract />} />
                     <Route path="/admin-goods" element={<AdminGoods />} />
-                    <Route path="/admin-request" element={<AdminRequest />} />
+                    <Route path="/admin-requests" element={<AdminRequest />} />
                     <Route path="/admin-request-details" element={<AdminRequestDetails />} />
                 </Routes>
             </div>
