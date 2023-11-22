@@ -125,7 +125,7 @@ export default class menus {
             },
             {
                 name: 'request',
-                path: 'admin-request'
+                path: 'admin-requests'
             },
             {
                 name: 'request details',

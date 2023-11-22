@@ -4,6 +4,7 @@ import menus from '../common/menus'
 import {AiFillTags, AiOutlineDropbox} from 'react-icons/ai'
 import { FaWarehouse, FaBlog, FaFileContract, FaUserFriends } from 'react-icons/fa'
 import { MdCategory, MdGroups2, MdDashboard } from 'react-icons/md'
+import { VscRequestChanges } from "react-icons/vsc";
 import { BsFillHouseGearFill } from 'react-icons/bs'
 import { RiBillLine } from 'react-icons/ri'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -95,6 +96,12 @@ function Sidebar() {
                     <div className='link-text'>
                         <FaFileContract className='nav-icon' />
                         <span className="nav-text">Hợp đồng</span>
+                    </div>
+                </li>
+                <li className={`${curTab == 'requests' ? 'active' : ''}`} onClick={() => changeRoute('requests', 'admin-requests')}>
+                    <div className='link-text'>
+                        <VscRequestChanges className='nav-icon' />
+                        <span className="nav-text">Yêu cầu</span>
                     </div>
                 </li>
             </ul>
