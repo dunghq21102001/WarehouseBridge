@@ -373,4 +373,12 @@ export default class API {
         return instance.get('/api/Enum/Requeststatus');
     }
 
+    static getRequestType() {
+        return instance.get('/api/Enum/RequestType');
+    }
+
+    static addRequest(data) {
+        return instance.post(`/api/Request`, data)
+    }
+
 }
