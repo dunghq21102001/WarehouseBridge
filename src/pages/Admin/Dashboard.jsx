@@ -52,6 +52,18 @@ function Dashboard() {
         ),
       },
       {
+        accessorKey: 'order.customer.fullname',
+        header: 'Khách hàng',
+      },
+      {
+        accessorKey: 'order.customer.userName',
+        header: 'Tên tài khoản',
+      },
+      {
+        accessorKey: 'order.customer.email',
+        header: 'Email',
+      },
+      {
         accessorKey: 'orderInfo',
         header: 'Thông tin đơn hàng',
       },
