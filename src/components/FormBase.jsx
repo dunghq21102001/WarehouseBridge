@@ -132,7 +132,7 @@ function FormBase({ title = [], onSubmit, buttonName, onCancel, totalImage = 4 }
                             >
                                 {inputTitle.options.map((option) => (
                                     <option key={option?.id} value={option?.id}>
-                                        {option?.name || option?.display}
+                                        {option?.name || option?.display || option?.fullname}
                                     </option>
                                 ))}
                             </select>

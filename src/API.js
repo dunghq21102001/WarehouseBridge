@@ -388,6 +388,9 @@ export default class API {
 
     static postFeedback(whId, data) {
         return instance.post(`/api/Feedback/${whId}`, data)
+
+    static getRequestType() {
+        return instance.get('/api/Enum/RequestType');
     }
 
 }
