@@ -42,6 +42,8 @@ function Profile() {
   const [isShowContract, setIsShowContract] = useState(false);
   const [isShowGood, setIsShowGood] = useState(false);
   const [goods, setGoods] = useState([]);
+  const [listGoodOfRequest, setListGoodOfRequest] = useState([]);
+  const [listGoodToDisplay, setListGoodToDisplay] = useState([]);
 
   useEffect(() => {
     dispatch(changeLoadingState(true));
@@ -58,6 +60,7 @@ function Profile() {
     // fetchWH()
     fetchContract();
     fetchUser();
+    // fetchWarehouse()
   }, []);
 
   function fetchUser() {
@@ -75,13 +78,25 @@ function Profile() {
       .catch((err) => {});
   }
 
+  const fetchWarehouse = () => {
+    dispatch(changeLoadingState(true));
+    API.warehouses()
+      .then((res) => {
+        dispatch(changeLoadingState(false));
+      })
+      .catch((err) => {
+        dispatch(changeLoadingState(false));
+      });
+  };
+
   const fetchContract = () => {
     dispatch(changeLoadingState(true));
     API.contracts()
       .then((res) => {
         dispatch(changeLoadingState(false));
-        setContract(res.data[0]);
-        API.getOderById(res.data[0]?.orderId)
+        const arr = res.data.reverse();
+        setContract(arr[0]);
+        API.getOderById(arr[0]?.orderId)
           .then((res) => {
             dispatch(changeLoadingState(true));
             API.warehouseDetailByID(res.data?.warehouseDetailId)
@@ -113,6 +128,8 @@ function Profile() {
   const getUserAgain = () => {
     API.getInfo()
       .then((res) => {
+        localStorage.removeItem("user");
+        localStorage.setItem("user", JSON.stringify(res.data));
         dispatch(authen(res.data));
         setDataUser(res?.data);
         setName(res?.data.fullname);
@@ -174,6 +191,8 @@ function Profile() {
     setIsOpenPopup(false);
     setIsShowContract(false);
     setIsShowGood(false);
+    setListGoodOfRequest([]);
+    setListGoodToDisplay([]);
   };
 
   const openPopup = () => {
@@ -209,6 +228,10 @@ function Profile() {
       .catch((err) => {});
   };
 
+  const updateReduxState = () => {
+    dispatch(authen(res.data));
+  };
+
   const handleParentClick = () => {
     cancelAll();
   };
@@ -230,8 +253,8 @@ function Profile() {
           dispatch(changeLoadingState(false));
           cancelAll();
           getDownloadURL(storageRef).then((downloadURL) => {
-            setAvt(downloadURL)
-            dispatch(changeLoadingState(true))
+            setAvt(downloadURL);
+            dispatch(changeLoadingState(true));
             API.updateInfo({
               userName: username,
               fullname: name,
@@ -241,14 +264,15 @@ function Profile() {
               email: email,
               phoneNumber: phone,
             })
-            .then(res => {
-              dispatch(changeLoadingState(false))
-              noti.success('Chỉnh sửa ảnh đại diện thành công')
-            })
-            .catch(err => {
-              dispatch(changeLoadingState(false))
-              noti.error('Chỉnh sửa ảnh đại diện thất bại')
-            })
+              .then((res) => {
+                getUserAgain();
+                dispatch(changeLoadingState(false));
+                noti.success("Chỉnh sửa ảnh đại diện thành công");
+              })
+              .catch((err) => {
+                dispatch(changeLoadingState(false));
+                noti.error("Chỉnh sửa ảnh đại diện thất bại");
+              });
           });
         })
         .catch((error) => {
@@ -319,6 +343,65 @@ function Profile() {
     setIsShowGood(true);
   };
 
+  const handleAddGoodToRequest = (id, item) => {
+    if (listGoodOfRequest.includes(id)) {
+      setListGoodToDisplay(listGoodToDisplay.filter((item) => item?.id !== id));
+      setListGoodOfRequest(listGoodOfRequest.filter((item) => item !== id));
+    } else {
+      item["tmpQuantity"] = 1;
+      setListGoodToDisplay((oldArray) => [...oldArray, item]);
+      setListGoodOfRequest((oldArray) => [...oldArray, id]);
+    }
+  };
+
+  const createRequest = () => {
+    if (listGoodOfRequest.length == 0)
+      return noti.warning(
+        "Bạn phải chọn ít nhất 1 món đồ để lấy ra khỏi kho!",
+        2400
+      );
+
+    let finalList = [];
+
+    dispatch(changeLoadingState(true));
+    listGoodToDisplay.map((item) => {
+      finalList.push({
+        goodId: item?.id,
+        quantity: Number.parseInt(item?.tmpQuantity),
+      });
+    });
+
+    API.addRequest({
+      // requestId: '',
+      customerId: contract?.customerId,
+      staffId: contract?.staffId,
+      requestStatus: 1,
+      denyReason: "",
+      requestType: 1,
+      completeDate: new Date().toISOString(),
+      requestDetails: finalList,
+    })
+      .then((res) => {
+        noti.success(res.data.result);
+        dispatch(changeLoadingState(false));
+      })
+      .catch((err) => {
+        dispatch(changeLoadingState(false));
+      });
+  };
+
+  const updateQuantity = (id, number) => {
+    setListGoodToDisplay((oldArray) =>
+      oldArray.map((item) => {
+        if (item?.id === id) {
+          const newTmpQuantity =
+            number > 0 && number <= item?.quantity ? number : 1;
+          return { ...item, tmpQuantity: newTmpQuantity };
+        }
+        return item;
+      })
+    );
+  };
   return (
     <div className="w-full bg-[#f9f5f1] min-h-screen">
       <div className="w-full md:h-[250px] lg:h-[300px] bg-custom pt-5">
@@ -397,10 +480,11 @@ function Profile() {
                 />
                 <input
                   type="text"
-                  className="w-full focus:outline-none focus:bg-[#ccc] px-2 rounded-md py-1"
+                  className="w-full cursor-not-allowed focus:outline-none focus:bg-[#ccc] px-2 rounded-md py-1"
                   onChange={(e) => setUsername(e.target.value)}
                   onBlur={() => updateData("username")}
                   value={username}
+                  disabled
                 />
                 <input
                   type="text"
@@ -435,7 +519,7 @@ function Profile() {
           </div>
 
           <div className={`w-full shadow-xl rounded-lg mt-5 bg-white p-8`}>
-            <span className="font-bold text-[30px]">Thông tin cơ bản</span>
+            <span className="font-bold text-[30px]">Bảo mật</span>
             <div className="w-full flex items-start">
               <div className="w-[40%] flex-col flex items-start font-bold text-[14px]">
                 <span className="px-2 py-1">Nhập mật khẩu mới:</span>
@@ -508,7 +592,7 @@ function Profile() {
         >
           <div className="w-[90%] mx-auto grid grid-cols-12 gap-3">
             {listOrder.length == 0 ? (
-              <p className="text-center font-bold text-[#666]">
+              <p className="text-center col-span-12 font-bold text-[#666]">
                 Không có dữ liệu
               </p>
             ) : (
@@ -526,11 +610,11 @@ function Profile() {
                       }`}
                     />
                     <span className="font-bold">
-                      - {func.convertVND(item?.deposit)}
+                      - {func.convertVND(item?.totalPrice)}
                     </span>
                   </div>
                   <div className="flex items-center justify-between w-full">
-                    <span>Trạng thái</span>
+                    <span>Tình trạng thanh toán</span>
                     <span
                       className={`font-bold ${
                         item?.paymentStatus == "Waiting"
@@ -567,6 +651,20 @@ function Profile() {
                     <span>Phí dịch vụ</span>
                     <span className="font-bold">
                       {func.convertVND(item?.servicePrice)}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between w-full">
+                    <span>Ngày tạo</span>
+                    <span className="font-bold">
+                      {func.convertDate(item?.creationDate)}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between w-full">
+                    <span>Ngày lấy hàng</span>
+                    <span className="font-bold">
+                      {item?.deletionDate != null
+                        ? func.convertDate(item?.deletionDate)
+                        : "Chưa lấy"}
                     </span>
                   </div>
                   <div className="line"></div>
@@ -642,7 +740,7 @@ function Profile() {
         <div className="bg-fog-cus hide-scroll" onClick={handleParentClick}>
           <div
             onClick={handleChildClick}
-            className="hide-scroll p-4 max-h-screen lg:max-h-[75vh] overflow-y-scroll rounded-md bg-white shadow-lg w-full lg:w-[50%] flex flex-wrap items-start justify-between"
+            className="hide-scroll pt-6 px-4 pb-[100px] lg:pb-6 max-h-screen lg:max-h-[55vh] overflow-y-scroll rounded-md bg-white shadow-lg w-full lg:w-[70%] flex flex-wrap items-start justify-between relative"
           >
             <div className="w-full relative">
               <span className="text-[24px] font-bold">Hợp đồng</span>
@@ -651,28 +749,35 @@ function Profile() {
                 className="absolute right-2 top-2 text-[18px] cursor-pointer"
               />
             </div>
-            <div className="w-[50%]">
-              <p>Khách hàng: {contract?.customer?.userName}</p>
-              <p>Giá kho: {func.convertVND(contract?.warehousePrice)}</p>
-              <p>Giá dịch vụ: {func.convertVND(contract?.servicePrice)}</p>
-              <p>Phí đã cọc: {func.convertVND(contract?.depositFee)}</p>
-            </div>
-            <div className="w-[50%]">
-              <p>Email: {contract?.customer?.email}</p>
-              <p>Mô tả: {contract?.description}</p>
-              <p>Ngày bắt đầu: {func.convertDate(contract?.startTime)}</p>
-              <p>Ngày kết thúc: {func.convertDate(contract?.endTime)}</p>
+            <div className="w-full flex items-start flex-col md:flex-row">
+              <div className="w-full md:w-[30%]">
+                <p>Khách hàng: {contract?.customer?.userName}</p>
+                <p>Giá kho: {func.convertVND(contract?.warehousePrice)}</p>
+                <p>Giá dịch vụ: {func.convertVND(contract?.servicePrice)}</p>
+                <p>Phí đã cọc: {func.convertVND(contract?.depositFee)}</p>
+              </div>
+              <div className="w-full md:w-[50%]">
+                <p>Email: {contract?.customer?.email}</p>
+                <p>Mô tả: {contract?.description}</p>
+                <p>Ngày bắt đầu: {func.convertDate(contract?.startTime)}</p>
+                <p>Ngày kết thúc: {func.convertDate(contract?.endTime)}</p>
+              </div>
             </div>
             <div className="w-full mt-5">
               <span className="text-[24px] font-bold">Hàng hoá</span>
             </div>
             <div className="w-full mx-auto grid grid-cols-12 gap-3">
               {goods.map((item) => (
-                <div key={item?.id} className="col-span-4">
-                  <div className="w-full h-[250px] overflow-hidden border-gray-200 border-solid border-[1px] flex items-center justify-center">
+                <div key={item?.id} className="col-span-12 md:col-span-4">
+                  <div className="w-full h-[250px] relative overflow-hidden border-gray-200 border-solid border-[1px] flex items-center justify-center">
                     <img
                       src={item?.goodImages[0]?.imageUrl}
                       alt="ảnh hàng hoá"
+                    />
+                    <input
+                      type="checkbox"
+                      className="absolute top-3 right-3 w-[20px] h-[20px]"
+                      onChange={() => handleAddGoodToRequest(item?.id, item)}
                     />
                   </div>
                   <p className="w-full text-center">{item?.goodName}</p>
@@ -683,6 +788,36 @@ function Profile() {
               ))}
             </div>
           </div>
+        </div>
+      ) : null}
+      {listGoodOfRequest.length > 0 ? (
+        <div className="w-screen fixed bottom-0 left-0 right-0 shadow-2xl z-[99] overscroll-x-auto h-[100px] md:h-[150px] bg-[#fdffde]">
+          <div className="md:w-[80%] w-full mx-auto flex items-center overflow-x-scroll hide-scroll">
+            {listGoodToDisplay.map((item) => (
+              <div key={item?.id} className="flex items-center flex-col mx-1">
+                <div className="w-[70px] h-[70px] overflow-hidden flex items-center justify-center ">
+                  <img
+                    src={item?.goodImages[0]?.imageUrl}
+                    alt="good image"
+                    className="object-fill"
+                  />
+                </div>
+                <p>{item?.goodName}</p>
+                <input
+                  className="outline-none w-[50px]"
+                  type="number"
+                  value={item?.tmpQuantity}
+                  onChange={(e) => updateQuantity(item?.id, e.target.value)}
+                />
+              </div>
+            ))}
+          </div>
+          <button
+            onClick={createRequest}
+            className="rounded-lg btn-primary px-3 py-1 absolute right-10 bottom-4"
+          >
+            Tạo yêu cầu lấy đồ trong kho
+          </button>
         </div>
       ) : null}
     </div>

@@ -39,7 +39,6 @@ function AdminGoods() {
       //   value: warehouse.id,
       //   label: warehouse.information,
       // }));
-      console.log(listRentWareHouse);
       setFormData([
         { name: 'Kho', binding: 'rentWarehouseId', type: 'select', options: listRentWareHouse, defaultValue: listRentWareHouse[0] },
         { name: 'Tên', binding: 'goodName', type: 'input' },
@@ -174,7 +173,7 @@ function AdminGoods() {
   return (
     <div className='w-full'>
       <div className=' w-full md:w-[90%] mx-auto mt-10'>
-        <button className='btn-primary px-3 py-1 my-2' onClick={actionAdd} >Thêm mới</button>
+        {/* <button className='btn-primary px-3 py-1 my-2' onClick={actionAdd} >Thêm mới</button> */}
         <MantineReactTable
           columns={columns}
           initialState={{ columnVisibility: { id: false } }}

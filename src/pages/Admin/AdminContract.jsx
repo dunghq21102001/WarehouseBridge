@@ -114,10 +114,10 @@ function AdminContract() {
       {
         accessorKey: 'file',
         header: 'File hợp đồng',
-        size: 800,
+        // size: 800,
         Cell: ({ cell, row }) => (
           <div className='underline cursor-pointer' onClick={() => window.open(cell.getValue(), '_blank')}>
-            {cell.getValue()}
+            Xem chi tiết
           </div>
         ),
       },
