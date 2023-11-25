@@ -377,6 +377,13 @@ export default class API {
         return instance.post(`/api/Request`, data)
     }
 
+    static updateRequest(data) {
+        return instance.put(`/api/Request`, data)
+    }
+    static deleteRequest(id) {
+        return instance.delete(`/api/Request/${id}`)
+    }
+
     // feedback
     static feedback() {
         return instance.get(`/api/Feedback`)
@@ -387,7 +394,8 @@ export default class API {
     }
 
     static postFeedback(whId, data) {
-        return instance.post(`/api/Feedback/${whId}`, data)
+        return instance.post(`/api/Feedback/${whId}`, data);
+    }
 
     static getRequestType() {
         return instance.get('/api/Enum/RequestType');

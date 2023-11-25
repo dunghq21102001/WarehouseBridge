@@ -19,6 +19,8 @@ const AdminRequest = () => {
   const [listStaff, setListStaff] = useState([]);
   const [listRQStatus, setListRQStatus] = useState([]);
   const [listRQType, setListRQType] = useState([]);
+  const [isShowUpdate, setIsShowUpdate] = useState(false)
+  const [request, setRequest] = useState(null)
   const [formData, setFormData] = useState([
     {
       name: "Khách hàng",
@@ -42,6 +44,23 @@ const AdminRequest = () => {
       defaultValue: "",
     },
     { name: "Lí do", binding: "denyReason", type: "input" },
+    {
+      name: "Thể loại yêu cầu",
+      binding: "requestType",
+      type: "select",
+      options: [1, 2],
+      defaultValue: "",
+    },
+  ]);
+
+  const [formData2, setFormData2] = useState([
+    {
+      name: "Yêu cầu trạng thái",
+      binding: "requestStatus",
+      type: "select",
+      options: [1, 2, 3],
+      defaultValue: "",
+    },
     {
       name: "Thể loại yêu cầu",
       binding: "requestType",
@@ -122,12 +141,10 @@ const AdminRequest = () => {
   };
 
   const getRequestStatus = () => {
-    const requestStatus = {}; // Changed variable name from requestStaus to requestStatus
+    const requestStatus = {}; 
     listRQStatus.forEach((status) => {
       requestStatus[status.value] = status.display;
     });
-  
-    return requestStatus; // Changed from return statement to return the entire requestStatus object
   };
   
   const getRequestType = () => {
@@ -135,8 +152,6 @@ const AdminRequest = () => {
     listRQType.forEach((status) => {
       requestType[status.value] = status.display;
     });
-  
-    return requestType;
   };
 
   const getUser = () => {
@@ -154,13 +169,12 @@ const AdminRequest = () => {
 
   const addRequest = (data) => {
     const finalData = {
-      customerId: data.customerId,
-      staffId: data.staffId,
-      requestStatus: getRequestStatus()[data.requestStatus], // Use the function to get the display value
-      denyReason: data.denyReason,
-      requestType: getRequestType()[data.requestType], // Use the function to get the display value
+      customerId: data?.customerId || listUser[0]?.id,
+      staffId: data?.staffId || listStaff[0]?.id,
+      requestStatus: data?.requestStatus == "Pending" ? 1 : data?.requestStatus == "Canceled" ? 2 : 3 || listRQStatus[0]?.value, 
+      denyReason: data?.denyReason,
+      requestType: data?.requestType == "PickUp" ? 1 : 2 || listRQType[0]?.value,
     };
-  
     API.addRequest(finalData)
       .then((res) => {
         fetchListRequest();
@@ -174,7 +188,7 @@ const AdminRequest = () => {
 
 
   useEffect(() => {
-    if (setListRQStatus.length > 0 && setListUser.length > 0 && setListStaff.length > 0) {
+    if (setListRQStatus.length > 0 && setListUser.length > 0 && setListStaff.length > 0 && setListRQType.length > 0) {
       setFormData([
         {
           name: "Khách hàng",
@@ -211,13 +225,106 @@ const AdminRequest = () => {
     }
   }, [listRQStatus, listUser, listStaff, listRQType])
 
+  useEffect(() => {
+    if (setListRQStatus.length > 0 && setListUser.length > 0 && setListStaff.length > 0 && setListRQType.length > 0) {
+      setFormData2([
+        {
+          name: "Yêu cầu trạng thái",
+          binding: "requestStatus",
+          type: "select",
+          options: listRQStatus,
+          defaultValue: listRQStatus[0],
+        },     
+        {
+          name: "Thể loại yêu cầu",
+          binding: "requestType",
+          type: "select",
+          options: listRQType,
+          defaultValue: listRQType[0],
+        },
+      ]);
+
+      // getRequestStatus();
+    }
+  }, [listRQStatus, listUser, listStaff, listRQType])
+
   const handleCancel = () => {
     setIsShow(false);
+    setIsShowUpdate(false)
   };
 
-  const actionAdd = () => {
-    setIsShow(true);
-  };
+  const getRequest = (data) => {
+    setRequest({
+      id: data.original.id,
+      customerId: data.original.customerId,
+      staffId: data.original.staffId,
+      requestStatus: data.original.requestStatus,
+      denyReason: data.original.denyReason,
+      requestType: data.original.requestType,
+    })
+    setIsShowUpdate(true)
+  }
+
+  const updateRequest = (data) => {
+    dispatch(changeLoadingState(true))
+    API.updateRequest({
+      id: data?.id,
+      customerId: data?.customerId || listUser[0]?.id,
+      staffId: data?.staffId || listStaff[0]?.id,
+      requestStatus: data?.requestStatus == "Pending" ? 1 : data?.requestStatus == "Canceled" ? 2 : 3 || listRQStatus[0]?.value, 
+      denyReason: data?.denyReason,
+      requestType: data?.requestType == "PickUp" ? 1 : 2 || listRQType[0]?.value,
+    })
+      .then(res => {
+        handleCancel()
+        dispatch(changeLoadingState(false))
+        fetchListRequest()
+        noti.success(res.data)
+      })
+      .catch(err => {
+        noti.error(err?.response?.data?.errors[0])
+        dispatch(changeLoadingState(false))
+      })
+  }
+
+  const handleDeleteRow = (data) => {
+    confirmAlert({
+      customUI: ({ onClose }) => {
+        return (
+          <div className='bg-[#f7f7f7] rounded-md p-4 shadow-md'>
+            <p className="text-[24px]">Bạn có chắc chắn muốn xoá request này</p>
+            <div className="w-full flex justify-end mt-3">
+              <button className="px-3 py-1 mr-2 rounded-md btn-cancel" onClick={onClose}>Huỷ</button>
+              <button
+                className="px-3 py-1 rounded-md btn-primary"
+                onClick={() => {
+                  deleteRequest(data.getValue('id'))
+                  onClose()
+                }}
+              >
+                Xoá
+              </button>
+            </div>
+          </div>
+        )
+      }
+    })
+  }
+
+  const deleteRequest = (id) => {
+    API.deleteRequest(id)
+      .then(res => {
+        fetchListRequest()
+        noti.success(res.data)
+      })
+      .catch(err => {
+        noti.error(err.response?.data)
+      })
+  }
+
+  // const actionAdd = () => {
+  //   setIsShow(true);
+  // };
 
   const columns = useMemo(
     () => [
@@ -230,10 +337,10 @@ const AdminRequest = () => {
         accessorKey: "customerName",
         header: "Tên khách hàng",
       },
-      {
-        accessorKey: "staffName",
-        header: "Tên nhân viên",
-      },
+      // {
+      //   accessorKey: "staffName",
+      //   header: "Tên nhân viên",
+      // },
       {
         accessorKey: "requestStatus",
         header: "Yêu cầu trạng thái",
@@ -258,9 +365,9 @@ const AdminRequest = () => {
   return (
     <div className="w-full">
       <div className=" w-full md:w-[90%] mx-auto mt-10">
-        <button className="btn-primary px-3 py-1 my-2" onClick={actionAdd}>
+        {/* <button className="btn-primary px-3 py-1 my-2" onClick={actionAdd}>
           Thêm mới
-        </button>
+        </button> */}
         <MantineReactTable
           columns={columns}
           initialState={{ columnVisibility: { id: false } }}
@@ -268,8 +375,8 @@ const AdminRequest = () => {
           enableEditing
           renderRowActions={({ row, table }) => (
             <div className="flex items-center">
-              {/* <button onClick={() => getDetailHastag(row)} className=''><AiOutlineEdit className='edit-icon' /></button>
-              <button onClick={() => handleDeleteRow(row)} className=''><MdDelete className='del-icon' /></button> */}
+              <button onClick={() => getRequest(row)} className=''><AiOutlineEdit className='edit-icon' /></button>
+              <button onClick={() => handleDeleteRow(row)} className=''><MdDelete className='del-icon' /></button>
             </div>
           )}
         />
@@ -284,6 +391,15 @@ const AdminRequest = () => {
       ) : (
         ""
       )}
+      {isShowUpdate ?
+        <FormUpdate
+          title={formData2}
+          buttonName={'Chỉnh sửa'}
+          initialData={request}
+          onSubmit={updateRequest}
+          onCancel={handleCancel}
+        />
+        : null}
     </div>
   );
 };
