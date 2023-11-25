@@ -17,7 +17,8 @@ function FormUpdate({ title = [], onSubmit, buttonName, onCancel, initialData, t
 
   useEffect(() => {
     if (initialData) {
-     if(initialData.avatar && typeof initialData.avatar == 'string') initialData['image'] = [initialData.avatar]
+      // goodImages
+      if(initialData.avatar && typeof initialData.avatar == 'string') initialData['image'] = [initialData.avatar]
       setFormData({ ...initialData, images: initialData.image  || [] });
     }
   }, [initialData])

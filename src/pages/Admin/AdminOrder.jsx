@@ -76,6 +76,11 @@ function AdminOrder() {
         header: 'Khách hàng',
       },
       {
+        accessorKey: 'warehouseDetail.warehouse.name',
+        header: 'Kho',
+        size: 200
+      },
+      {
         accessorKey: 'customer.phoneNumber',
         header: 'Số điện thoại',
       },

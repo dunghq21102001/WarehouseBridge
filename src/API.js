@@ -166,6 +166,18 @@ export default class API {
         return instance.get(`/Admin/api/RentWarehouse`)
     }
 
+    static goodById(rentWHId, id) {
+        return instance.get(`/Admin/api/Good/${rentWHId}/${id}`)
+    }
+
+    static putGood(id, data) {
+        return instance.put(`/Admin/api/Good/${id}`, data)
+    }
+
+    static deleteGood(rentWHId, id) {
+        return instance.delete(`/Admin/api/Good/${rentWHId}/${id}`)
+    }
+
     // provider
     static provider() {
         return instance.get('/api/Providers')
