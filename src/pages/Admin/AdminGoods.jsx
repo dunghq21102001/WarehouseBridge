@@ -224,6 +224,46 @@ function AdminGoods() {
       });
   };
 
+  const handleDeleteRow = (data) => {
+    confirmAlert({
+      customUI: ({ onClose }) => {
+        return (
+          <div className="bg-[#f7f7f7] rounded-md p-4 shadow-md">
+            <p className="text-[24px]">Bạn có chắc chắn muốn xoá good này</p>
+            <div className="w-full flex justify-end mt-3">
+              <button
+                className="px-3 py-1 mr-2 rounded-md btn-cancel"
+                onClick={onClose}
+              >
+                Huỷ
+              </button>
+              <button
+                className="px-3 py-1 rounded-md btn-primary"
+                onClick={() => {
+                  deleteGood(data.getValue("rentWarehouseId"), data.getValue("id"));
+                  onClose();
+                }}
+              >
+                Xoá
+              </button>
+            </div>
+          </div>
+        );
+      },
+    });
+  };
+
+  const deleteGood = (rentWarehouseId, id) => {
+    API.deleteGood(rentWarehouseId, id)
+      .then((res) => {
+        fetchListGood();
+        noti.success(res.data);
+      })
+      .catch((err) => {
+        noti.error(err.response?.data);
+      });
+  };
+
   return (
     <div className="w-full">
       <div className=" w-full md:w-[90%] mx-auto mt-10">
@@ -242,7 +282,7 @@ function AdminGoods() {
               <button onClick={() => getGoodDetail(row)} className="">
                 <AiOutlineEdit className="edit-icon" />
               </button>
-              {/* <button onClick={() => handleDeleteRow(row)} className=''><MdDelete className='del-icon' /></button> */}
+              <button onClick={() => handleDeleteRow(row)} className=''><MdDelete className='del-icon' /></button>
             </div>
           )}
         />

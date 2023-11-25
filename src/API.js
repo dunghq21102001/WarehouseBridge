@@ -174,8 +174,8 @@ export default class API {
         return instance.put(`/Admin/api/Good/${id}`, data)
     }
 
-    static deleteGood(rentWHId, id) {
-        return instance.delete(`/Admin/api/Good/${rentWHId}/${id}`)
+    static deleteGood(rentWarehouseId, id) {
+        return instance.delete(`/Admin/api/Good/${rentWarehouseId}/${id}`)
     }
 
     // provider
