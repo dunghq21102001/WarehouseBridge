@@ -383,6 +383,7 @@ function Profile() {
     })
       .then((res) => {
         noti.success(res.data.result);
+        cancelAll()
         dispatch(changeLoadingState(false));
       })
       .catch((err) => {

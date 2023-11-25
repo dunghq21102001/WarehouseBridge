@@ -5,16 +5,14 @@ import API from "../../API";
 import { useDispatch } from "react-redux";
 import { changeLoadingState } from "../../reducers/SystemReducer";
 import { AiOutlineEdit } from "react-icons/ai";
-import { MdDelete } from "react-icons/md";
-import { IoMdPaper } from "react-icons/io";
 import func from "../../common/func";
 import FormBase from "../../components/FormBase";
 import FormUpdate from "../../components/FormUpdate";
 import noti from "../../common/noti";
 import { storage } from "../../firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
+import { downloadExcel } from "react-export-table-to-excel";
 
 function AdminUser() {
   const dispatch = useDispatch();
@@ -47,6 +45,8 @@ function AdminUser() {
     { name: "Ảnh đại diện", binding: "avatar", type: "file" },
   ]);
 
+  const [excelList, setExcelList] = useState([]);
+
   useEffect(() => {
     fetchUser();
     fetchStaff();
@@ -57,6 +57,17 @@ function AdminUser() {
     API.users()
       .then((res) => {
         setList(res.data);
+        let tmpList = [];
+        res.data.map((item) => {
+          tmpList.push({
+            fullname: item?.fullname,
+            email: item?.email,
+            phoneNumber: item?.phoneNumber,
+            birthday: func.convertDate(item?.birthday),
+            address: item?.address,
+          });
+        });
+        setExcelList(tmpList)
         dispatch(changeLoadingState(false));
       })
       .catch((er) => dispatch(changeLoadingState(false)));
@@ -353,7 +364,18 @@ function AdminUser() {
   //       })
   //  }
 
-  const exportExcel = () => {};
+  const header = ["fullname", "email", "phoneNumber", "birthday", "address"];
+
+  const exportExcel = () => {
+    downloadExcel({
+      fileName: "user-data",
+      sheet: "user-data",
+      tablePayload: {
+        header,
+        body: excelList,
+      },
+    });
+  };
 
   return (
     <div className="w-full">
@@ -362,6 +384,7 @@ function AdminUser() {
         <button className="btn-primary px-3 py-1 my-2" onClick={exportExcel}>
           Xuất tệp Excel
         </button>
+
         <MantineReactTable
           columns={columns}
           initialState={{ columnVisibility: { id: false } }}
