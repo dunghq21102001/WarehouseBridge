@@ -227,9 +227,9 @@ function AdminGoods() {
   return (
     <div className="w-full">
       <div className=" w-full md:w-[90%] mx-auto mt-10">
-        <button className="btn-primary px-3 py-1 my-2" onClick={actionAdd}>
+        {/* <button className="btn-primary px-3 py-1 my-2" onClick={actionAdd}>
           Thêm mới
-        </button>
+        </button> */}
         <MantineReactTable
           columns={columns}
           initialState={{
