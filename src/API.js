@@ -9,8 +9,8 @@ function checkToken() {
 }
 checkToken()
 const instance = axios.create({
-    // baseURL: 'https://localhost:5001',
-    baseURL: 'https://warebousebridge.azurewebsites.net/',
+    baseURL: 'https://localhost:5001',
+    // baseURL: 'https://warebousebridge.azurewebsites.net/',
 
     headers: {
         'Content-Type': 'application/json',
@@ -416,6 +416,19 @@ export default class API {
 
     static getRequestType() {
         return instance.get('/api/Enum/RequestType');
+    }
+
+    //service payment
+    static servicePayment() {
+        return instance.get(`/api/ServicePayment`)
+    }
+
+    static addServicePayment() {
+        return instance.post(`/api/ServicePayment`)
+    }
+
+    static servicePaymentById(id) {
+        return instance.get(`/api/ServicePayment/${id}`)
     }
 
 }

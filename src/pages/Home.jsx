@@ -68,7 +68,7 @@ function Home() {
       <div className='w-full min-h-[500px] hidden md:flex'>
         <div className='w-[50%] bg-primary flex flex-col items-start pl-20 pt-24 pr-8'>
           <h1 className='uppercase text-[18px] font-bold text-white'>Đối tác chất lượng</h1>
-          <h1 className='text-[38px] font-bold text-white mt-4'>My Storage</h1>
+          <h1 className='text-[38px] font-bold text-white mt-4'>SelfStorageShield</h1>
           <p className='text-white my-5'>Bạn còn phân vân giữa hai mô hình cho thuê kho để đồ TP HCM, hay muốn tham khảo thêm về giá? Đừng ngần ngại liên hệ MyStorage hoặc đọc thêm bài viết dưới đây để có thông tin bao quát nhất về dịch vụ của chúng tôi.</p>
           <div className='flex mt-3 justify-between w-full'>
             <button className='btn-secondary px-3 md:px-4 py-2 font-bold uppercase w-[45%] text-[10px] xl:text-[15px] mr-3'>tìm hiểu thêm</button>
@@ -150,11 +150,11 @@ function Home() {
       </div>
 
       {/* screen 6 */}
-      <div className='w-full h-[500px] lg:h-[350px] bg-primary hidden md:flex items-center justify-center'>
+      {/* <div className='w-full h-[500px] lg:h-[350px] bg-primary hidden md:flex items-center justify-center'>
         <div className='w-[70%]'>
           <SliderComment comments={comments} />
         </div>
-      </div>
+      </div> */}
 
       {/* screen 7 */}
       <OutstandingPartner />

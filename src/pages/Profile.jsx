@@ -9,6 +9,7 @@ import func from "../common/func";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { changeLoadingState } from "../reducers/SystemReducer";
 import { authen } from "../reducers/UserReducer";
+import FormBase from "../components/FormBase";
 import API from "../API";
 function Profile() {
   const user = useSelector((state) => state.auth);
@@ -22,7 +23,7 @@ function Profile() {
     { id: 0, name: "Tổng quan" },
     { id: 1, name: "Kho đã thuê" },
     { id: 2, name: "Lịch sử giao dịch" },
-    // { id: 3, name: 'Hợp đồng' },
+    { id: 3, name: "Dịch vụ thanh toán" },
   ];
   const role = user.role;
   const [name, setName] = useState("");
@@ -45,6 +46,16 @@ function Profile() {
   const [listGoodOfRequest, setListGoodOfRequest] = useState([]);
   const [listGoodToDisplay, setListGoodToDisplay] = useState([]);
 
+  const [isShowAddGoodToWH, setIsShowAddGoodToWH] = useState(false);
+  const [listGoodTmp, setListGoodTmp] = useState([]);
+  const [formData, setformData] = useState([
+    { name: "Tên món đồ", binding: "name", type: "input" },
+    { name: "Số lượng", binding: "quantity", type: "input" },
+    { name: "Ảnh", binding: "avatar", type: "file" },
+  ]);
+
+  const [listServicePayment, setListServicePayment] = useState([]);
+
   useEffect(() => {
     dispatch(changeLoadingState(true));
     API.getOrder()
@@ -61,6 +72,7 @@ function Profile() {
     fetchContract();
     fetchUser();
     // fetchWarehouse()
+    fetchServicePayment();
   }, []);
 
   function fetchUser() {
@@ -83,6 +95,18 @@ function Profile() {
     API.warehouses()
       .then((res) => {
         dispatch(changeLoadingState(false));
+      })
+      .catch((err) => {
+        dispatch(changeLoadingState(false));
+      });
+  };
+
+  const fetchServicePayment = () => {
+    dispatch(changeLoadingState(true));
+    API.servicePayment()
+      .then((res) => {
+        dispatch(changeLoadingState(false));
+        setListServicePayment(res.data);
       })
       .catch((err) => {
         dispatch(changeLoadingState(false));
@@ -193,6 +217,8 @@ function Profile() {
     setIsShowGood(false);
     setListGoodOfRequest([]);
     setListGoodToDisplay([]);
+    setIsShowAddGoodToWH(false);
+    setListGoodTmp([]);
   };
 
   const openPopup = () => {
@@ -383,7 +409,7 @@ function Profile() {
     })
       .then((res) => {
         noti.success(res.data.result);
-        cancelAll()
+        cancelAll();
         dispatch(changeLoadingState(false));
       })
       .catch((err) => {
@@ -402,6 +428,20 @@ function Profile() {
         return item;
       })
     );
+  };
+
+  const addGoodTolistTmp = (data) => {
+    if (listGoodTmp.length > 6)
+      return noti.warning(
+        "Bạn chỉ có thể thêm tối da 6 món hàng vào kho trong 1 lần thêm",
+        3000
+      );
+    if (!Number.isInteger(Number.parseInt(data?.quantity)))
+      return noti.error("Bạn phải nhập số lượng là 1 số!");
+    if (Number.parseInt(data?.quantity) > 100)
+      return noti.error("Số lượng chỉ được dưới 100");
+    if(data?.images.length == 0) return noti.error('Bạn phải thêm ảnh vào để tạo hàng hoá')
+    setListGoodTmp([...listGoodTmp, data]);
   };
   return (
     <div className="w-full bg-[#f9f5f1] min-h-screen">
@@ -489,10 +529,11 @@ function Profile() {
                 />
                 <input
                   type="text"
-                  className="w-full focus:outline-none focus:bg-[#ccc] px-2 rounded-md py-1"
+                  className="w-full focus:outline-none focus:bg-[#ccc] px-2 rounded-md py-1 cursor-not-allowed"
                   onChange={(e) => setEmail(e.target.value)}
                   onBlur={() => updateData("email")}
                   value={email}
+                  disabled
                 />
                 <input
                   type="datetime-local"
@@ -692,7 +733,35 @@ function Profile() {
           }`}
         >
           <div className="w-[90%] mx-auto grid grid-cols-12 gap-3">
-            hợp đồng
+            {listServicePayment.length == 0 ? (
+              <p className="col-span-12 text-gray-500 text-center w-full text-[18px]">
+                Không có dữ liệu
+              </p>
+            ) : null}
+            {listServicePayment.length > 0 &&
+              listServicePayment.map((item) => (
+                <div
+                  className="col-span-12 md:col-span-4 border-gray-300 border-solid border-[1px] rounded-lg flex items-start justify-between px-2 py-1"
+                  key={item?.id}
+                >
+                  <div className="w-[30%] flex flex-col items-start">
+                    <span>Tháng</span>
+                    <span>Năm</span>
+                    <span>Phí dịch vụ</span>
+                    <span>Phí kho</span>
+                    <span>Tổng phí</span>
+                    <span>Hạn chót</span>
+                  </div>
+                  <div className="w-[65%] flex items-end flex-col">
+                    <span>{item?.monthPayment}</span>
+                    <span>{item?.yearPayment}</span>
+                    <span>{func.convertVND(item?.servicePrice)}</span>
+                    <span>{func.convertVND(item?.warehousePrice)}</span>
+                    <span>{func.convertVND(item?.totalPrice)}</span>
+                    <span>{func.convertDate(item?.deadline)}</span>
+                  </div>
+                </div>
+              ))}
           </div>
         </div>
       </div>
@@ -764,8 +833,14 @@ function Profile() {
                 <p>Ngày kết thúc: {func.convertDate(contract?.endTime)}</p>
               </div>
             </div>
-            <div className="w-full mt-5">
+            <div className="w-full mt-5 flex items-center justify-between">
               <span className="text-[24px] font-bold">Hàng hoá</span>
+              <button
+                onClick={() => setIsShowAddGoodToWH(true)}
+                className="btn-primary px-3 py-1 rounded-lg"
+              >
+                Thêm đồ vào kho
+              </button>
             </div>
             <div className="w-full mx-auto grid grid-cols-12 gap-3">
               {goods.map((item) => (
@@ -792,7 +867,7 @@ function Profile() {
         </div>
       ) : null}
       {listGoodOfRequest.length > 0 ? (
-        <div className="w-screen fixed bottom-0 left-0 right-0 shadow-2xl z-[99] overscroll-x-auto h-[100px] md:h-[150px] bg-[#fdffde]">
+        <div className="w-screen lg:w-[90%] lg:mx-auto fixed bottom-0 left-0 right-0 shadow-2xl z-[99] overscroll-x-auto h-[100px] md:h-[150px] bg-white lg:rounded-tr-2xl lg:rounded-tl-2xl border-[1px] border-solid border-gray-300 lg:border-black">
           <div className="md:w-[80%] w-full mx-auto flex items-center overflow-x-scroll hide-scroll">
             {listGoodToDisplay.map((item) => (
               <div key={item?.id} className="flex items-center flex-col mx-1">
@@ -805,7 +880,7 @@ function Profile() {
                 </div>
                 <p>{item?.goodName}</p>
                 <input
-                  className="outline-none w-[50px]"
+                  className="outline-none w-[50px] bg-gray-400"
                   type="number"
                   value={item?.tmpQuantity}
                   onChange={(e) => updateQuantity(item?.id, e.target.value)}
@@ -819,6 +894,56 @@ function Profile() {
           >
             Tạo yêu cầu lấy đồ trong kho
           </button>
+        </div>
+      ) : null}
+
+      {isShowAddGoodToWH ? (
+        <div className="bg-fog-cus">
+          <div className="w-[50%] overflow-y-scroll hide-scroll max-h-[80vh] bg-white rounded-lg p-5">
+            <div className="w-full mx-auto flex">
+              <FormBase
+                onCancel={cancelAll}
+                isDisplayBG={false}
+                title={formData}
+                onSubmit={addGoodTolistTmp}
+                buttonName="Thêm mới"
+                totalImage={1}
+              />
+            </div>
+
+            {listGoodTmp.length > 0 ? (
+              <div className="w-full flex items-center justify-between px-5">
+                <p className="text-[18px]">Hàng bạn muốn thêm: </p>
+                <button className="btn-primary px-3 py-1 rounded-lg">
+                  Tạo yêu cầu thêm hàng hoá
+                </button>
+              </div>
+            ) : null}
+
+            <div className="w-[90%] mx-auto grid grid-cols-12 gap-3">
+              {listGoodTmp.length > 0 &&
+                listGoodTmp.map((item, index) => (
+                  <div
+                    className="col-span-6 md:col-span-4 flex flex-col items-center max-h-[400px] overflow-y-scroll hide-scroll"
+                    key={index}
+                  >
+                    <div className="w-[100px] h-[100px] overflow-hidden flex items-center justify-center">
+                      {item?.images?.length > 0 && item.images[0] ? (
+                        <img
+                          className="object-fill"
+                          src={URL.createObjectURL(item?.images[0])}
+                          alt="good image"
+                        />
+                      ) : (
+                        <span>No image available</span>
+                      )}
+                    </div>
+                    <p>Tên: {item?.name}</p>
+                    <p>Số lượng: {item?.quantity}</p>
+                  </div>
+                ))}
+            </div>
+          </div>
         </div>
       ) : null}
     </div>

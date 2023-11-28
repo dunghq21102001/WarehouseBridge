@@ -461,7 +461,7 @@ const AdminRequest = () => {
             />
             <p className="w-full text-[24px]">Hàng hoá</p>
             <div className="flex flex-col w-full my-2">
-              {requestDetail.map((item) => (
+              {Array.isArray(requestDetail) && requestDetail.map((item) => (
                 <div
                   className="w-full flex items-start justify-between border-b-[1px] border-solid border-gray-300 mt-4 pb-2"
                   key={item?.id}

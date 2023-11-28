@@ -3,7 +3,7 @@ import '../css/FormBase.css'
 import { TiDeleteOutline } from 'react-icons/ti'
 import { Textarea } from "@mantine/core"
 import noti from "../common/noti"
-function FormBase({ title = [], onSubmit, buttonName, onCancel, totalImage = 4 }) {
+function FormBase({ title = [], onSubmit, buttonName, onCancel, totalImage = 4, isDisplayBG = true }) {
     const [formData, setFormData] = useState({
         images: []
     })
@@ -101,8 +101,8 @@ function FormBase({ title = [], onSubmit, buttonName, onCancel, totalImage = 4 }
     }
 
     return (
-        <div className="bg-fog" onClick={handleCancel}>
-            <form className="hide-scroll w-[95%] md:w-[70%] lg:w-[50%] max-h-[80vh] overflow-y-scroll" onSubmit={handleSubmit}>
+        <div className={isDisplayBG ? 'bg-fog' : 'w-full'} onClick={handleCancel}>
+            <form className={isDisplayBG ? "hide-scroll w-[95%] md:w-[70%] lg:w-[50%] max-h-[80vh] overflow-y-scroll" : 'w-full max-h-[80vh] overflow-y-scroll hide-scroll'} onSubmit={handleSubmit}>
                 {title.map((inputTitle) => (
                     <div className="flex w-[80%] flex-col md:flex-row mx-auto my-4 md:my-2 justify-between" key={inputTitle.name}>
                         <label>{inputTitle.name}</label>

@@ -1,5 +1,5 @@
 import { useEffect, useState, Fragment, useRef, useCallback } from "react";
-import logoImg from "../assets/images/fav.png";
+import logoImg from "../assets/images/logo/11zon_cropped.png";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AiFillMail, AiFillPhone } from "react-icons/ai";
 import { HiMenu } from "react-icons/hi";
@@ -85,7 +85,7 @@ function Header() {
         ""
       )}
       <div className="w-full lg:w-[20%] flex items-center justify-between relative lg:justify-center bg-primary px-2 py-4">
-        <img src={logoImg} alt="" className="hidden lg:block w-[80%]" />
+        <img src={logoImg} alt="" className="hidden lg:block w-[100px]" />
         {user.auth == null ? (
           <div
             onClick={() => changeRoute("login")}
@@ -168,10 +168,18 @@ function Header() {
             &nbsp;+0975688774
           </p>
           <div className="flex flex-wrap text-[24px] items-center">
-            <BiLogoFacebook className="text-[#fea116] hover:text-[#fea116c8] cursor-pointer mx-1" />
-            <BiLogoInstagram className="text-[#fea116] hover:text-[#fea116c8] cursor-pointer mx-1" />
+            <BiLogoFacebook
+              onClick={() =>
+                window.open(
+                  "https://www.facebook.com/profile.php?id=61551608820562",
+                  "_blank"
+                )
+              }
+              className="text-[#fea116] hover:text-[#fea116c8] cursor-pointer mx-1"
+            />
+            {/* <BiLogoInstagram className="text-[#fea116] hover:text-[#fea116c8] cursor-pointer mx-1" />
             <BiLogoTwitter className="text-[#fea116] hover:text-[#fea116c8] cursor-pointer mx-1" />
-            <BiLogoYoutube className="text-[#fea116] hover:text-[#fea116c8] cursor-pointer mx-1" />
+            <BiLogoYoutube className="text-[#fea116] hover:text-[#fea116c8] cursor-pointer mx-1" /> */}
           </div>
         </div>
 
