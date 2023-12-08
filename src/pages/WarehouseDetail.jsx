@@ -345,7 +345,11 @@ function WarehouseDetail() {
                       <div className="flex items-center w-full">
                         <div className="w-[60px] h-[60px] overflow-hidden flex items-center justify-center rounded-full">
                           <img
-                            src={item?.applicationUser?.avatar}
+                            src={
+                              item?.applicationUser?.avatar == "null"
+                                ? "https://static.vecteezy.com/system/resources/previews/019/896/008/original/male-user-avatar-icon-in-flat-design-style-person-signs-illustration-png.png"
+                                : item?.applicationUser?.avatar
+                            }
                             alt="user image"
                             className="object-fill"
                           />

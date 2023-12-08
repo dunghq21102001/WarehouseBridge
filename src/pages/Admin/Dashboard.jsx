@@ -11,27 +11,34 @@ import { changeLoadingState } from "../../reducers/SystemReducer";
 import func from "../../common/func";
 import BarChart from "../../components/charts/BarChart";
 import LineChart from "../../components/charts/LineChart";
+import { downloadExcel } from "react-export-table-to-excel";
 
 function Dashboard() {
   const dispatch = useDispatch();
   const [deposit, setDeposit] = useState([]);
-  const [revenue, setRevenue] = useState(0);
   const [WH, setWH] = useState(0);
   const [user, setUser] = useState(0);
   const [partner, setPartner] = useState(0);
   const [listCounting, setListCounting] = useState([]);
-
+  const [listDepositTmp, setListDepositTmp] = useState([]);
+  const [listTransaction, setListTransaction] = useState([]);
+  const [transactionTmp, setTransactionTmp] = useState([]);
+  const [totalRevenue, setTotalRevenue] = useState(0);
+  const [listServicePayment, setListServicePayment] = useState([]);
+  const [servicePaymentTmp, setServicePaymentTmp] = useState([]);
   useEffect(() => {
     fetchDeposit();
     fetchListWarehouse();
     fetchUser();
     fetchListProvider();
-
+    fetchTransaction();
+    fetchTotalRevenue();
+    fetchServicePayment();
     setListCounting([
       {
         id: 1,
         name: "Doanh thu",
-        number: func.convertVND(revenue),
+        number: func.convertVND(totalRevenue),
         icon: <FcMoneyTransfer className="text-[26px]" />,
       },
       {
@@ -53,7 +60,73 @@ function Dashboard() {
         icon: <MdOutlineGroups2 className="text-[26px] text-[#efae4e]" />,
       },
     ]);
-  }, [revenue, WH, user, partner]);
+  }, [WH, user, partner]);
+
+  const fetchServicePayment = () => {
+    dispatch(changeLoadingState(true));
+    API.servicePaymentAdmin()
+      .then((res) => {
+        dispatch(changeLoadingState(false));
+        setListServicePayment(res.data);
+        let tmpList = [];
+
+        res.data.map((item) => {
+          tmpList.push({
+            month: item?.monthPayment,
+            year: item?.yearPayment,
+            servicePrice: func.convertVND(item?.servicePrice),
+            warehousePrice: func.convertVND(item?.warehousePrice),
+            totalPrice: func.convertVND(item?.totalPrice),
+            creationDate: func.convertDate(item?.creationDate),
+            deadline: func.convertDate(item?.deadline),
+            paymentDate: item?.paymentDate
+              ? func.convertDate(item?.paymentDate)
+              : "Chưa thanh toán",
+          });
+        });
+
+        setServicePaymentTmp(tmpList)
+      })
+      .catch((err) => dispatch(changeLoadingState(false)));
+  };
+
+  const fetchTransaction = () => {
+    dispatch(changeLoadingState(true));
+    API.transaction()
+      .then((res) => {
+        setListTransaction(res.data);
+        let tmpList = [];
+        res.data.map((item) => {
+          tmpList.push({
+            time: func.convertDate(item?.creationDate),
+            name:
+              item?.servicePayment?.contract?.customer?.fullname ||
+              item?.servicePayment?.contract?.customer?.userName,
+            price: func.convertVND(item?.amount),
+            status:
+              item?.status == 1
+                ? "Thành công"
+                : item?.status == 2
+                ? "Thất bại"
+                : "Đang đợi",
+          });
+        });
+
+        setTransactionTmp(tmpList);
+        dispatch(changeLoadingState(false));
+      })
+      .catch((err) => dispatch(changeLoadingState(false)));
+  };
+
+  const fetchTotalRevenue = () => {
+    dispatch(changeLoadingState(true));
+    API.totalRevenue()
+      .then((res) => {
+        setTotalRevenue(res.data);
+        dispatch(changeLoadingState(false));
+      })
+      .catch((err) => dispatch(changeLoadingState(false)));
+  };
 
   const fetchDeposit = () => {
     dispatch(changeLoadingState(true));
@@ -63,11 +136,16 @@ function Dashboard() {
         let tmpList;
         if (Array.isArray(res.data)) tmpList = res.data.reverse();
         setDeposit(tmpList);
-        let tmpRevenue = 0;
+        let listExcel = [];
         res.data.map((item) => {
-          tmpRevenue = tmpRevenue + item?.amount;
+          listExcel.push({
+            time: func.convertDate(item?.creationDate),
+            name: item?.order?.customer?.fullname,
+            price: func.convertVND(item?.amount),
+            status: item?.status == 1 ? "Thành công" : "Thất bại",
+          });
         });
-        setRevenue(tmpRevenue);
+        setListDepositTmp(listExcel);
       })
       .catch((err) => {
         dispatch(changeLoadingState(false));
@@ -156,6 +234,179 @@ function Dashboard() {
     []
   );
 
+  const columnsTransaction = useMemo(
+    () => [
+      {
+        accessorKey: "id",
+        header: "ID",
+        Cell: ({ cell, row }) => <div>...</div>,
+      },
+      {
+        accessorKey: "info",
+        header: "Thông tin đơn hàng",
+      },
+      {
+        accessorKey: "servicePayment.contract.customer.fullname",
+        header: "Khách hàng",
+      },
+      {
+        accessorKey: "servicePayment.contract.customer.userName",
+        header: "Tên tài khoản",
+      },
+      {
+        accessorKey: "servicePayment.contract.customer.email",
+        header: "Email",
+      },
+      {
+        accessorKey: "amount",
+        header: "Số tiền",
+        Cell: ({ cell, row }) => <div>{func.convertVND(cell.getValue())}</div>,
+      },
+
+      {
+        accessorKey: "message",
+        header: "Tin nhắn",
+      },
+      {
+        accessorKey: "orderType",
+        header: "Phương thức đặt hàng",
+      },
+      {
+        accessorKey: "payType",
+        header: "Loại tài khoản",
+      },
+      {
+        accessorKey: "paymentMethod",
+        header: "Phương thức thanh toán",
+      },
+      {
+        accessorKey: "creationDate",
+        header: "Ngày tạo",
+        Cell: ({ cell, row }) => <div>{func.convertDate(cell.getValue())}</div>,
+      },
+      {
+        accessorKey: "status",
+        header: "Trạng thái",
+        Cell: ({ cell, row }) => (
+          <div>
+            {cell.getValue() == 1
+              ? "Thành công"
+              : cell.getValue() == 2
+              ? "Thất bại"
+              : "Đang đợi"}
+          </div>
+        ),
+      },
+    ],
+    []
+  );
+
+  const columnsServicePayment = useMemo(
+    () => [
+      {
+        accessorKey: "id",
+        header: "ID",
+        Cell: ({ cell, row }) => <div>...</div>,
+      },
+      {
+        accessorKey: "contract.customer.fullname",
+        header: "Khách hàng",
+      },
+      {
+        accessorKey: "contract.customer.userName",
+        header: "Tên tài khoản",
+      },
+      {
+        accessorKey: "contract.customer.email",
+        header: "Email",
+      },
+      {
+        accessorKey: "monthPayment",
+        header: "Tháng",
+      },
+      {
+        accessorKey: "yearPayment",
+        header: "Năm",
+      },
+      {
+        accessorKey: "servicePrice",
+        header: "Giá dịch vụ",
+        Cell: ({ cell, row }) => <div>{func.convertVND(cell.getValue())}</div>,
+      },
+      {
+        accessorKey: "warehousePrice",
+        header: "Giá kho",
+        Cell: ({ cell, row }) => <div>{func.convertVND(cell.getValue())}</div>,
+      },
+      {
+        accessorKey: "totalPrice",
+        header: "Tổng tiền",
+        Cell: ({ cell, row }) => <div>{func.convertVND(cell.getValue())}</div>,
+      },
+      {
+        accessorKey: "deadline",
+        header: "Hạn chót",
+        Cell: ({ cell, row }) => <div>{func.convertDate(cell.getValue())}</div>,
+      },
+      {
+        accessorKey: "paymentDate",
+        header: "Ngày trả",
+        Cell: ({ cell, row }) => (
+          <div>
+            {cell.getValue()
+              ? func.convertDate(cell.getValue())
+              : "Chưa thanh toán"}
+          </div>
+        ),
+      },
+    ],
+    []
+  );
+
+  const header = ["time", "name", "price", "status"];
+  const headerSP = [
+    "month",
+    "year",
+    "servicePrice",
+    "warehousePrice",
+    "totalPrice",
+    "creationDate",
+    "deadline",
+    "paymentDate",
+  ];
+  const exportExcelTransaction = () => {
+    downloadExcel({
+      fileName: "transaction-data",
+      sheet: "transaction-data",
+      tablePayload: {
+        header,
+        body: transactionTmp,
+      },
+    });
+  };
+
+  const exportExcel = () => {
+    downloadExcel({
+      fileName: "deposit-data",
+      sheet: "deposit-data",
+      tablePayload: {
+        header,
+        body: listDepositTmp,
+      },
+    });
+  };
+
+  const exportExcelSP = () => {
+    downloadExcel({
+      fileName: "service-payment-data",
+      sheet: "service-payment-data",
+      tablePayload: {
+        header: headerSP,
+        body: servicePaymentTmp,
+      },
+    });
+  };
+
   return (
     <div className="w-[90%] mx-auto mt-[40px]">
       {/* counting */}
@@ -191,12 +442,63 @@ function Dashboard() {
 
       {/* deposit */}
       <div className="w-full mt-10">
-        <span className="text-[36px] text-primary font-bold">Ký gửi</span>
+        <span className="text-[36px] text-primary font-bold">
+          Giao dịch thanh toán đơn hàng
+        </span>
+        <br />
+        <button
+          className="btn-primary px-3 py-1 rounded-lg my-2"
+          onClick={exportExcel}
+        >
+          Xuất Excel
+        </button>
         <div className="w-full mx-auto mt-2">
           <MantineReactTable
             columns={columns}
             initialState={{ columnVisibility: { id: false } }}
             data={deposit}
+          />
+        </div>
+      </div>
+
+      {/* transaction */}
+      <div className="w-full mt-10">
+        <span className="text-[36px] text-primary font-bold">
+          Giao dịch thanh toán hóa đơn hàng tháng
+        </span>
+        <br />
+        <button
+          className="btn-primary px-3 py-1 rounded-lg my-2"
+          onClick={exportExcelTransaction}
+        >
+          Xuất Excel
+        </button>
+        <div className="w-full mx-auto mt-2">
+          <MantineReactTable
+            columns={columnsTransaction}
+            initialState={{ columnVisibility: { id: false } }}
+            data={listTransaction}
+          />
+        </div>
+      </div>
+
+      {/* service payment */}
+      <div className="w-full mt-10">
+        <span className="text-[36px] text-primary font-bold">
+          Quản lý hóa đơn hàng tháng
+        </span>
+        <br />
+        <button
+          className="btn-primary px-3 py-1 rounded-lg my-2"
+          onClick={exportExcelSP}
+        >
+          Xuất Excel
+        </button>
+        <div className="w-full mx-auto mt-2">
+          <MantineReactTable
+            columns={columnsServicePayment}
+            initialState={{ columnVisibility: { id: false } }}
+            data={listServicePayment}
           />
         </div>
       </div>

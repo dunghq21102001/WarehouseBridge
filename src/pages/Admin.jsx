@@ -15,6 +15,7 @@ import AdminHashtag from './Admin/AdminHashtag'
 import AdminUser from "./Admin/AdminUser"
 import AdminRequest from "./Admin/AdminRequest"
 import AdminRequestDetails from "./Admin/AdminRequestDetail"
+import AdminRentWH from "./Admin/AdminRentWH"
 
 function Admin() {
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
@@ -44,6 +45,7 @@ function Admin() {
                     <Route path="/admin-warehouses" element={<AdminWarehouse />} />
                     <Route path="/admin-users" element={<AdminUser />} />
                     <Route path="/admin-warehouses-details" element={<AdminWarehouseDetail />} />
+                    <Route path="/admin-rent-warehouses" element={<AdminRentWH />} />
                     <Route path="/admin-orders" element={<AdminOrder />} />
                     <Route path="/admin-categories" element={<AdminCategory />} />
                     <Route path="/admin-partners" element={<AdminPartner />} />

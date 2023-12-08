@@ -1,4 +1,4 @@
-import logoFooter from '../assets/images/footer.png'
+import logoFooter from '../assets/images/logo/11zon_cropped.png'
 import { MdLocationOn } from 'react-icons/md'
 import { BsFillTelephoneFill } from 'react-icons/bs'
 import { AiFillMail } from 'react-icons/ai'
@@ -6,7 +6,7 @@ function Footer() {
     return (
         <div className="w-full bg-primary min-h-screen flex items-center md:items-start justify-around flex-wrap py-[20vh] flex-col md:flex-row">
             <div className="flex items-center flex-col w-[90%] md:w-[50%] bg-secondary py-5 px-14">
-                <img src={logoFooter} alt="" className='w-full' />
+                <img src={logoFooter} alt="" className='w-[150px]' />
                 <p className='text-center text-primary my-2 text-[14px] md:text-[20px]'>
                     Warehousebridge – mang không gian đến với khách hàng, <span className='text-white'>hệ thống kết nối khách hàng cần không gian lưu trữ với các chủ kho, phù hợp với hầu hết nhu cầu của khách hàng.</span>
                 </p>

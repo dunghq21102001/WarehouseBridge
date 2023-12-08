@@ -55,6 +55,8 @@ function Profile() {
   ]);
 
   const [listServicePayment, setListServicePayment] = useState([]);
+  const [isShowChoose, setIsShowChoose] = useState(false);
+  const [servicePaymentId, setServicePaymentId] = useState("");
 
   useEffect(() => {
     dispatch(changeLoadingState(true));
@@ -219,6 +221,7 @@ function Profile() {
     setListGoodToDisplay([]);
     setIsShowAddGoodToWH(false);
     setListGoodTmp([]);
+    setIsShowChoose(false);
   };
 
   const openPopup = () => {
@@ -440,8 +443,82 @@ function Profile() {
       return noti.error("Bạn phải nhập số lượng là 1 số!");
     if (Number.parseInt(data?.quantity) > 100)
       return noti.error("Số lượng chỉ được dưới 100");
-    if(data?.images.length == 0) return noti.error('Bạn phải thêm ảnh vào để tạo hàng hoá')
+    if (data?.images.length == 0)
+      return noti.error("Bạn phải thêm ảnh vào để tạo hàng hoá");
     setListGoodTmp([...listGoodTmp, data]);
+  };
+
+  const postServicePayment = (paymentType) => {
+    dispatch(changeLoadingState(true));
+    API.addServicePayment(servicePaymentId, paymentType)
+      .then((res) => {
+        dispatch(changeLoadingState(false));
+        window.open(res.data, "_self");
+      })
+      .catch((err) => {
+        dispatch(changeLoadingState(false));
+        noti.error(err?.response?.data);
+      });
+  };
+
+  const createRequestAddGood = async () => {
+    try {
+      dispatch(changeLoadingState(true));
+
+      const uploadedImages = await Promise.all(
+        listGoodTmp.map(async (item) => {
+          const image = item?.images[0];
+
+          // Upload image to Firebase Storage
+          const timestamp = new Date().getTime();
+          const fileName = `${timestamp}_${image.name}`;
+          const storageRef = ref(storage, "images/" + fileName);
+
+          await uploadBytes(storageRef, image);
+
+          // Get the download URL of the uploaded image
+          const imageURL = await getDownloadURL(storageRef);
+
+          return {
+            goodCreateModel: {
+              rentWarehouseId: contract?.rentWarehouseId,
+              goodName: item.name,
+              quantity: Number.parseInt(item.quantity),
+              goodUnit: 1,
+              description: "string",
+            },
+            images: [imageURL],
+          };
+        })
+      );
+
+      // Now, uploadedImages contains an array of objects with goodCreateModel and images properties
+      // You can use this array in your API call
+
+      API.addGoodToWH({
+        createRequestWithRequestDetailViewModel: {
+          customerId: contract?.customerId,
+          staffId: contract?.customerId,
+          requestStatus: 1,
+          denyReason: "none",
+          requestType: 2,
+          completeDate: "2023-12-05T23:43:13.771Z",
+          requestDetails: [],
+        },
+        goodCreateWithImage: uploadedImages,
+      })
+        .then((res) => {
+          noti.success("Tạo yêu cầu thêm hàng vào kho thành công!", 2000);
+          dispatch(changeLoadingState(false));
+          cancelAll()
+        })
+        .catch((err) => {
+          dispatch(changeLoadingState(false));
+          console.log(err);
+        });
+    } catch (error) {
+      dispatch(changeLoadingState(false));
+    }
   };
   return (
     <div className="w-full bg-[#f9f5f1] min-h-screen">
@@ -599,7 +676,7 @@ function Profile() {
         >
           <div className="w-[90%] mx-auto grid grid-cols-12 gap-3">
             {curWH ? (
-              <div className="col-span-4 shadow-lg">
+              <div className="col-span-12 md:col-span-4 shadow-lg">
                 <div className="w-full h-[200px] overflow-hidden flex items-center justify-center">
                   <img src={curWH?.imageURL} alt="" />
                 </div>
@@ -679,6 +756,12 @@ function Profile() {
                     <span className="font-bold">Miễn phí</span>
                   </div>
                   <div className="line block"></div>
+                  <div className="flex items-start justify-between w-full">
+                    <span>Tên kho kho</span>
+                    <p className="font-bold w-[240px] text-right">
+                      {item?.warehouseDetail?.warehouse?.name}
+                    </p>
+                  </div>
                   <div className="flex items-center justify-between w-full">
                     <span>Loại kho</span>
                     <span className="font-bold">{`${item?.width} x ${item?.depth} x ${item?.height} ${item?.unitType}`}</span>
@@ -704,8 +787,8 @@ function Profile() {
                   <div className="flex items-center justify-between w-full">
                     <span>Ngày lấy hàng</span>
                     <span className="font-bold">
-                      {item?.deletionDate != null
-                        ? func.convertDate(item?.deletionDate)
+                      {item?.paymentDate != null
+                        ? func.convertDate(item?.paymentDate)
                         : "Chưa lấy"}
                     </span>
                   </div>
@@ -741,25 +824,52 @@ function Profile() {
             {listServicePayment.length > 0 &&
               listServicePayment.map((item) => (
                 <div
-                  className="col-span-12 md:col-span-4 border-gray-300 border-solid border-[1px] rounded-lg flex items-start justify-between px-2 py-1"
+                  className="col-span-12 md:col-span-6 lg:col-span-4 border-gray-300 border-solid border-[1px] rounded-lg px-2 py-1"
                   key={item?.id}
                 >
-                  <div className="w-[30%] flex flex-col items-start">
-                    <span>Tháng</span>
-                    <span>Năm</span>
-                    <span>Phí dịch vụ</span>
-                    <span>Phí kho</span>
-                    <span>Tổng phí</span>
-                    <span>Hạn chót</span>
+                  <div className="w-full flex items-start justify-between">
+                    <div className="w-[40%] flex flex-col items-start">
+                      <span>Tháng</span>
+                      <span>Năm</span>
+                      <span>Phí dịch vụ</span>
+                      <span>Phí kho</span>
+                      <span>Tổng phí</span>
+                      <span>Hạn chót</span>
+                      <span>Ngày thanh toán</span>
+                    </div>
+                    <div className="w-[60%] flex items-end flex-col">
+                      <span>{item?.monthPayment}</span>
+                      <span>{item?.yearPayment}</span>
+                      <span>{func.convertVND(item?.servicePrice)}</span>
+                      <span>{func.convertVND(item?.warehousePrice)}</span>
+                      <span>{func.convertVND(item?.totalPrice)}</span>
+                      <span>{func.convertDate(item?.deadline)}</span>
+                      <span>
+                        {item?.deletionDate != null
+                          ? func.convertDate(item?.deletionDate)
+                          : "Chưa thanh toán"}
+                      </span>
+                    </div>
                   </div>
-                  <div className="w-[65%] flex items-end flex-col">
-                    <span>{item?.monthPayment}</span>
-                    <span>{item?.yearPayment}</span>
-                    <span>{func.convertVND(item?.servicePrice)}</span>
-                    <span>{func.convertVND(item?.warehousePrice)}</span>
-                    <span>{func.convertVND(item?.totalPrice)}</span>
-                    <span>{func.convertDate(item?.deadline)}</span>
-                  </div>
+                  {item?.isPaid == false ? (
+                    <div className="w-full flex justify-end mt-3">
+                      <button
+                        className="btn-primary px-3 py-1 rounded-lg"
+                        onClick={() => {
+                          setServicePaymentId(item?.id);
+                          setIsShowChoose(true);
+                        }}
+                      >
+                        Thanh toán
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="w-full flex justify-end mt-3">
+                      <button className="btn-primary px-3 py-1 rounded-lg cursor-not-allowed">
+                        Đã thanh toán
+                      </button>
+                    </div>
+                  )}
                 </div>
               ))}
           </div>
@@ -899,7 +1009,7 @@ function Profile() {
 
       {isShowAddGoodToWH ? (
         <div className="bg-fog-cus">
-          <div className="w-[50%] overflow-y-scroll hide-scroll max-h-[80vh] bg-white rounded-lg p-5">
+          <div className="w-[90%] md:w-[70%] lg:w-[50%] overflow-y-scroll hide-scroll max-h-[80vh] bg-white rounded-lg p-5">
             <div className="w-full mx-auto flex">
               <FormBase
                 onCancel={cancelAll}
@@ -914,7 +1024,10 @@ function Profile() {
             {listGoodTmp.length > 0 ? (
               <div className="w-full flex items-center justify-between px-5">
                 <p className="text-[18px]">Hàng bạn muốn thêm: </p>
-                <button className="btn-primary px-3 py-1 rounded-lg">
+                <button
+                  onClick={createRequestAddGood}
+                  className="btn-primary px-3 py-1 rounded-lg"
+                >
                   Tạo yêu cầu thêm hàng hoá
                 </button>
               </div>
@@ -942,6 +1055,31 @@ function Profile() {
                     <p>Số lượng: {item?.quantity}</p>
                   </div>
                 ))}
+            </div>
+          </div>
+        </div>
+      ) : null}
+      {isShowChoose ? (
+        <div className="bg-fog-cus" onClick={handleParentClick}>
+          <div
+            className="w-full md:w-[60%] bg-white rounded-xl"
+            onClick={handleChildClick}
+          >
+            <div
+              onClick={() => {
+                postServicePayment("captureWallet");
+              }}
+              className="block w-[90%] mx-auto hover:bg-[#ff3333] text-center rounded-md bg-[#1773B0] text-white mt-4 py-4 cursor-pointer duration-150"
+            >
+              MOMO QR
+            </div>
+            <div
+              onClick={() => {
+                postServicePayment("payWithATM");
+              }}
+              className="block w-[90%] mx-auto hover:bg-[#ff3333] text-center rounded-md bg-[#1773B0] text-white my-4 py-4 cursor-pointer duration-150"
+            >
+              MOMO Napas
             </div>
           </div>
         </div>

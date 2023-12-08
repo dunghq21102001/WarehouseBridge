@@ -9,8 +9,8 @@ function checkToken() {
 }
 checkToken()
 const instance = axios.create({
-    baseURL: 'https://localhost:5001',
-    // baseURL: 'https://warebousebridge.azurewebsites.net/',
+    // baseURL: 'https://localhost:5001',
+    baseURL: 'https://warebousebridge.azurewebsites.net/',
 
     headers: {
         'Content-Type': 'application/json',
@@ -237,8 +237,8 @@ export default class API {
         return instance.get(`/api/Orders`)
     }
 
-    static postOrder(WHId) {
-        return instance.post(`/api/Orders?warehouseDetailId=${WHId}`)
+    static postOrder(WHId, option) {
+        return instance.post(`/api/Orders?warehouseDetailId=${WHId}&option=${option}`)
     }
 
     static getOderById(id) {
@@ -276,6 +276,10 @@ export default class API {
 
     static addPost(data) {
         return instance.post(`/api/Post`, data)
+    }
+
+    static getPostById(id) {
+        return instance.get(`/api/Post/${id}`)
     }
 
     static updatePost(data) {
@@ -372,6 +376,10 @@ export default class API {
         return instance.get('/Admin/api/Good');
     }
 
+    static getGoodsById(rentId) {
+        return instance.get(`/Admin/api/Good/${rentId}`)
+    }
+
     static addGood(data) {
         return instance.post(`/Admin/api/Good`, data)
     }
@@ -382,7 +390,7 @@ export default class API {
     }
 
     static getRequestStatus() {
-        return instance.get('/api/Enum/Requeststatus');
+        return instance.get('/api/Enum/RequestStatus');
     }
 
     static addRequest(data) {
@@ -394,6 +402,10 @@ export default class API {
     }
     static deleteRequest(id) {
         return instance.delete(`/api/Request/${id}`)
+    }
+
+    static addGoodToWH(data) {
+        return instance.post(`/api/Request/CreateRequestWithGoods`, data)
     }
 
     // request detail
@@ -423,12 +435,31 @@ export default class API {
         return instance.get(`/api/ServicePayment`)
     }
 
-    static addServicePayment() {
-        return instance.post(`/api/ServicePayment`)
+    static addServicePayment(id, option) {
+        return instance.post(`/api/ServicePayment?servicePaymentId=${id}&option=${option}`)
     }
 
     static servicePaymentById(id) {
         return instance.get(`/api/ServicePayment/${id}`)
+    }
+
+    static servicePaymentAdmin() {
+        return instance.get(`/Admin/api/ServicePayment`)
+    }
+
+    // transaction
+
+    static transaction() {
+        return instance.get(`/Admin/api/Transaction`)
+    }
+
+    // dashboard
+    static totalRevenue() {
+        return instance.get(`/api/Dasboard/TotalRevenue`)
+    }
+
+    static orderStatic() {
+        return instance.get(`/api/Dasboard/OrderStatic`)
     }
 
 }

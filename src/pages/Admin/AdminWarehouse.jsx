@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { changeLoadingState } from "../../reducers/SystemReducer";
 import FormBase from "../../components/FormBase";
 import FormUpdate from "../../components/FormUpdate";
+import { IoIosInformationCircleOutline } from "react-icons/io";
 import { AiOutlineEdit, AiOutlineCloseSquare } from "react-icons/ai";
 import { MdDelete, MdMoveToInbox } from "react-icons/md";
 import { BiDetail } from "react-icons/bi";
@@ -14,6 +15,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import SubWHPage from "./SubWHPage";
+import SubScreenGood from "../../components/SubScreenGood";
 
 function AdminWarehouse() {
   const [list, setList] = useState([]);
@@ -57,6 +59,9 @@ function AdminWarehouse() {
     { name: "Mô tả", binding: "description", type: "input" },
     { name: "Hình ảnh", binding: "image", type: "file" },
   ]);
+
+  const [isShowGood, setIsShowGood] = useState(false);
+  const [rentWHByShowGood, setRentWHByShowGood] = useState("");
 
   const dispatch = useDispatch();
 
@@ -266,7 +271,7 @@ function AdminWarehouse() {
       },
       {
         accessorKey: "information",
-        header: "Thông tin",
+        header: "Thông tin kho",
       },
       {
         accessorKey: "rentStatus",
@@ -462,7 +467,7 @@ function AdminWarehouse() {
         />
       </div>
 
-      <div className=" w-full md:w-[90%] mx-auto mt-10">
+      {/* <div className=" w-full md:w-[90%] mx-auto mt-10">
         <MantineReactTable
           columns={columnsRentWH}
           data={rentWH}
@@ -470,13 +475,21 @@ function AdminWarehouse() {
           enableEditing
           renderRowActions={({ row, table }) => (
             <div className="flex items-center">
-              <button onClick={() => addGood(row)}>
+              <button onClick={() => addGood(row)} className="mr-3">
                 <MdMoveToInbox className="text-[24px] text-primary" />
+              </button>
+              <button
+                onClick={() => {
+                  setIsShowGood(true);
+                  setRentWHByShowGood(row.getValue("id"));
+                }}
+              >
+                <IoIosInformationCircleOutline className="text-[24px] text-secondary" />
               </button>
             </div>
           )}
         />
-      </div>
+      </div> */}
 
       {isShowUpdate ? (
         <FormUpdate
@@ -519,6 +532,8 @@ function AdminWarehouse() {
           </div>
         </div>
       ) : null}
+
+      {isShowGood ? <SubScreenGood rentID={rentWHByShowGood} /> : null}
     </div>
   );
 }

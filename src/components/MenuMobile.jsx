@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import logoImg from '../assets/images/fav.png'
+import logoImg from '../assets/images/logo/11zon_cropped.png'
 import menus from "../common/menus"
 import { useLocation, useNavigate } from "react-router-dom"
 function MenuMobile({ isOpen, setIsShowMenuMobile }) {
@@ -35,7 +35,7 @@ function MenuMobile({ isOpen, setIsShowMenuMobile }) {
     return (
         <div className="w-full z-10 fixed top-0 left-0 right-0 bottom-0 bg-black/60" onClick={handleParentClick}>
             <div className="w-[70%] md:w-[40%] bg-primary h-[100vh] text-white pt-4" onClick={handleChildClick}>
-                <img src={logoImg} className="w-[80%] mx-auto" alt="" />
+                <img src={logoImg} className="w-[200px] mx-auto" alt="" />
                 <ul className="w-full flex flex-col items-start uppercase mt-5">
                     {mainMenu.map(item => (
                         <li onClick={() => changeRoute(item.pathName)} className={`text-[14px] cursor-pointer hover:bg-[#fea116] w-full my-2 pl-4 py-2 md:text-[16px] hover:text-white ${curRoute == item.name ? 'bg-secondary' : ''}`} key={item.name}>{item.title}</li>

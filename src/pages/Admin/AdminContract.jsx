@@ -12,7 +12,6 @@ import noti from '../../common/noti'
 import { storage } from '../../firebase'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { AiOutlineEdit } from 'react-icons/ai'
-import { MdDelete } from 'react-icons/md'
 
 function AdminContract() {
   const dispatch = useDispatch()
@@ -272,7 +271,7 @@ function AdminContract() {
   return (
     <div className='w-full'>
       <div className=' w-full md:w-[90%] mx-auto mt-10'>
-        <button className='btn-primary px-3 py-1 my-2' onClick={actionAdd}>Thêm</button>
+        {/* <button className='btn-primary px-3 py-1 my-2' onClick={actionAdd}>Thêm</button> */}
         <MantineReactTable
           columns={columns}
           data={list}
@@ -286,7 +285,7 @@ function AdminContract() {
           )}
         />
       </div>
-      {isShowAdd
+      {/* {isShowAdd
         ?
         <div className='bg-fog-cus'>
           <div className='hide-scroll bg-white p-4 rounded-lg w-[95%] md:w-[70%] lg:w-[50%] max-h-[80vh] overflow-y-scroll'>
@@ -342,7 +341,7 @@ function AdminContract() {
             </div>
           </div>
         </div>
-        : null}
+        : null} */}
 
       {isShowUpdate
         ?

@@ -48,12 +48,12 @@ function Sidebar() {
                         <span className="nav-text">Nhà kho</span>
                     </div>
                 </li>
-                {/* <li className={`${curTab == 'warehouses details' ? 'active' : ''}`} onClick={() => changeRoute('warehouses details', 'admin-warehouses-details')}>
+                <li className={`${curTab == 'rent-warehouses' ? 'active' : ''}`} onClick={() => changeRoute('rent-warehouses', 'admin-rent-warehouses')}>
                     <div className='link-text'>
                         <BsFillHouseGearFill className='nav-icon' />
-                        <span className="nav-text">Chi tiết kho</span>
+                        <span className="nav-text">Kho đã thuê</span>
                     </div>
-                </li> */}
+                </li>
                 <li className={`${curTab == 'orders' ? 'active' : ''}`} onClick={() => changeRoute('orders', 'admin-orders')}>
                     <div className='link-text'>
                         <RiBillLine className='nav-icon' />
@@ -86,12 +86,12 @@ function Sidebar() {
                         <span className="nav-text">Hashtags</span>
                     </div>
                 </li>
-                <li className={`${curTab == 'goods' ? 'active' : ''}`} onClick={() => changeRoute('goods', 'admin-goods')}>
+                {/* <li className={`${curTab == 'goods' ? 'active' : ''}`} onClick={() => changeRoute('goods', 'admin-goods')}>
                     <div className='link-text'>
                         <AiOutlineDropbox className='nav-icon' />
                         <span className="nav-text">Hàng hoá</span>
                     </div>
-                </li>
+                </li> */}
                 <li className={`${curTab == 'contracts' ? 'active' : ''}`} onClick={() => changeRoute('contracts', 'admin-contracts')}>
                     <div className='link-text'>
                         <FaFileContract className='nav-icon' />

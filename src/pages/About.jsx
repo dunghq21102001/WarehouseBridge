@@ -5,49 +5,55 @@ import {
   BiLogoTwitter,
 } from "react-icons/bi";
 import "../css/About.css";
+import MyImg from "../assets/images/members/team2.jpg";
+import TrangImg from "../assets/images/members/team1.jpg";
+import DungImg from "../assets/images/members/team3.png";
+import DuyImg from "../assets/images/members/team4.png";
+import NghiaImg from "../assets/images/members/team5.jpg";
+import VanImg from "../assets/images/members/team6.jpg";
 import { useEffect, useState } from "react";
 function About() {
   const [listMember, setListMember] = useState([
     {
       fullName: "Hoàng Quốc Dũng",
       role: "Đồng sáng lập",
-      img: "https://png.pngtree.com/png-clipart/20190924/original/pngtree-user-vector-avatar-png-image_4830521.jpg",
+      img: DungImg,
     },
     {
       fullName: "Nguyễn Văn Duy",
       role: "Đồng sáng lập",
-      img: "https://png.pngtree.com/png-clipart/20190924/original/pngtree-user-vector-avatar-png-image_4830521.jpg",
+      img: DuyImg,
     },
     {
       fullName: "Phạm Đức Nghĩa",
       role: "Đồng sáng lập",
-      img: "https://png.pngtree.com/png-clipart/20190924/original/pngtree-user-vector-avatar-png-image_4830521.jpg",
+      img: NghiaImg,
     },
     {
       fullName: "Nguyễn Thị Trà My",
       role: "Đồng sáng lập",
-      img: "https://png.pngtree.com/png-clipart/20190924/original/pngtree-user-vector-avatar-png-image_4830521.jpg",
+      img: MyImg,
     },
     {
       fullName: "Phùng Thị Thuỳ Trang",
       role: "Đồng sáng lập",
-      img: "https://png.pngtree.com/png-clipart/20190924/original/pngtree-user-vector-avatar-png-image_4830521.jpg",
+      img: TrangImg,
     },
-    {
-      fullName: "Nguyễn Minh Đăng",
-      role: "Đồng sáng lập",
-      img: "https://png.pngtree.com/png-clipart/20190924/original/pngtree-user-vector-avatar-png-image_4830521.jpg",
-    },
+    // {
+    //   fullName: "Nguyễn Minh Đăng",
+    //   role: "Đồng sáng lập",
+    //   img: "https://png.pngtree.com/png-clipart/20190924/original/pngtree-user-vector-avatar-png-image_4830521.jpg",
+    // },
     {
       fullName: "Nguyễn Đức Hải Văn",
       role: "Đồng sáng lập",
-      img: "https://png.pngtree.com/png-clipart/20190924/original/pngtree-user-vector-avatar-png-image_4830521.jpg",
+      img: VanImg,
     },
-    {
-      fullName: "Hoàng",
-      role: "Đồng sáng lập",
-      img: "https://png.pngtree.com/png-clipart/20190924/original/pngtree-user-vector-avatar-png-image_4830521.jpg",
-    },
+    // {
+    //   fullName: "Hoàng",
+    //   role: "Đồng sáng lập",
+    //   img: "https://png.pngtree.com/png-clipart/20190924/original/pngtree-user-vector-avatar-png-image_4830521.jpg",
+    // },
   ]);
 
   useEffect(() => {
@@ -57,7 +63,7 @@ function About() {
       listMember[i] = listMember[j];
       listMember[j] = temp;
 
-      setListMember(listMember)
+      setListMember(listMember);
     }
   }, []);
   return (
@@ -81,7 +87,7 @@ function About() {
               <div className="w-full relative">
                 <img
                   src={item.img}
-                  className="w-full max-h-[400px] object-cover"
+                  className="w-full h-[400px] object-cover"
                   alt=""
                 />
                 <div className="flex w-[40%] items-center justify-around absolute left-[50%] translate-x-[-50%] bottom-[-20px]">

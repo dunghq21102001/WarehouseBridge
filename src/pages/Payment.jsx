@@ -52,9 +52,9 @@ function Payment() {
       .catch((err) => {});
   }, []);
 
-  const postOrder = () => {
+  const postOrder = (paymentType) => {
     dispatch(changeLoadingState(true));
-    API.postOrder(WHDetail?.id)
+    API.postOrder(WHDetail?.id, paymentType)
       .then((res) => {
         dispatch(changeLoadingState(false));
         window.open(res.data, "_self");
@@ -137,7 +137,7 @@ function Payment() {
                   {/* <span className="w-[38px] h-[24px] bg-[#eda024] font-bold text-white text-center leading-[24px] rounded-sm">
                                         M
                                     </span> */}
-                                    {/* imageURL */}
+                  {/* imageURL */}
                   <img
                     src="https://play-lh.googleusercontent.com/dQbjuW6Jrwzavx7UCwvGzA_sleZe3-Km1KISpMLGVf1Be5N6hN6-tdKxE5RDQvOiGRg"
                     className="w-[24px] h-[24px]"
@@ -175,10 +175,16 @@ function Payment() {
               </div>
 
               <div
-                onClick={postOrder}
-                className="hidden lg:block w-full hover:bg-[#ff3333] text-center rounded-md bg-[#1773B0] text-white mt-4 py-4 cursor-pointer button"
+                onClick={() => postOrder("captureWallet")}
+                className="hidden lg:block w-full hover:bg-[#ff3333] text-center rounded-md bg-[#1773B0] text-white py-4 cursor-pointer button"
               >
-                Thanh toán ngay
+                MOMO QR
+              </div>
+              <div
+                onClick={() => postOrder("payWithATM")}
+                className="hidden lg:block w-full mt-3 hover:bg-[#ff3333] text-center rounded-md bg-[#1773B0] text-white py-4 cursor-pointer button"
+              >
+                MOMO Napas
               </div>
             </div>
           </div>
@@ -242,10 +248,16 @@ function Payment() {
           )}
 
           <div
-            onClick={postOrder}
+            onClick={() => postOrder("captureWallet")}
             className="lg:hidden mt-8 block w-full hover:bg-[#ff3333] text-center rounded-md bg-[#1773B0] text-white py-4 cursor-pointer button"
           >
-            Thanh toán ngay
+            MOMO QR
+          </div>
+          <div
+            onClick={() => postOrder("payWithATM")}
+            className="lg:hidden mt-8 block w-full hover:bg-[#ff3333] mt-3 text-center rounded-md bg-[#1773B0] text-white py-4 cursor-pointer button"
+          >
+            MOMO Napas
           </div>
         </div>
       </div>

@@ -25,6 +25,7 @@ import Payment from "./pages/Payment";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import NotFound from "./pages/NotFound";
 import Welcome from "./pages/Welcome";
+import NewDetail from "./pages/NewDetail";
 function App() {
   const system = useSelector((state) => state.system);
   const user = useSelector((state) => state.auth);
@@ -90,6 +91,7 @@ function App() {
             <Route path="/warehouse/:name" element={<WarehouseList />} />
             <Route path="/warehouse-detail/:id" element={<WarehouseDetail />} />
             <Route path="/news" element={<News />} />
+            <Route path="/news/:id" element={<NewDetail />} />
             <Route path="/contact" element={<Contact />} />
             <Route
               path="/profile"

@@ -21,13 +21,6 @@ function AdminGoods() {
   const [detailGood, setDetailGood] = useState({});
   const [selectedIdRent, setSelectedIdRent] = useState("");
   const [formData, setFormData] = useState([
-    // {
-    //   name: "Kho",
-    //   binding: "rentWarehouseId",
-    //   type: "select",
-    //   options: [1, 2, 3],
-    //   defaultValue: "",
-    // },
     { name: "Tên", binding: "goodName", type: "input" },
     { name: "Số lượng", binding: "quantity", type: "input" },
     { name: "Mô tả", binding: "description", type: "input" },
@@ -41,18 +34,7 @@ function AdminGoods() {
 
   useEffect(() => {
     if (listRentWareHouse.length > 0) {
-      // const options = listRentWareHouse.map(warehouse => ({
-      //   value: warehouse.id,
-      //   label: warehouse.information,
-      // }));
       setFormData([
-        // {
-        //   name: "Kho",
-        //   binding: "rentWarehouseId",
-        //   type: "select",
-        //   options: listRentWareHouse,
-        //   defaultValue: listRentWareHouse[0],
-        // },
         { name: "Tên", binding: "goodName", type: "input" },
         { name: "Số lượng", binding: "quantity", type: "input" },
         { name: "Mô tả", binding: "description", type: "input" },
@@ -240,7 +222,10 @@ function AdminGoods() {
               <button
                 className="px-3 py-1 rounded-md btn-primary"
                 onClick={() => {
-                  deleteGood(data.getValue("rentWarehouseId"), data.getValue("id"));
+                  deleteGood(
+                    data.getValue("rentWarehouseId"),
+                    data.getValue("id")
+                  );
                   onClose();
                 }}
               >
@@ -282,7 +267,9 @@ function AdminGoods() {
               <button onClick={() => getGoodDetail(row)} className="">
                 <AiOutlineEdit className="edit-icon" />
               </button>
-              <button onClick={() => handleDeleteRow(row)} className=''><MdDelete className='del-icon' /></button>
+              <button onClick={() => handleDeleteRow(row)} className="">
+                <MdDelete className="del-icon" />
+              </button>
             </div>
           )}
         />

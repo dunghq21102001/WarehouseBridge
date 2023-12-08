@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux'
-import logo from '../assets/images/fav.png'
+import logo from '../assets/images/logo/11zon_cropped.png'
 import { Menu } from '@headlessui/react'
 import { authen, setRole } from '../reducers/UserReducer'
 import noti from '../common/noti'
@@ -50,7 +50,7 @@ function AdminHeader() {
     return (
         <div className={`shadow-lg float-right`} style={{ width: `${windowWidth}px` }}>
             <div className="bg-white flex justify-end md:justify-between px-5">
-                <div className='w-[18%] flex items-center'>
+                <div className='w-[100px] flex items-center'>
                     <img src={logo} alt="" className='w-full hidden md:block' />
                 </div>
                 <div className='w-[20%] h-[100px] relative'>

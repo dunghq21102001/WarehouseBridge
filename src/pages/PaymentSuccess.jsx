@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "../css/PaymentSuccess.css";
-import whLogo from "../assets/images/fav.png";
+import whLogo from "../assets/images/logo/11zon_cropped.png";
 import func from "../common/func";
 import { useNavigate } from "react-router-dom";
 function PaymentSuccess() {
@@ -94,7 +94,7 @@ function PaymentSuccess() {
         </div>
         <div className="w-full md:w-[60%]">
           <div className="w-full justify-between items-center px-2 hidden lg:flex">
-            <img src={whLogo} className="w-[200px] h-[70px]" alt="" />
+            <img src={whLogo} className="w-[100px]" alt="" />
             <img
               className="w-[70px] h-[70px]"
               src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDK-HgXPh9osISQTLAHVdO3foi-FY3IOmbbAyr-TbKHwMI3lwllKDjBoS_N1ZipoMhusY&usqp=CAU"
